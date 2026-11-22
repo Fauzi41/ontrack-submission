@@ -12,6 +12,7 @@ export interface CsvParseResult {
 export function parseCsv(text: string): CsvParseResult {
   const clean = text.replace(/^\uFEFF/, '');
   const rows: string[][] = [];
+  const rowLines: number[] = [];
   let field = '';
   let row: string[] = [];
   let inQuotes = false;
@@ -46,6 +47,7 @@ export function parseCsv(text: string): CsvParseResult {
     } else if (ch === '\n') {
       row.push(field);
       rows.push(row);
+      rowLines.push(rowStartLine);
       row = [];
       field = '';
       line++;
@@ -57,24 +59,29 @@ export function parseCsv(text: string): CsvParseResult {
   if (field !== '' || row.length > 0) {
     row.push(field);
     rows.push(row);
+    rowLines.push(rowStartLine);
   }
 
-  const nonEmpty = rows.filter((r) => r.some((c) => c.trim() !== ''));
-  const header = (nonEmpty.shift() ?? []).map((h) => h.trim());
+  // Nomor baris ikut dibawa supaya baris yang ditolak bisa dilacak ke file aslinya,
+  // bukan ke posisinya setelah baris lain dibuang.
+  const pairs = rows
+    .map((cells, i) => ({ cells, line: rowLines[i] ?? i + 1 }))
+    .filter((r) => r.cells.some((c) => c.trim() !== ''));
+  const header = (pairs.shift()?.cells ?? []).map((h) => h.trim());
 
   const malformed: CsvParseResult['malformed'] = [];
   const out: string[][] = [];
-  nonEmpty.forEach((r, idx) => {
-    if (r.length !== header.length) {
+  for (const p of pairs) {
+    if (p.cells.length !== header.length) {
       malformed.push({
-        line: idx + 2,
+        line: p.line,
         code: 'COLUMN_COUNT_MISMATCH',
-        message: `baris punya ${r.length} kolom, header ${header.length}`,
+        message: `baris punya ${p.cells.length} kolom, header ${header.length}`,
       });
-      return;
+      continue;
     }
-    out.push(r);
-  });
+    out.push(p.cells);
+  }
 
   return { header, rows: out, malformed };
 }

@@ -82,7 +82,7 @@ export function buildContext(facts: ProjectFacts): Ctx {
     all(metric).filter((v) => v.source_kind === 'MASTER').at(-1)?.value_num ?? null;
   const text = (metric: string): string | null => latest(metric)?.value_text ?? null;
 
-  const reported = masterNum('reported_actual') ?? num('reported_actual');
+  const reported = masterNum('reported_actual') ?? num('reported_actual') ?? project.reported_actual;
   const unit = project.target_unit ?? '';
   const validatedMetric = VALIDATED_METRIC[unit];
   const validated = validatedMetric ? num(validatedMetric) : null;

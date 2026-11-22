@@ -101,7 +101,16 @@ export function runImport(db: DB, opts: { dataDir?: string } = {}): ImportReport
     ...masterCsv.malformed.map((m) => ({ severity: 'WARN' as const, code: m.code, message: `Master baris ${m.line}: ${m.message}` })),
     ...updatesCsv.malformed.map((m) => ({ severity: 'WARN' as const, code: m.code, message: `Updates baris ${m.line}: ${m.message}` })),
   ];
-  const counters: Counters = { inserted: 0, updated: 0, duplicates: 0, rejected: 0, late_arrivals: 0, orphans: 0 };
+  const counters: Counters = {
+    inserted: 0,
+    updated: 0,
+    duplicates: 0,
+    // Baris yang dibuang parser ikut dihitung ditolak; kalau tidak, laporan impor
+    // bisa bilang "0 ditolak" padahal ada baris yang tidak pernah masuk.
+    rejected: masterCsv.malformed.length + updatesCsv.malformed.length,
+    late_arrivals: 0,
+    orphans: 0,
+  };
 
   const selRecord = db.prepare(
     'SELECT id, observed_at, raw_json FROM source_records WHERE source_kind = ? AND source_ref_id = ?',

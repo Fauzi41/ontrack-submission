@@ -330,7 +330,18 @@ export function capacityDegradation(ctx: Ctx): Finding[] {
 
   const prev = snaps.length > 1 ? parse(snaps.at(-2)!) : [];
   const prevDown = prev.filter((s) => (s.status ?? '').toUpperCase() !== 'RUNNING').length;
-  const improving = prev.length > 0 && down.length < prevDown;
+
+  // Perbaikan bisa terjadi tanpa mengubah jumlah unit yang terganggu,
+  // misalnya OUT_OF_SERVICE menjadi LIMITED. Yang dibandingkan keadaannya, bukan hitungannya.
+  const score = (status?: string): number => {
+    const s = (status ?? '').toUpperCase();
+    if (s === 'RUNNING') return 0;
+    if (s === 'LIMITED') return 1;
+    return 2;
+  };
+  const nowScore = Math.max(...now.map((s) => score(s.status)));
+  const prevScore = prev.length > 0 ? Math.max(...prev.map((s) => score(s.status))) : 0;
+  const improving = prev.length > 0 && nowScore < prevScore;
   const allDown = down.length === now.length;
 
   return [
@@ -410,7 +421,7 @@ export function closureEvidence(ctx: Ctx): Finding[] {
 /** Dua angka di baris yang sama saling bertentangan. */
 export function internalInconsistency(ctx: Ctx): Finding[] {
   const actual = ctx.reported;
-  const pct = ctx.masterNum('reported_progress_pct');
+  const pct = ctx.masterNum('reported_progress_pct') ?? ctx.facts.project.reported_progress_pct;
   const target = ctx.facts.project.target;
   if (actual === null || pct === null || !target) return [];
   const calc = (actual / target) * 100;
@@ -438,7 +449,7 @@ export function internalInconsistency(ctx: Ctx): Finding[] {
 /* ---------------------------------------------------------------- D10 */
 /** Status tidak sejalan dengan angka atau dengan buktinya. */
 export function statusContradiction(ctx: Ctx): Finding[] {
-  const pct = ctx.masterNum('reported_progress_pct');
+  const pct = ctx.masterNum('reported_progress_pct') ?? ctx.facts.project.reported_progress_pct;
   const validated = ctx.validated;
   const target = ctx.facts.project.target;
 
@@ -480,7 +491,7 @@ export function progressBasisConflict(ctx: Ctx): Finding[] {
   if (ctx.facts.rule.progress_basis !== 'accepted_in_production') return [];
   const developed = ctx.num('developed_endpoints');
   const tested = ctx.num('production_tested_endpoints');
-  const pct = ctx.masterNum('reported_progress_pct');
+  const pct = ctx.masterNum('reported_progress_pct') ?? ctx.facts.project.reported_progress_pct;
   if (developed === null || developed <= 0) return [];
 
   return [

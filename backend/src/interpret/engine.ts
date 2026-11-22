@@ -29,7 +29,7 @@ const DETECTOR_LABEL: Record<string, string> = {
 
 /** Confidence rendah menahan severity critical: klaim besar dengan bukti tipis
  *  tidak boleh memimpin daftar. */
-function adjust(f: Finding): Finding {
+export function adjust(f: Finding): Finding {
   if (f.severity === 'critical' && f.confidence === 'low') {
     return { ...f, severity_final: 'attention' };
   }
@@ -182,12 +182,22 @@ export function assemblePortfolio(asOf: string, factsList: ProjectFacts[]): Port
     if (key !== prevKey) {
       rank = i + 1;
       prevKey = key;
-      p.tied = false;
-    } else {
-      p.tied = true;
     }
     p.rank = p.top_severity === 'info' ? null : rank;
   });
+
+  // Seri ditandai di semua anggotanya, bukan hanya yang kebetulan di urutan kedua.
+  const perRank = new Map<number, ProjectAssessment[]>();
+  for (const p of sorted) {
+    if (p.rank === null) continue;
+    const list = perRank.get(p.rank);
+    if (list) list.push(p);
+    else perRank.set(p.rank, [p]);
+  }
+  for (const list of perRank.values()) {
+    const tied = list.length > 1;
+    for (const p of list) p.tied = tied;
+  }
 
   const counts: Record<Severity, number> = { critical: 0, attention: 0, watch: 0, info: 0 };
   for (const p of projects) counts[p.top_severity] += 1;
