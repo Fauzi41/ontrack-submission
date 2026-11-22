@@ -52,6 +52,14 @@ describe('portofolio pada data asli', () => {
     expect(prj.findings.some((f) => f.borderline)).toBe(true);
   });
 
+  it('menyebut semua masalah di judul kelompok, bukan hanya yang terkuat', () => {
+    const prj = portfolio.projects.find((p) => p.project_id === 'PRJ-003')!;
+    expect(prj.groups).toHaveLength(1);
+    const title = prj.groups[0]?.title ?? '';
+    expect(title).toContain('Laporan berhenti masuk');
+    expect(title).toContain('Angka di satu baris tidak cocok');
+  });
+
   it('tidak menghitung laju untuk pekerjaan diskrit', () => {
     const prj = portfolio.projects.find((p) => p.project_id === 'PRJ-005')!;
     expect(prj.findings.some((f) => f.detector === 'schedule_risk')).toBe(false);

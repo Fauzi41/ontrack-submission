@@ -222,6 +222,27 @@ export function scheduleRisk(ctx: Ctx): Finding[] {
   const target = ctx.facts.project.target;
   const elapsed = ctx.elapsedDays;
   const remaining = ctx.remainingDays;
+
+  // Deadline lewat tanpa penyelesaian bukan kasus laju, melainkan kasus status.
+  // Tanpa cabang ini proyek yang telat justru tidak menghasilkan temuan apa pun.
+  if (remaining !== null && remaining <= 0 && ctx.overdueDays !== null) {
+    return [
+      build(ctx, {
+        detector: 'deadline_passed',
+        severity: 'critical',
+        confidence: 'high',
+        method: `deadline ${ctx.facts.project.deadline ?? '-'} vs as_of ${ctx.facts.asOf}`,
+        reason: `Deadline lewat ${fmt(ctx.overdueDays)} hari, statusnya masih ${ctx.lifecycle}.`,
+        unknowns: ['apakah pekerjaan sebenarnya sudah selesai tetapi statusnya belum diperbarui'],
+        evidence: [
+          ctx.ev(ctx.latest('reported_actual'), 'posisi terakhir'),
+          ctx.ev(ctx.latest('reported_status'), 'status terakhir'),
+        ],
+        action: 'Tetapkan status sebenarnya hari ini. Kalau belum selesai, terbitkan tanggal baru atau kurangi lingkupnya.',
+      }),
+    ];
+  }
+
   if (target === null || elapsed === null || remaining === null || remaining <= 0) return [];
 
   const candidates: Array<{ name: string; value: number | null; ref: Evidence }> = [
@@ -344,13 +365,20 @@ export function capacityDegradation(ctx: Ctx): Finding[] {
   const improving = prev.length > 0 && nowScore < prevScore;
   const allDown = down.length === now.length;
 
+  const prevAt = snaps.length > 1 ? (snaps.at(-2)!.observed_at ?? '') : '';
+  const prevClock = prevAt.includes('T') ? prevAt.slice(11, 16) : '';
+  const prevWorst = prev.reduce<Scanner | undefined>((worst, s) => (!worst || score(s.status) > score(worst.status) ? s : worst), undefined);
+  const trend = improving
+    ? `masih terbatas, sudah membaik dari ${(prevWorst?.status ?? '').toLowerCase().replace(/_/g, ' ')}${prevClock ? ` pukul ${prevClock}` : ''}`
+    : 'tidak berjalan normal';
+
   return [
     build(ctx, {
       detector: 'capacity_degradation',
       severity: allDown ? 'critical' : improving ? 'watch' : 'attention',
       confidence: 'high',
       method: `${down.length}/${now.length} unit tidak RUNNING; snapshot sebelumnya ${prevDown} unit terdampak`,
-      reason: `${down.length} dari ${now.length} unit ${improving ? 'masih terbatas dan sudah membaik dari 08:15' : 'tidak berjalan normal'}. Kapasitas tidak boleh diskalakan dari keadaan ini, cukup dicatat.`,
+      reason: `${down.length} dari ${now.length} unit ${trend}. Kapasitas tidak boleh diskalakan dari keadaan ini, cukup dicatat.`,
       unknowns: ['berapa throughput nyata sampai unit normal kembali'],
       evidence: [
         ctx.ev(snaps.at(-1), 'keadaan unit terakhir'),
@@ -392,20 +420,22 @@ export function closureEvidence(ctx: Ctx): Finding[] {
     ];
   }
 
-  // Yang menentukan tepat waktu adalah saat pekerjaan dinyatakan selesai,
-  // bukan saat pemeriksaan kesehatan terakhir dilakukan.
+  // Waktu selesai yang tidak tercatat tidak boleh diubah menjadi klaim "tepat waktu".
   const finishedMs = deployed?.observed_at ? Date.parse(`${deployed.observed_at}Z`) : null;
-  const late = deadlineMs !== null && finishedMs !== null && finishedMs > deadlineMs;
+  const timingUnknown = finishedMs === null;
+  const late = !timingUnknown && deadlineMs !== null && finishedMs > deadlineMs;
 
   return [
     build(ctx, {
       detector: 'verified_closure',
       severity: 'info',
       confidence: 'high',
-      method: `deployment COMPLETED ${deployed?.observed_at ?? '?'} vs deadline ${deadline ?? '?'}`,
-      reason: late
-        ? 'Sudah selesai dan terbukti berjalan, tetapi penutupannya jatuh setelah tanggal yang dijanjikan.'
-        : 'Selesai tepat waktu dan terbukti masih dipakai sesudahnya. Ini satu-satunya klaim selesai di portofolio yang punya bukti langsung, jadi dipakai sebagai pembanding untuk proyek lain.',
+      method: `deployment COMPLETED ${deployed?.observed_at ?? 'tidak tercatat'} vs deadline ${deadline ?? '?'}`,
+      reason: timingUnknown
+        ? 'Selesai dan terbukti berjalan, tetapi waktu penutupannya tidak tercatat sehingga ketepatan waktu tidak bisa dinilai.'
+        : late
+          ? 'Sudah selesai dan terbukti berjalan, tetapi penutupannya jatuh setelah tanggal yang dijanjikan.'
+          : 'Selesai tepat waktu dan terbukti masih dipakai sesudahnya. Ini satu-satunya klaim selesai di portofolio yang punya bukti langsung, jadi dipakai sebagai pembanding untuk proyek lain.',
       unknowns: [],
       evidence: [
         ctx.ev(deployed, 'deployment selesai'),

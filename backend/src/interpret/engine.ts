@@ -25,6 +25,7 @@ const DETECTOR_LABEL: Record<string, string> = {
   internal_inconsistency: 'Angka di satu baris tidak cocok',
   status_contradiction: 'Status bertentangan dengan angka',
   progress_basis_conflict: 'Definisi progress tidak sesuai tipe proyek',
+  deadline_passed: 'Deadline lewat, belum selesai',
 };
 
 /** Confidence rendah menahan severity critical: klaim besar dengan bukti tipis
@@ -73,9 +74,13 @@ function groupFindings(findings: Finding[]): FindingGroup[] {
   for (const [root, members] of buckets) {
     if (members.length < 2) continue;
     const top = members.reduce((a, b) => (SEVERITY_ORDER[b.severity_final] > SEVERITY_ORDER[a.severity_final] ? b : a));
+    // Judul kelompok harus menyebut semua masalah yang ada di dalamnya. Kalau hanya
+    // memakai anggota terkuat, kelompok PRJ-003 tampil sebagai "laporan berhenti masuk"
+    // padahal isinya juga soal angka yang tidak cocok.
+    const keys = [top.detector, ...members.map((m) => m.detector).filter((d) => d !== top.detector)];
     groups.push({
       group_key: root,
-      title: DETECTOR_LABEL[top.detector] ?? top.detector,
+      title: [...new Set(keys)].map((k) => DETECTOR_LABEL[k] ?? k).join(' / '),
       severity: top.severity_final,
       member_fingerprints: members.map((m) => m.fingerprint),
     });

@@ -107,6 +107,17 @@ describe('schedule_risk', () => {
     expect(scheduleRisk(ctx)).toEqual([]);
     expect(ctx.timePressure).toBe('UNKNOWN');
   });
+
+  it('melaporkan deadline yang lewat sebagai masalah status, bukan diam saja', () => {
+    const ctx = buildContext(
+      facts({ target: 1000, deadline: '2026-09-30', reported_status: 'ON TRACK' }, [master('reported_actual', 900)]),
+    );
+    expect(ctx.timePressure).toBe('OVERDUE');
+    const [found] = scheduleRisk(ctx);
+    expect(found?.detector).toBe('deadline_passed');
+    expect(found?.severity).toBe('critical');
+    expect(found?.reason).toContain('masih ON TRACK');
+  });
 });
 
 describe('stale_data', () => {
@@ -169,7 +180,7 @@ describe('capacity_degradation', () => {
         value('scanners', JSON.stringify([
           { scanner_id: 'SCN-A', status: 'RUNNING' },
           { scanner_id: 'SCN-B', status: 'OUT_OF_SERVICE' },
-        ]), { observed_at: '2026-10-06T08:15:00' }),
+        ]), { observed_at: '2026-10-06T09:05:00' }),
         value('scanners', JSON.stringify([
           { scanner_id: 'SCN-A', status: 'RUNNING' },
           { scanner_id: 'SCN-B', status: 'LIMITED' },
@@ -180,6 +191,23 @@ describe('capacity_degradation', () => {
     expect(found?.severity).toBe('watch');
     expect(found?.owner).toBe('PROJECT_MANAGER');
     expect(found?.reason).toContain('membaik');
+  });
+
+  it('mengambil jam pembanding dari data, bukan dari teks yang ditulis tangan', () => {
+    const ctx = buildContext(
+      facts({}, [
+        master('reported_actual', 900),
+        value('scanners', JSON.stringify([{ scanner_id: 'A', status: 'OUT_OF_SERVICE' }]), {
+          observed_at: '2026-10-06T09:05:00',
+        }),
+        value('scanners', JSON.stringify([{ scanner_id: 'A', status: 'LIMITED' }]), {
+          observed_at: '2026-10-06T15:30:00',
+        }),
+      ]),
+    );
+    const [found] = capacityDegradation(ctx);
+    expect(found?.reason).toContain('09:05');
+    expect(found?.reason).not.toContain('08:15');
   });
 });
 
@@ -209,6 +237,18 @@ describe('closure', () => {
     const [found] = closureEvidence(ctx);
     expect(found?.detector).toBe('closure_evidence_missing');
     expect(found?.severity).toBe('attention');
+  });
+
+  it('tidak mengarang ketepatan waktu saat waktu selesai tidak tercatat', () => {
+    const ctx = buildContext(
+      facts({ target: 1, target_unit: 'system', reported_status: 'COMPLETED', reported_actual: 1 }, [
+        master('reported_actual', 1),
+        value('application_status', 'ONLINE', { observed_at: '2026-10-06T16:45:00' }),
+      ]),
+    );
+    const [found] = closureEvidence(ctx);
+    expect(found?.reason).toContain('tidak tercatat');
+    expect(found?.reason).not.toContain('tepat waktu');
   });
 });
 
