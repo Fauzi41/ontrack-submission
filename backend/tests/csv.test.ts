@@ -43,4 +43,10 @@ describe('parseCsv', () => {
     const r = parseCsv('id,nilai\n7,abc\n');
     expect(toObjects(r.header, r.rows)).toEqual([{ id: '7', nilai: 'abc' }]);
   });
+
+  it('tidak menggantung saat kutip terakhir tidak ditutup', () => {
+    const r = parseCsv('a,b\n1,"abc');
+    expect(r.rows).toEqual([['1', 'abc']]);
+    expect(r.malformed).toEqual([]);
+  });
 });

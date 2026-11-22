@@ -138,7 +138,7 @@ export function buildContext(facts: ProjectFacts): Ctx {
     pending,
     elapsedDays,
     remainingDays: remainingRaw,
-    overdueDays: remainingRaw !== null && remainingRaw < 0 ? -remainingRaw : null,
+    overdueDays: !finished && remainingRaw !== null && remainingRaw < 0 ? -remainingRaw : null,
     hoursSinceReport: Number.isFinite(lastReportMs) && lastReportMs > 0 ? (asOfMs - lastReportMs) / 3_600_000 : null,
     hoursSinceEvidence:
       Number.isFinite(lastEvidenceMs) && lastEvidenceMs > 0 ? (asOfMs - lastEvidenceMs) / 3_600_000 : null,

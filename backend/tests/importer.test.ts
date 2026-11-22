@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { inMemoryDb } from '../src/db/db.js';
-import { runImport } from '../src/ingest/importer.js';
+import { currentAsOf, runImport } from '../src/ingest/importer.js';
 import { loadFacts, readAsOf } from '../src/interpret/load.js';
 import { DATA_DIR, FIXTURES } from '../src/config.js';
 
@@ -104,5 +104,69 @@ describe('impor', () => {
     const issue = report.issues.find((i) => i.code === 'COLUMN_COUNT_MISMATCH');
     expect(issue?.message).toContain('Updates baris');
     expect(report.inserted).toBe(41);
+  });
+});
+
+describe('impor yang tidak bersih', () => {
+  it('mencatat update untuk proyek yang tidak ada di master sebagai orphan', () => {
+    const dir = copyFixtures();
+    const db = inMemoryDb();
+    const path = join(dir, FIXTURES.updates);
+    writeFileSync(
+      path,
+      `${readFileSync(path, 'utf8')}\nUPD-777,PRJ-999,2026-10-01T10:00:00,PROJECT_MANAGER,Nadia,"Proyek hantu."`,
+    );
+    const report = runImport(db, { dataDir: dir });
+    expect(report.orphans).toBe(1);
+    expect(report.issues.map((i) => i.code)).toContain('ORPHAN_PROJECT');
+  });
+
+  it('berhenti sebelum menyentuh data bila header tidak sesuai', () => {
+    const dir = copyFixtures();
+    const db = inMemoryDb();
+    writeFileSync(join(dir, FIXTURES.updates), 'update_id,project_id,timestamp\nUPD-1,PRJ-001,2026-10-01T10:00:00\n');
+    expect(() => runImport(db, { dataDir: dir })).toThrow();
+    const count = db.prepare('SELECT count(*) AS c FROM source_records').get() as { c: number };
+    expect(count.c).toBe(0);
+  });
+
+  it('berhenti dengan pesan yang jelas saat JSON produksi rusak', () => {
+    const dir = copyFixtures();
+    writeFileSync(join(dir, FIXTURES.production), '{rusak');
+    expect(() => runImport(inMemoryDb(), { dataDir: dir })).toThrow(/tidak dapat dibaca/);
+  });
+
+  it('mencatat angka tak terbaca tanpa menghentikan impor', () => {
+    const dir = copyFixtures();
+    const db = inMemoryDb();
+    const path = join(dir, FIXTURES.master);
+    writeFileSync(path, readFileSync(path, 'utf8').replace(',400,', ',empat ratus,'));
+    const report = runImport(db, { dataDir: dir });
+    expect(report.issues.map((i) => i.code)).toContain('UNREADABLE_NUMBER');
+    expect(report.rejected).toBe(0);
+  });
+});
+
+describe('aturan tipe proyek', () => {
+  it('mengisi tabel aturan sekali dan membacanya kembali', () => {
+    const db = inMemoryDb();
+    runImport(db, { dataDir: DATA_DIR });
+    const count = db.prepare('SELECT count(*) AS c FROM project_types').get() as { c: number };
+    expect(count.c).toBe(5);
+    expect(currentAsOf(db)).toBe('2026-10-06T17:00:00');
+  });
+
+  it('memakai aturan default untuk tipe yang belum dikenal, bukan menebak', () => {
+    const db = inMemoryDb();
+    runImport(db, { dataDir: DATA_DIR });
+    db.prepare(
+      `INSERT INTO projects (project_id, customer, project_name, project_type, pic, start_date, deadline, target, target_unit,
+        reported_actual, reported_progress_pct, reported_status, last_reported_update_at, active, first_seen_at, last_ingested_at)
+       VALUES ('PRJ-NEW','C','Baru','Tipe Baru',NULL,'2026-09-01','2026-10-15',100,'ML',10,10,'ON TRACK',NULL,1,'x','x')`,
+    ).run();
+    const loaded = loadFacts(db).find((f) => f.project.project_id === 'PRJ-NEW');
+    expect(loaded?.rule.progress_basis).toBe('validated_quantity');
+    expect(loaded?.rule.rate_model).toBe('flow');
+    expect(loaded?.rule.expected_cadence_hours).toBe(72);
   });
 });

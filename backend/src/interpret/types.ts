@@ -137,7 +137,3 @@ export const TIME_ORDER: Record<TimePressure, number> = {
   NONE: 1,
   UNKNOWN: 0,
 };
-
-export function worstSeverity(a: Severity, b: Severity): Severity {
-  return SEVERITY_ORDER[a] >= SEVERITY_ORDER[b] ? a : b;
-}

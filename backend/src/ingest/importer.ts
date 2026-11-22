@@ -284,8 +284,11 @@ export function runImport(db: DB, opts: { dataDir?: string } = {}): ImportReport
     const masterRows = toObjects(masterCsv.header, masterCsv.rows);
     const normMaster = masterRows.map((r) => normalizeMasterRow(r, ingestedAt));
     for (const n of normMaster) {
-      if (!n.ok) {
-        counters.rejected++;
+      if (!n.ok) counters.rejected++;
+      // Peringatan pada baris yang tetap diterima (angka tak terbaca, format tanggal)
+      // harus ikut terlihat. Sebelumnya hanya baris yang ditolak yang dilaporkan,
+      // jadi masalah pada baris yang lolos hilang tanpa jejak.
+      if (n.issues.length > 0) {
         issues.push(...n.issues.map((i) => ({ ...i, project_id: i.source_ref_id ?? null })));
       }
     }

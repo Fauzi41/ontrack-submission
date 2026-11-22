@@ -9,7 +9,7 @@ import type {
   ProjectFacts,
   Severity,
 } from './types.js';
-import { CONFIDENCE_ORDER, SEVERITY_ORDER, TIME_ORDER, worstSeverity } from './types.js';
+import { CONFIDENCE_ORDER, SEVERITY_ORDER, TIME_ORDER } from './types.js';
 
 const DETECTOR_LABEL: Record<string, string> = {
   progress_gap: 'Progress dilaporkan melebihi bukti',
