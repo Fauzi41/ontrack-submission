@@ -82,7 +82,7 @@ export default function App() {
       <header className="top">
         <div>
           <h1>OnTrack <span>Project Intelligence</span></h1>
-          <p className="sub">Fase 1–2 · importer &amp; penyimpanan sumber. Portofolio dan attention menyusul di fase 3–5.</p>
+          <p className="sub">Importer dan penyimpanan sumber sudah jalan. Portofolio, penilaian perhatian, dan tindak lanjut menyusul.</p>
         </div>
         <div className="asof">
           <span className="label">as-of</span>
@@ -93,7 +93,7 @@ export default function App() {
       {error && <div className="banner err">{error}</div>}
       {run?.issues?.length ? (
         <div className="banner warn">
-          {run.issues.length} catatan impor — {run.issues.filter((i) => i.severity === 'ERROR').length} error,{' '}
+          {run.issues.length} catatan impor: {run.issues.filter((i) => i.severity === 'ERROR').length} error,{' '}
           {run.issues.filter((i) => i.severity === 'WARN').length} warning
         </div>
       ) : null}
@@ -107,7 +107,7 @@ export default function App() {
 
       <section className="panel">
         <div className="panel-head">
-          <h2>Hitung per jenis sumber</h2>
+          <h2>Jumlah per jenis sumber</h2>
           <button onClick={reimport} disabled={busy}>{busy ? 'Mengimpor…' : 'Impor ulang'}</button>
         </div>
         <table>
@@ -129,7 +129,7 @@ export default function App() {
       <section className="panel">
         <div className="panel-head">
           <h2>Baris sumber per proyek</h2>
-          <span className="hint">setiap baris file harus muncul di sini — tidak ada yang disembunyikan</span>
+          <span className="hint">Semua baris dari file sumber harus muncul di sini, termasuk yang tidak memicu temuan.</span>
         </div>
         <table>
           <thead>
