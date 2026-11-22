@@ -7,3 +7,7 @@ dist/
 *.log
 __pycache__/
 .venv/
+
+# hasil pengukuran cakupan test
+backend/.cov/
+backend/coverage/
