@@ -139,6 +139,11 @@ export function runImport(db: DB, opts: { dataDir?: string } = {}): ImportReport
   const insDeadline = db.prepare(
     'INSERT INTO deadline_history (project_id, changed_at, from_date, to_date) VALUES (?, ?, ?, ?)',
   );
+  const insVersion = db.prepare(
+    `INSERT INTO record_versions
+       (source_kind, source_ref_id, project_id, observed_at, ingested_at, raw_json, reason, current_record_id)
+     VALUES (@source_kind, @source_ref_id, @project_id, @observed_at, @ingested_at, @raw_json, @reason, @current_record_id)`,
+  );
 
   /** Simpan satu record + nilainya, dengan kebijakan duplikat/data-terlambat. */
   function persistRecord(norm: Normalized, ingestedAt: string): void {
@@ -163,6 +168,17 @@ export function runImport(db: DB, opts: { dataDir?: string } = {}): ImportReport
     ) {
       counters.late_arrivals++;
       db.prepare('UPDATE source_records SET is_late_arrival = 1 WHERE id = ?').run(existing.id);
+      // Versi lama tetap disimpan supaya riwayatnya bisa diperiksa, bukan dibuang.
+      insVersion.run({
+        source_kind: record.source_kind,
+        source_ref_id: record.source_ref_id,
+        project_id: record.project_id,
+        observed_at: record.observed_at,
+        ingested_at: ingestedAt,
+        raw_json: record.raw_json,
+        reason: 'LATE_ARRIVAL',
+        current_record_id: existing.id,
+      });
       issues.push({
         severity: 'WARN',
         code: 'LATE_ARRIVAL',
@@ -172,6 +188,17 @@ export function runImport(db: DB, opts: { dataDir?: string } = {}): ImportReport
       });
       return;
     } else {
+      // Simpan yang akan tergantikan supaya perubahannya bisa ditelusuri.
+      insVersion.run({
+        source_kind: record.source_kind,
+        source_ref_id: record.source_ref_id,
+        project_id: record.project_id,
+        observed_at: existing.observed_at,
+        ingested_at: ingestedAt,
+        raw_json: existing.raw_json,
+        reason: 'SUPERSEDED',
+        current_record_id: existing.id,
+      });
       updRecord.run({ ...payload, id: existing.id });
       delValues.run(existing.id);
       recordId = existing.id;

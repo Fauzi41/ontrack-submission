@@ -179,3 +179,20 @@ CREATE TABLE IF NOT EXISTS deadline_history (
   from_date   TEXT,
   to_date     TEXT NOT NULL
 );
+
+-- Riwayat versi record: data terlambat dan record yang tergantikan tetap disimpan,
+-- tidak pernah dibuang meski bukan lagi nilai yang dipakai untuk perhitungan.
+CREATE TABLE IF NOT EXISTS record_versions (
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  source_kind  TEXT NOT NULL,
+  source_ref_id TEXT NOT NULL,
+  project_id   TEXT NOT NULL,
+  observed_at  TEXT,
+  ingested_at  TEXT NOT NULL,
+  raw_json     TEXT NOT NULL,
+  reason       TEXT NOT NULL,   -- LATE_ARRIVAL | SUPERSEDED
+  current_record_id INTEGER
+);
+
+CREATE INDEX IF NOT EXISTS idx_versions_ref ON record_versions (source_kind, source_ref_id);
+
