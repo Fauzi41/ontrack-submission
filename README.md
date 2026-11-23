@@ -85,10 +85,78 @@ Ambang severity adalah keputusan rancangan, bukan hasil pengukuran. Rasio pace 1
 
 Mesin tidak meramalkan. Tidak ada model bahasa, tidak ada proyeksi. Semua angka berasal dari baris yang ada di basis data, dan semua kalimat berasal dari templat yang menerima angka itu.
 
+## API
+
+Empat belas rute, semuanya tanpa autentikasi karena brief melarangnya.
+
+| Metode | Rute | Gunanya |
+|---|---|---|
+| GET | `/healthz` | status proses dan waktu acuan |
+| GET | `/api/portfolio` | seluruh proyek berperingkat, temuan, dan hitungan isu |
+| GET | `/api/projects/:id` | satu proyek: rantai sumber, dua persentase, temuan, isu |
+| GET | `/api/issues` | daftar isu, bisa disaring `project_id` dan `status` |
+| POST | `/api/issues/:id/status` | ubah status isu, dengan gerbang bukti |
+| GET | `/api/projects/:id/followups` | daftar follow-up proyek |
+| POST | `/api/projects/:id/followups` | buat follow-up |
+| GET | `/api/followups/:id` | satu follow-up beserta kejadiannya |
+| PATCH | `/api/followups/:id` | ubah status, pemilik, atau tanggal |
+| GET | `/api/projects/:id/findings/:fingerprint/responses` | tanggapan atas satu temuan |
+| POST | `/api/projects/:id/findings/:fingerprint/responses` | akui, bantah, atau jelaskan |
+| GET | `/api/source-inventory` | sebaran baris sumber dan impor terakhir |
+| GET | `/api/import-runs/latest` | hasil impor terakhir |
+| POST | `/api/import` | baca ulang berkas sumber dan selaraskan isu |
+
+Kode galat sengaja dibedakan, bukan satu kode untuk semua penolakan: `EVIDENCE_REQUIRED` 422, `EVIDENCE_STALE` 409, `EVIDENCE_OTHER_PROJECT` 409, `PROJECT_NOT_FOUND` 404, `BAD_STATUS` 400.
+
+## Model data
+
+Empat belas tabel. Yang penting untuk membaca perilakunya:
+
+| Tabel | Isinya |
+|---|---|
+| `source_records` | satu baris per record sumber, dengan `source_kind` dan `provenance` |
+| `observation_values` | nilai yang diekstrak dari record, satu baris per metrik |
+| `record_versions` | versi lama record dengan alasan `SUPERSEDED` atau `LATE_ARRIVAL` |
+| `projects`, `project_types` | master proyek dan aturan basis progress per tipe |
+| `findings` | temuan hasil detektor, dengan fingerprint dan severity |
+| `issues` | daftar kerja: OPEN, AWAITING_EVIDENCE, VERIFIED_RESOLVED, NOT_DETECTED |
+| `followups`, `followup_events` | tindakan manusia dan riwayat perubahannya |
+| `finding_responses` | tanggapan manusia atas temuan |
+| `import_runs`, `ingest_issues` | catatan impor dan peringatan normalisasi |
+| `deadline_history`, `meta` | perubahan deadline dan waktu acuan `as_of` |
+
+## Asumsi
+
+Berkas CSV dan JSON adalah sumber otoritatif. Excel hanya pembanding, sesuai aturan brief.
+
+`generated_at` pada berkas produksi dipakai sebagai waktu acuan, bukan jam dinding, supaya hasilnya bisa diulang.
+
+Deadline dibaca sampai akhir hari. Konvensi ini yang menempatkan PRJ-001 di garis antara patuh dan terlambat.
+
+Kolom status dan catatan progres di update mingguan adalah klaim, sekalipun ditulis PIC.
+
+Nilai operasional dianggap bukti hanya kalau berasal dari sistem, bukan dari manusia.
+
+## Alokasi waktu
+
+Jejak komit menjadi dasar angka ini, bukan perkiraan setelah kejadian.
+
+| Rentang | Yang dikerjakan |
+|---|---|
+| 22:30 - 23:40 | kerangka, skema, importer, dan mesin detektor |
+| jeda malam | tidak ada pekerjaan tercatat |
+| 06:36 - 07:02 | test, tiga bug, dan API isu serta follow-up |
+| 08:26 - 08:51 | UI, slide dua bahasa, dan verifikasi menyeluruh |
+| 09:15 | proof pack dan dry run |
+
+Rentang kerja yang tercatat 3 jam 49 menit. Sisanya membaca brief, memeriksa hasil, dan menulis teks yang tidak selalu berujung komit. Saya tidak bisa membuktikan angka enam jam dan tidak mengklaimnya. Rinciannya ada di `AI_USAGE.md`.
+
 ## Berkas pendukung
 
+- `AI_USAGE.md` apa yang dikerjakan model, dan apa yang diperiksa manusia
 - `docs/DECISION_LOG.md` keputusan rancangan, alternatif yang ditolak, dan biaya membaliknya
 - `docs/BUG_LOG.md` sebelas bug beserta gejala, penyebab, dan test penjaganya
 - `docs/PROOF_PACK.md` peta klaim ke berkas bukti
-- `docs/AI_USAGE.md` apa yang dikerjakan model, dan apa yang diperiksa manusia
-- `docs/presentation.html` sepuluh slide dalam dua bahasa, dengan tombol `ID / EN`
+- `docs/REFLECTION.md` lima pertanyaan refleksi dari panduan pengiriman
+- `docs/PRESENTATION.pdf` sepuluh slide bahasa Inggris, `docs/PRESENTATION-ID.pdf` versi Indonesia
+- `docs/presentation.html` sumber kedua versi itu, dengan tombol `ID / EN`
