@@ -11,3 +11,6 @@ __pycache__/
 # hasil pengukuran cakupan test
 backend/.cov/
 backend/coverage/
+
+# PDF sementara saat berkas lama masih dibuka penampil
+docs/tmp-*.pdf

@@ -6,5 +6,12 @@ export default defineConfig({
   resolve: {
     alias: [{ find: /^(\.\.?\/.+?)\.js$/, replacement: '$1' }],
   },
-  test: { environment: 'node', include: ['tests/**/*.test.ts'] },
+  test: {
+    environment: 'node',
+    include: ['tests/**/*.test.ts'],
+    // Skrip CLI tidak diuji unit, tapi dijalankan utuh oleh `npm run verify` dan
+    // `npm run evaluate`. Menghitungnya sebagai baris tak tercakup membuat angka
+    // cakupan menyesatkan ke arah sebaliknya.
+    coverage: { exclude: ['src/cli/**', 'src/api/index.ts'] },
+  },
 });

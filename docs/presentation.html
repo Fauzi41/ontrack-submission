@@ -244,19 +244,19 @@ const DECK = {
       body: `<div class="split">
         <div>
           <ul>
-            <li><b>108 test</b> di 8 berkas: parser, importer, normalisasi, detektor, peringkat, API, dan kasus tepi.</li>
-            <li><b>10 bug</b> ditemukan selama pengerjaan, semuanya tercatat dengan gejala, penyebab, dan test penjaganya.</li>
-            <li>Impor kedua tidak menggandakan apa pun: 41 baris dikenali sebagai duplikat, nol baris baru.</li>
+            <li><b>115 test</b> di 8 berkas: parser, importer, normalisasi, detektor, peringkat, API, dan kasus tepi.</li>
+            <li><b>50 pemeriksaan</b> di skrip verifikasi: semua rute, kode jawaban, dan integritas data di SQLite.</li>
+            <li><b>11 bug</b> ditemukan selama pengerjaan, semuanya tercatat dengan gejala, penyebab, dan test penjaganya.</li>
           </ul>
         </div>
         <div class="box">
           <h3>Cakupan pernyataan</h3>
-          <div class="big ok">90%</div>
+          <div class="big ok">96%</div>
           <div class="small">modul inti 100% (interpretasi, presence, basis data)</div>
-          <div class="small" style="margin-top:10px">API 76%, isu dan follow-up 92%, impor 91%.</div>
+          <div class="small" style="margin-top:10px">API 80%, isu dan follow-up 92%, impor 86%.</div>
         </div>
       </div>`,
-      note: 'Enam bug tertangkap test, empat tertangkap penyisiran manual dan pemeriksaan UI. Daftarnya ada di docs/BUG_LOG.md.'
+      note: 'Enam bug tertangkap test, lima tertangkap penyisiran manual, pemeriksaan UI, dan skrip verifikasi. Daftarnya ada di docs/BUG_LOG.md.'
     },
     {
       kicker: '10 · batas',
@@ -397,19 +397,19 @@ const DECK = {
       body: `<div class="split">
         <div>
           <ul>
-            <li><b>108 tests</b> across 8 files: parser, importer, normalisation, detectors, ranking, API, edge cases.</li>
-            <li><b>10 bugs</b> found along the way, each recorded with symptom, cause, and the test that now guards it.</li>
-            <li>A second import duplicates nothing: 41 rows recognised as duplicates, zero new rows.</li>
+            <li><b>115 tests</b> across 8 files: parser, importer, normalisation, detectors, ranking, API, edge cases.</li>
+            <li><b>50 checks</b> in the verification script: every route, expected status codes, and data integrity in SQLite.</li>
+            <li><b>11 bugs</b> found along the way, each recorded with symptom, cause, and the test that now guards it.</li>
           </ul>
         </div>
         <div class="box">
           <h3>Statement coverage</h3>
-          <div class="big ok">90%</div>
+          <div class="big ok">96%</div>
           <div class="small">core modules at 100% (interpretation, presence, database)</div>
-          <div class="small" style="margin-top:10px">API 76%, issues and follow-ups 92%, ingest 91%.</div>
+          <div class="small" style="margin-top:10px">API 80%, issues and follow-ups 92%, ingest 86%.</div>
         </div>
       </div>`,
-      note: 'Six bugs were caught by tests, four by manual review and UI checks. The list lives in docs/BUG_LOG.md.'
+      note: 'Six bugs were caught by tests, five by manual review, UI checks, and the verification script. The list lives in docs/BUG_LOG.md.'
     },
     {
       kicker: '10 · limits',

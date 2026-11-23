@@ -216,7 +216,7 @@ export function buildServer(dbPath?: string) {
       return reply.code(404).send({ error: 'PROJECT_NOT_FOUND', message: `Proyek ${projectId} tidak ada.` });
     }
     try {
-      const response = addResponse(db, projectId, fingerprint, body, nowIso());
+      const response = addResponse(db, projectId, fingerprint, { ...body, actor: body.actor ?? 'api' }, nowIso());
       return reply.code(201).send({ response });
     } catch (err) {
       return fail(reply, err);

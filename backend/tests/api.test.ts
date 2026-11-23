@@ -13,9 +13,10 @@ afterEach(async () => {
   cleanup = [];
 });
 
-function server() {
+function serverPaths() {
   const dir = mkdtempSync(join(tmpdir(), 'ontrack-api-'));
-  const app = buildServer(join(dir, 'test.db'));
+  const dbFile = join(dir, 'test.db');
+  const app = buildServer(dbFile);
   cleanup.push(async () => {
     await app.close();
     try {
@@ -24,7 +25,11 @@ function server() {
       // Windows kadang masih memegang handle file sesaat setelah close.
     }
   });
-  return app;
+  return { app, dbFile };
+}
+
+function server() {
+  return serverPaths().app;
 }
 
 async function imported() {
@@ -258,6 +263,30 @@ describe('penutupan isu butuh bukti', () => {
     expect(same.status).toBe('AWAITING_EVIDENCE');
   });
 
+  it('menerima penutupan saat bukti baru masuk setelah isu dibuka', async () => {
+    const { app, dbFile } = serverPaths();
+    await app.inject({ method: 'POST', url: '/api/import' });
+    const list = await app.inject({ method: 'GET', url: '/api/issues?project_id=PRJ-002' });
+    const issue = list.json().issues[0] as { id: number };
+
+    // Meniru impor berikutnya yang membawa satu record baru.
+    const db = openDb(dbFile);
+    db.prepare(
+      `INSERT INTO source_records (project_id, source_kind, provenance, source_ref_id, observed_at, ingested_at, raw_json)
+       VALUES ('PRJ-002','PRODUCTION','OPERATIONAL','SCAN-BETA-009','2026-10-07T09:00:00', ?, '{}')`,
+    ).run(new Date(Date.now() + 60_000).toISOString());
+    db.close();
+
+    const res = await app.inject({
+      method: 'POST',
+      url: `/api/issues/${issue.id}/status`,
+      payload: { status: 'VERIFIED_RESOLVED', evidence_ref: 'SCAN-BETA-009' },
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().issue.status).toBe('VERIFIED_RESOLVED');
+    expect(res.json().issue.resolved_by_record).toBe('SCAN-BETA-009');
+  });
+
   it('menolak status NOT_DETECTED dari tangan manusia', async () => {
     const { app } = await imported();
     const issue = await firstIssue(app);
@@ -293,5 +322,65 @@ describe('tanggapan atas temuan', () => {
     });
     expect(res.statusCode).toBe(400);
     expect(res.json().error).toBe('NOTE_REQUIRED');
+  });
+
+  it('menolak record bukti yang tidak ada', async () => {
+    const { app } = await imported();
+    const res = await app.inject({
+      method: 'POST',
+      url: '/api/projects/PRJ-002/findings/apa-saja/responses',
+      payload: { actor: 'rina', kind: 'DISPUTED', note: 'Ini bantahan.', evidence_ref: 'TIDAK-ADA-001' },
+    });
+    expect(res.statusCode).toBe(422);
+    expect(res.json().error).toBe('EVIDENCE_UNKNOWN');
+  });
+});
+
+describe('jalur galat yang mudah terlewat', () => {
+  it('menolak id isu yang bukan angka', async () => {
+    const { app } = await imported();
+    const res = await app.inject({ method: 'POST', url: '/api/issues/abc/status', payload: { status: 'OPEN' } });
+    expect(res.statusCode).toBe(400);
+    expect(res.json().error).toBe('BAD_ID');
+  });
+
+  it('menolak follow-up untuk proyek yang tidak ada', async () => {
+    const { app } = await imported();
+    const res = await app.inject({
+      method: 'POST',
+      url: '/api/projects/PRJ-999/followups',
+      payload: { title: 'Tidak ada proyeknya', owner: 'Rina' },
+    });
+    expect(res.statusCode).toBe(404);
+    expect(res.json().error).toBe('PROJECT_NOT_FOUND');
+  });
+
+  it('menolak status follow-up yang tidak dikenal', async () => {
+    const { app } = await imported();
+    const created = await app.inject({
+      method: 'POST',
+      url: '/api/projects/PRJ-002/followups',
+      payload: { title: 'Uji status', owner: 'Rina' },
+    });
+    const id = created.json().followup.id;
+    const res = await app.inject({ method: 'PATCH', url: `/api/followups/${id}`, payload: { status: 'BERES' } });
+    expect(res.statusCode).toBe(400);
+    expect(res.json().error).toBe('BAD_STATUS');
+  });
+
+  it('menyaring isu berdasarkan status', async () => {
+    const { app } = await imported();
+    const res = await app.inject({ method: 'GET', url: '/api/issues?status=OPEN' });
+    expect(res.statusCode).toBe(200);
+    const body = res.json() as { issues: Array<{ status: string }> };
+    expect(body.issues.length).toBeGreaterThan(0);
+    expect(body.issues.every((i) => i.status === 'OPEN')).toBe(true);
+  });
+
+  it('mengembalikan daftar follow-up per proyek', async () => {
+    const { app } = await imported();
+    const res = await app.inject({ method: 'GET', url: '/api/projects/PRJ-002/followups' });
+    expect(res.statusCode).toBe(200);
+    expect(Array.isArray(res.json().followups)).toBe(true);
   });
 });

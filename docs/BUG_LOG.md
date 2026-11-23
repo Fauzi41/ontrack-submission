@@ -21,6 +21,7 @@ yang bersih biasanya berarti pencatatannya kurang teliti, bukan kodenya bersih.
 | B-008 | pengukuran cakupan | importer | peringatan data hilang tanpa jejak |
 | B-009 | test API | penutupan isu | semua penutupan gagal 500 |
 | B-010 | pemeriksaan UI | persentase progress | dua angka berbeda tampil identik |
+| B-011 | skrip verifikasi | tanggapan temuan | pemanggil API tanpa nama pelaku ditolak, follow-up tidak |
 
 ---
 
@@ -168,6 +169,18 @@ untuk baris yang benar-benar ditolak.
 **Perbaikan.** `pct_calculated` diisi dari nilai tervalidasi; bila tidak ada bukti tervalidasi, nilainya kosong dan layar menulis "tidak ada".
 
 **Penjaga.** `tests/portfolio.test.ts`, kasus "persentase hitung datang dari bukti".
+
+---
+
+## B-011 Dua rute yang sejenis memperlakukan pelaku berbeda
+
+**Gejala.** `POST /api/projects/:id/findings/:fingerprint/responses` tanpa field `actor` dijawab `400 ACTOR_REQUIRED`, sementara `POST /api/projects/:id/followups` tanpa `actor` berjalan normal dengan nilai bawaan `api`.
+
+**Penyebab.** Nilai bawaan dipasang di rute follow-up, tapi lupa dipasang di rute tanggapan. Aturan "pelaku wajib" jadi berlaku tidak merata.
+
+**Perbaikan.** Rute tanggapan memakai nilai bawaan yang sama.
+
+**Penjaga.** `npm run verify -w backend` memanggil rute itu tanpa `actor` dan mengharapkan `201`. Skrip itu yang menemukannya.
 
 ---
 
