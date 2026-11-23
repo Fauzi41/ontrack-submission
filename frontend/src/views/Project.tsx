@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  ApiError,
   LABEL,
   addResponse,
   createFollowup,
@@ -29,7 +30,7 @@ export default function ProjectView({ projectId, onBack }: Props) {
       setDetail(await getProject(projectId));
       setError(null);
     } catch (e) {
-      setError((e as Error).message);
+      setError(e instanceof ApiError ? `${e.code}: ${e.message}` : (e as Error).message);
     }
   }, [projectId]);
 
@@ -52,7 +53,7 @@ export default function ProjectView({ projectId, onBack }: Props) {
       await load();
     } catch (e) {
       setNotice(null);
-      setError((e as Error).message);
+      setError(e instanceof ApiError ? `${e.code}: ${e.message}` : (e as Error).message);
     } finally {
       setBusy(false);
     }
