@@ -10,7 +10,9 @@
     "evaluate": "tsx src/cli/evaluate.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "verify": "tsx src/cli/verify.ts"
+    "verify": "tsx src/cli/verify.ts",
+    "dump": "tsx src/cli/dump.ts",
+    "probe:versions": "tsx src/cli/probe-versions.ts"
   },
   "dependencies": {
     "@fastify/cors": "^10.0.1",

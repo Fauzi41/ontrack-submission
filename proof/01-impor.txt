@@ -1,0 +1,32 @@
+npm notice run backend@0.1.0 import
+npm notice run tsx src/cli/import.ts
+
+IMPORT REPORT
+────────────────────────────────────────────────────────────────
+  started_at           2026-11-23T02:14:53.873Z
+  finished_at          2026-11-23T02:14:53.891Z
+  as_of                2026-10-06T17:00:00
+  inserted             41
+  updated              0
+  duplicates           0
+  rejected             0
+  late_arrivals        0
+  orphans              0
+  impact               [object Object]
+  projects             6
+  updates              23
+  production           12
+  sourceRecords        41
+  observationValues    92
+────────────────────────────────────────────────────────────────
+  issues                0
+
+PROYEK
+  id       type                    actual/target      pct   upd  prod
+  PRJ-001  Archive Arrangement         318/400        79.5    5     2
+  PRJ-002  Document Digitalisation   91500/120000    76.25    6     3
+  PRJ-003  Archive Arrangement        1840/2000         94    2     1
+  PRJ-004  Data Verification         45000/100000       52    4     2
+  PRJ-005  System Integration            9/10           90    3     2
+  PRJ-006  DMS Implementation            1/1           100    3     2
+

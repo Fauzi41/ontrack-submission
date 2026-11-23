@@ -14,3 +14,8 @@ backend/coverage/
 
 # PDF sementara saat berkas lama masih dibuka penampil
 docs/tmp-*.pdf
+
+# basis data proof pack
+proof/*.db
+proof/*.db-wal
+proof/*.db-shm

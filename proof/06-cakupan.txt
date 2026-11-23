@@ -1,0 +1,63 @@
+npm notice run ontrack@0.1.0 npx
+npm notice run vitest run --coverage --coverage.reporter=text
+
+ RUN  v2.1.9 C:/Users/Fore/git/assessment/tata/ontrack/backend
+      Coverage enabled with v8
+
+ ✓ tests/csv.test.ts (7 tests) 17ms
+ ✓ tests/edge-cases.test.ts (20 tests) 35ms
+ ✓ tests/detectors.test.ts (22 tests) 40ms
+ ✓ tests/normalize.test.ts (8 tests) 16ms
+ ✓ tests/portfolio.test.ts (13 tests) 17ms
+ ✓ tests/presence.test.ts (5 tests) 19ms
+ ✓ tests/importer.test.ts (13 tests) 1584ms
+   ✓ impor > idempoten: impor kedua tidak menggandakan apa pun 470ms
+ ✓ tests/api.test.ts (27 tests) 2492ms
+   ✓ impor lewat API > melaporkan apa yang lahir dari impor, bukan hanya jumlah baris 408ms
+
+ Test Files  8 passed (8)
+      Tests  115 passed (115)
+   Start at  09:15:14
+   Duration  8.01s (transform 4.48s, setup 0ms, collect 8.27s, tests 4.22s, environment 6ms, prepare 4.48s)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   96.34 |    87.86 |   97.84 |   96.34 |                   
+ backend           |       0 |        0 |       0 |       0 |                   
+  vitest.config.ts |       0 |        0 |       0 |       0 | 1-17              
+ backend/src       |     100 |        0 |     100 |     100 |                   
+  config.ts        |     100 |        0 |     100 |     100 | 11                
+ backend/src/api   |   83.05 |    80.76 |     100 |   83.05 |                   
+  impact.ts        |     100 |    82.35 |     100 |     100 | 55-56,59          
+  server.ts        |   79.69 |    80.32 |     100 |   79.69 | ...40-245,258-259 
+ backend/src/core  |     100 |       92 |     100 |     100 |                   
+  presence.ts      |     100 |       92 |     100 |     100 | 36,49             
+ backend/src/db    |     100 |     87.5 |     100 |     100 |                   
+  db.ts            |     100 |     87.5 |     100 |     100 | 49                
+ ...end/src/ingest |   91.11 |    85.43 |     100 |   91.11 |                   
+  csv.ts           |     100 |    90.62 |     100 |     100 | 68,70,93          
+  importer.ts      |   85.57 |    79.22 |     100 |   85.57 | ...87-390,392-400 
+  normalize.ts     |   97.61 |    92.85 |     100 |   97.61 | 97-98,159-160     
+ .../src/interpret |     100 |    88.32 |     100 |     100 |                   
+  context.ts       |     100 |    85.55 |     100 |     100 | ...09-112,131,134 
+  detectors.ts     |     100 |    89.57 |     100 |     100 | ...68,372,404,433 
+  engine.ts        |     100 |    88.63 |     100 |     100 | ...77-179,182,189 
+  load.ts          |     100 |    82.35 |     100 |     100 | 68-71             
+  types.ts         |     100 |      100 |     100 |     100 |                   
+ backend/src/store |   94.18 |    72.72 |   93.33 |   94.18 |                   
+  followups.ts     |   93.16 |    62.16 |     100 |   93.16 | ...57-158,160-161 
+  issues.ts        |      99 |    90.32 |     100 |      99 | 90                
+  responses.ts     |   85.36 |    55.55 |   66.66 |   85.36 | 28-31,43-44       
+ backend/tests     |   99.84 |     96.8 |     100 |   99.84 |                   
+  api.test.ts      |   99.41 |    95.91 |     100 |   99.41 | 26,86             
+  csv.test.ts      |     100 |      100 |     100 |     100 |                   
+  ...ctors.test.ts |     100 |      100 |     100 |     100 |                   
+  ...cases.test.ts |     100 |      100 |     100 |     100 |                   
+  helpers.ts       |     100 |      100 |     100 |     100 |                   
+  importer.test.ts |     100 |      100 |     100 |     100 |                   
+  ...alize.test.ts |     100 |    83.33 |     100 |     100 | 28,70,82          
+  ...folio.test.ts |     100 |    94.44 |     100 |     100 | 45,58             
+  presence.test.ts |     100 |      100 |     100 |     100 |                   
+-------------------|---------|----------|---------|---------|-------------------

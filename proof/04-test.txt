@@ -1,0 +1,24 @@
+npm notice run ontrack@0.1.0 test
+npm notice run npm -w backend run test
+npm notice run backend@0.1.0 test
+npm notice run vitest run
+
+ RUN  v2.1.9 C:/Users/Fore/git/assessment/tata/ontrack/backend
+
+ ✓ tests/csv.test.ts (7 tests) 12ms
+ ✓ tests/normalize.test.ts (8 tests) 15ms
+ ✓ tests/detectors.test.ts (22 tests) 37ms
+ ✓ tests/edge-cases.test.ts (20 tests) 251ms
+ ✓ tests/portfolio.test.ts (13 tests) 138ms
+ ✓ tests/presence.test.ts (5 tests) 10ms
+ ✓ tests/importer.test.ts (13 tests) 1283ms
+   ✓ impor > tidak menimpa dengan versi yang lebih tua, tapi tetap menyimpannya 425ms
+ ✓ tests/api.test.ts (27 tests) 3278ms
+   ✓ impor lewat API > melaporkan apa yang lahir dari impor, bukan hanya jumlah baris 614ms
+   ✓ basis data yang diisi lewat CLI > menyelaraskan isu saat server hidup tanpa impor lewat API 360ms
+
+ Test Files  8 passed (8)
+      Tests  115 passed (115)
+   Start at  09:15:01
+   Duration  8.80s (transform 7.27s, setup 0ms, collect 13.95s, tests 5.02s, environment 3ms, prepare 4.63s)
+
