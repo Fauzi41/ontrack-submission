@@ -3,6 +3,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { buildServer } from '../src/api/server.js';
+import { openDb } from '../src/db/db.js';
+import { runImport } from '../src/ingest/importer.js';
 
 let cleanup: Array<() => Promise<void> | void> = [];
 
@@ -58,6 +60,29 @@ describe('impor lewat API', () => {
     await app.inject({ method: 'POST', url: '/api/import' });
     const again = await app.inject({ method: 'POST', url: '/api/import' });
     expect(again.json().report.impact.changed).toEqual([]);
+  });
+});
+
+describe('basis data yang diisi lewat CLI', () => {
+  it('menyelaraskan isu saat server hidup tanpa impor lewat API', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'ontrack-cli-'));
+    const dbFile = join(dir, 'cli.db');
+    const seed = openDb(dbFile);
+    runImport(seed);
+    seed.close();
+
+    const app = buildServer(dbFile);
+    cleanup.push(async () => {
+      await app.close();
+      try {
+        rmSync(dir, { recursive: true, force: true });
+      } catch {
+        // handle file bisa masih dipegang sesaat di Windows
+      }
+    });
+
+    const res = await app.inject({ method: 'GET', url: '/api/portfolio' });
+    expect(res.json().issue_counts.OPEN).toBe(14);
   });
 });
 

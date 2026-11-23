@@ -62,6 +62,16 @@ export function buildServer(dbPath?: string) {
     return assemblePortfolio(asOf, loadFacts(db, asOf));
   };
 
+  // Isu diselaraskan sekali saat server hidup. Tanpa ini, basis data yang diisi
+  // lewat CLI akan menampilkan temuan tanpa satu pun baris isu, karena hanya rute
+  // impor yang menyelaraskan.
+  try {
+    const boot = portfolioNow();
+    if (boot.projects.length > 0) syncIssues(db, boot, boot.as_of ?? nowIso());
+  } catch {
+    // basis data baru atau belum punya data; tidak ada yang perlu diselaraskan
+  }
+
   app.get('/healthz', async () => {
     const asOf = currentAsOf(db);
     const counts = db
