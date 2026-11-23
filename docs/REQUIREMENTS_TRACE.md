@@ -277,9 +277,9 @@ Setelah dicentang, dokumen ini menjadi baseline: setiap penyimpangan dicatat seb
 | 4 API | OK | 16 rute; isu, follow-up, tanggapan, dan dampak impor tersimpan di DB |
 | 5 UI | OK | empat tampilan: portofolio berperingkat, detail proyek, antrean tinjauan, sumber data |
 | 6 Test | OK | 124 test di 8 berkas + skrip `npm run verify` (58 pemeriksaan rute dan integritas data) |
-| 9 Slide dua bahasa | OK | `docs/presentation.html` (10 slide, toggle ID/EN) + PDF kedua bahasa |
+| 9 Slide presentasi | OK | `docs/presentation.html` (10 slide bahasa Inggris) + `docs/PRESENTATION.pdf` |
 | 7 Proof pack | OK | `scripts/proof.sh` membangun ulang semua bukti; `docs/PROOF_PACK.md` memetakan klaim ke berkas |
-| 8 Dokumen | OK | `README.md`, `docs/DECISION_LOG.md` (16 keputusan), `docs/AI_USAGE.md`, `docs/BUG_LOG.md` (13 bug) |
+| 8 Dokumen | OK | `README.md`, `docs/DECISION_LOG.md` (17 keputusan), `docs/AI_USAGE.md`, `docs/BUG_LOG.md` (14 bug) |
 | 10 Dry run | OK | klon bersih: `npm install` 283 paket, 115 test, 50/50 verifikasi, impor 41 baris, build 165,69 kB, antarmuka terbuka di port 3011 |
 
 Bukti fase 5, diperiksa lewat browser pada `http://127.0.0.1:5173`:
@@ -375,7 +375,7 @@ Catatan keputusan yang masuk `Decision_Log`:
 | Minimal dua test otomatis dan cara menjalankannya | OK | 124 test di 8 berkas, dicetak `npm test` |
 | README: pasang, arsitektur, API, model data, asumsi, batas, alokasi waktu | OK | `README.md` bagian Menjalankan, Struktur, API, Model data, Asumsi, Alokasi waktu, Batas |
 | AI_USAGE.md | OK | `AI_USAGE.md` di akar repositori |
-| PRESENTATION.pdf maksimal 10 slide | OK | `docs/PRESENTATION.pdf` (Inggris) dan `docs/PRESENTATION-ID.pdf`, sepuluh halaman masing-masing |
+| PRESENTATION.pdf maksimal 10 slide | OK | `docs/PRESENTATION.pdf`, sepuluh halaman, bahasa Inggris |
 | Kode sumber dan manifes dependensi | OK | `package.json`, `package-lock.json` di akar dan dua workspace |
 | Instruksi impor | OK | tombol impor di layar Sumber data, `npm run import -w backend`, dan `bash scripts/proof.sh` |
 | Lima pertanyaan refleksi | OK | `docs/REFLECTION.md` |

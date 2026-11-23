@@ -147,7 +147,7 @@ Jejak komit menjadi dasar angka ini, bukan perkiraan setelah kejadian.
 | 22:30 - 23:40 | kerangka, skema, importer, dan mesin detektor |
 | jeda malam | tidak ada pekerjaan tercatat |
 | 06:36 - 07:02 | test, tiga bug, dan API isu serta follow-up |
-| 08:26 - 08:51 | UI, slide dua bahasa, dan verifikasi menyeluruh |
+| 08:26 - 08:51 | UI, slide presentasi, dan verifikasi menyeluruh |
 | 09:15 | proof pack dan dry run |
 
 Rentang kerja yang tercatat 3 jam 49 menit. Sisanya membaca brief, memeriksa hasil, dan menulis teks yang tidak selalu berujung komit. Saya tidak bisa membuktikan angka enam jam dan tidak mengklaimnya. Rinciannya ada di `AI_USAGE.md`.
@@ -159,5 +159,5 @@ Rentang kerja yang tercatat 3 jam 49 menit. Sisanya membaca brief, memeriksa has
 - `docs/BUG_LOG.md` tiga belas bug beserta gejala, penyebab, dan test penjaganya
 - `docs/PROOF_PACK.md` peta klaim ke berkas bukti
 - `docs/REFLECTION.md` lima pertanyaan refleksi dari panduan pengiriman
-- `docs/PRESENTATION.pdf` sepuluh slide bahasa Inggris, `docs/PRESENTATION-ID.pdf` versi Indonesia
-- `docs/presentation.html` sumber kedua versi itu, dengan tombol `ID / EN`
+- `docs/PRESENTATION.pdf` sepuluh slide bahasa Inggris
+- `docs/presentation.html` sumber slide itu, tanpa pilihan bahasa

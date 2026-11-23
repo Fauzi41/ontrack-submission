@@ -110,6 +110,14 @@ Alternatif yang ditolak: mengizinkan penutupan dengan catatan bebas. Itu membuat
 
 Biaya membalik: rendah di kode, tinggi di makna. Tanpa aturan ini alatnya berubah menjadi dashboard status biasa.
 
+## D-014 Urutan pengerjaan deck sebelum proof pack
+
+Slide presentasi dikerjakan lebih dulu daripada proof pack dan dokumen, karena itu bagian dengan risiko waktu tertinggi dan hasilnya memaksa angka terakhir dibekukan lebih awal.
+
+Alternatif yang ditolak: mengikuti urutan alami brief. Saya sudah melihat bahwa dokumen selalu jadi bagian yang dikorbankan saat waktu habis, jadi bagian yang paling mahal dikerjakan saat masih ada waktu.
+
+Biaya membalik: tidak ada. Ini urutan kerja, bukan keputusan teknis.
+
 ## D-015 Keputusan tinjauan dicatat, severity mesin tidak diubah
 
 Bantahan dan penjelasan dari PIC masuk ke antrean `GET /api/review`. Manusia memutuskan `UPHELD` atau `DENIED` lewat `POST /api/responses/:id/review`, dengan alasan wajib dan nama peninjau. Keputusan itu tersimpan di baris tanggapan, bukan menimpa hasil hitung mesin.
@@ -126,10 +134,11 @@ Alternatif yang ditolak: menyimpan temuan setiap impor. Itu menambah satu sumber
 
 Biaya membalik: sedang. Kalau suatu hari temuan perlu riwayat, tabel itu harus dibuat lagi dengan kunci `(project_id, fingerprint, as_of)` dan ditulis oleh satu jalur saja.
 
-## D-014 Urutan pengerjaan deck sebelum proof pack
+## D-017 Presentasi satu bahasa, Inggris
 
-Slide dua bahasa dikerjakan lebih dulu daripada proof pack dan dokumen, karena itu bagian dengan risiko waktu tertinggi dan hasilnya memaksa angka terakhir dibekukan lebih awal.
+Deck awalnya dibuat dua bahasa dengan tombol `ID / EN`. Versi Indonesia dikerjakan cepat dan hasilnya berantakan: kalimat terlalu panjang untuk kotak slide, istilah campur, dan beberapa baris terasa diterjemahkan alih-alih ditulis. Versi Indonesia dibuang, tombol bahasa dihapus, dan `docs/PRESENTATION.pdf` sekarang satu bahasa.
 
-Alternatif yang ditolak: mengikuti urutan alami brief. Saya sudah melihat bahwa dokumen selalu jadi bagian yang dikorbankan saat waktu habis, jadi bagian yang paling mahal dikerjakan saat masih ada waktu.
+Alternatif yang ditolak: memperbaiki versi Indonesia. Itu pekerjaan menulis ulang sepuluh slide, bukan menerjemahkan, dan tidak menambah apa pun yang dinilai. Bahasa pengantar presentasi tetap bisa Indonesia secara lisan.
 
-Biaya membalik: tidak ada. Ini urutan kerja, bukan keputusan teknis.
+Biaya membalik: rendah. Sumbernya satu berkas HTML dengan satu larik slide, jadi menambah bahasa lain berarti menambah larik, bukan membongkar tampilan.
+

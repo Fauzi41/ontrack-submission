@@ -9,7 +9,7 @@ Saya memakai agen pengkode (Hermes, model deepseek-v4.1-flash) yang bisa menjala
 Keputusan yang datang dari manusia, bukan dari model:
 
 - tabel `record_versions` harus berdiri sendiri sebagai riwayat versi
-- presentasi harus dua bahasa, Indonesia dan Inggris
+- presentasi awalnya diminta dua bahasa, lalu diputuskan bahasa Inggris saja karena versi Indonesia dinilai berantakan
 - semua teks ditulis dengan aturan tertentu: tanpa em dash, tanpa emoji hiasan, tanpa daftar berjudul tebal, tanpa kalimat pemanasan
 - setiap fase harus diuji sebelum lanjut, dan setiap bug harus dicatat, bukan hanya diperbaiki
 - slide dikerjakan sebelum proof pack dan dokumen, karena itu bagian paling berisiko waktu
@@ -25,7 +25,7 @@ Klaim tanpa keluaran perintah tidak saya anggap selesai. Pemeriksaan yang benar-
 - `npm run probe:versions` melaporkan 6 dari 6 pemeriksaan lulus, termasuk penolakan record yang lebih tua
 - cakupan diukur dengan `vitest --coverage`, bukan diperkirakan
 - antarmuka diklik di browser sungguhan: menandai isu menunggu bukti, mencoba menutup dengan record lama, membuat follow-up, menandainya selesai, lalu memastikan hitungan isu tidak bergerak
-- slide diperiksa dengan mengukur `scrollHeight - clientHeight` pada sepuluh slide di dua bahasa, lalu diperiksa lagi secara visual pada slide terpadat
+- slide diperiksa dengan mengukur `scrollHeight - clientHeight` pada sepuluh slide, lalu diperiksa lagi secara visual pada slide terpadat
 - PDF dihitung halamannya dari struktur berkas, bukan dari asumsi
 
 ## Di mana model salah
@@ -40,7 +40,7 @@ Skrip probe versi mengubah fixture sebelum impor pertama, sehingga "impor kedua"
 
 Skrip verifikasi mengharapkan `200` pada rute yang menjawab `201`, lalu mengungkap ketidakcocokan yang sebenarnya: rute tanggapan menolak pemanggil tanpa nama pelaku, sementara rute follow-up memberinya nilai bawaan. Menjadi B-011.
 
-Laporan sementara menyebut 108 test di 9 berkas. Jumlah berkasnya 8. Angka itu ikut masuk ke slide, dan harus diperbaiki di dua bahasa setelah pengukuran ulang.
+Laporan sementara menyebut 108 test di 9 berkas. Jumlah berkasnya 8. Angka itu ikut masuk ke slide, dan harus diperbaiki setelah pengukuran ulang.
 
 ## Soal waktu
 
