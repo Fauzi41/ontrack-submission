@@ -20,6 +20,7 @@ yang bersih biasanya berarti pencatatannya kurang teliti, bukan kodenya bersih.
 | B-007 | pengukuran cakupan | konteks waktu | proyek selesai terbaca terlambat |
 | B-008 | pengukuran cakupan | importer | peringatan data hilang tanpa jejak |
 | B-009 | test API | penutupan isu | semua penutupan gagal 500 |
+| B-010 | pemeriksaan UI | persentase progress | dua angka berbeda tampil identik |
 
 ---
 
@@ -155,6 +156,18 @@ untuk baris yang benar-benar ditolak.
 **Perbaikan.** Kedua tempat pencarian bukti memakai `source_ref_id`.
 
 **Penjaga.** `tests/api.test.ts`, kasus "menolak record yang sudah ada saat isu dibuka" dan "menolak record milik proyek lain".
+
+---
+
+## B-010 Persentase hitung hanya menyalin persentase laporan
+
+**Gejala.** Di layar, "76,3% menurut laporan" dan "76,3% dihitung dari bukti" tampil sama untuk PRJ-002, padahal angka tervalidasinya 87.240 dari 120.000, yaitu 72,7%.
+
+**Penyebab.** `pct_calculated` diisi dari angka laporan, bukan dari `validated`. Akibatnya dua angka yang seharusnya menunjukkan selisih selalu identik.
+
+**Perbaikan.** `pct_calculated` diisi dari nilai tervalidasi; bila tidak ada bukti tervalidasi, nilainya kosong dan layar menulis "tidak ada".
+
+**Penjaga.** `tests/portfolio.test.ts`, kasus "persentase hitung datang dari bukti".
 
 ---
 

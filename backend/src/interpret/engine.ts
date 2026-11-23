@@ -140,7 +140,10 @@ export function evaluateProject(facts: ProjectFacts): ProjectAssessment {
       reported: ctx.reported,
       validated: ctx.validated,
       pct_reported: pct,
-      pct_calculated: target && ctx.reported !== null ? (ctx.reported / target) * 100 : null,
+      // Persentase ini dipakai untuk menunjukkan selisih antara yang dilaporkan
+      // dan yang bisa dibuktikan. Kalau diisi dari angka laporan, ia hanya
+      // menyalin pct_reported dan selisihnya selalu nol.
+      pct_calculated: target && ctx.validated !== null ? (ctx.validated / target) * 100 : null,
       basis: facts.rule.progress_basis,
     },
     findings: ordered,

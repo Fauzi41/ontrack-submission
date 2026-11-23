@@ -60,6 +60,12 @@ describe('portofolio pada data asli', () => {
     expect(title).toContain('Angka di satu baris tidak cocok');
   });
 
+  it('persentase hitung datang dari bukti, bukan salinan laporan', () => {
+    const prj = portfolio.projects.find((p) => p.project_id === 'PRJ-002')!;
+    expect(prj.progress.pct_reported).toBeCloseTo(76.25, 1);
+    expect(prj.progress.pct_calculated).toBeCloseTo(72.7, 1);
+  });
+
   it('tidak menghitung laju untuk pekerjaan diskrit', () => {
     const prj = portfolio.projects.find((p) => p.project_id === 'PRJ-005')!;
     expect(prj.findings.some((f) => f.detector === 'schedule_risk')).toBe(false);
