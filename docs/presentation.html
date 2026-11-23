@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>OnTrack Project Intelligence · Presentasi</title>
+<style>
+  :root {
+    --bg: #0b0f14;
+    --panel: #121821;
+    --line: #232b36;
+    --text: #e6ebf2;
+    --muted: #8b97a8;
+    --accent: #6ea8fe;
+    --warn: #d9a441;
+    --err: #e06c75;
+    --ok: #8fd39a;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #05070a; color: var(--text); }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  #stage-wrap { position: relative; width: 100vw; height: calc(100vh - 42px); display: grid; place-items: center; }
+  #stage {
+    width: 1280px; height: 720px; position: relative; background: var(--bg);
+    overflow: hidden; box-shadow: 0 24px 70px rgba(0,0,0,0.55);
+    transform-origin: center center;
+  }
+  .slide {
+    position: absolute; inset: 0; padding: 56px 68px 64px;
+    display: none; flex-direction: column;
+  }
+  .slide.on { display: flex; }
+  .kicker {
+    font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .kicker::after { content: ''; height: 1px; width: 64px; background: var(--line); }
+  h2 { font-size: 44px; line-height: 1.14; letter-spacing: -0.02em; margin: 18px 0 14px; max-width: 20ch; }
+  .lead { font-size: 19px; line-height: 1.5; color: #c6cfdb; max-width: 62ch; margin: 0 0 22px; }
+  ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 13px; max-width: 74ch; }
+  li { font-size: 16.5px; line-height: 1.45; padding-left: 20px; position: relative; color: #d5dde7; }
+  li::before { content: ''; position: absolute; left: 0; top: 9px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); opacity: 0.85; }
+  li b { color: var(--text); font-weight: 600; }
+  .note { margin-top: auto; font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 12px; }
+
+  /* tata letak khusus */
+  .chain { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-top: 6px; }
+  .chain div { border: 1px solid var(--line); border-radius: 10px; padding: 12px 12px 14px; background: var(--panel); }
+  .chain span { display: block; font-size: 10.5px; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; }
+  .chain strong { display: block; font-size: 15px; margin: 6px 0 6px; }
+  .chain p { margin: 0; font-size: 12px; color: #a9b4c2; line-height: 1.4; }
+
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; align-items: start; }
+  .box { border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; background: var(--panel); }
+  .box h3 { margin: 0 0 10px; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .big { font-size: 40px; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .big.warn { color: var(--warn); }
+  .big.err { color: var(--err); }
+  .big.ok { color: var(--ok); }
+  .small { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.45; }
+
+  table.rank { width: 100%; border-collapse: collapse; font-size: 15px; }
+  table.rank th { text-align: left; font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 6px 8px; border-bottom: 1px solid var(--line); font-weight: 500; }
+  table.rank td { padding: 7px 8px; border-bottom: 1px solid #1a222c; }
+  table.rank td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .tag { font-size: 11px; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--line); }
+  .tag.critical { color: var(--err); border-color: #4d2529; background: #1d1113; }
+  .tag.attention { color: var(--warn); border-color: #4a3c1c; background: #1d1810; }
+  .tag.watch { color: var(--accent); border-color: #23364f; background: #111a25; }
+  .tag.info { color: var(--muted); }
+
+  .quote { font-size: 20px; line-height: 1.5; border-left: 3px solid var(--accent); padding: 6px 0 6px 18px; color: #dbe3ec; max-width: 70ch; }
+  .err-line { font-family: 'Cascadia Mono', Consolas, monospace; font-size: 13px; color: var(--err); background: #1a1013; border: 1px solid #3d1f23; border-radius: 8px; padding: 10px 13px; margin-top: 12px; }
+
+  /* kontrol */
+  #bar {
+    position: fixed; bottom: 0; left: 0; right: 0; height: 42px; display: flex; align-items: center;
+    gap: 14px; padding: 0 18px; background: rgba(5,7,10,0.92); border-top: 1px solid #141a22;
+    font-size: 12px; color: var(--muted); z-index: 20;
+  }
+  #bar .dots { display: flex; gap: 6px; }
+  #bar .dot { width: 7px; height: 7px; border-radius: 50%; background: #2a3441; cursor: pointer; }
+  #bar .dot.on { background: var(--accent); }
+  #bar .spacer { flex: 1; }
+  #bar button {
+    background: #172029; color: #cfd8e3; border: 1px solid #26313d; border-radius: 6px;
+    padding: 4px 10px; font: inherit; font-size: 11.5px; cursor: pointer;
+  }
+  #bar button:hover { border-color: var(--accent); color: var(--accent); }
+  #bar button.on { border-color: var(--accent); color: var(--accent); }
+
+  @media print {
+    @page { size: 1280px 720px; margin: 0; }
+    html, body { background: #fff; overflow: visible; height: auto; }
+    #stage-wrap { width: 1280px; height: auto; display: block; }
+    #stage { width: 1280px; height: auto; box-shadow: none; transform: none !important; }
+    .slide { display: flex !important; position: relative; width: 1280px; height: 720px; page-break-after: always; background: var(--bg); }
+    #bar { display: none; }
+  }
+</style>
+</head>
+<body>
+<div id="stage-wrap"><div id="stage"></div></div>
+
+<div id="bar">
+  <span id="counter">1 / 10</span>
+  <div class="dots" id="dots"></div>
+  <span class="spacer"></span>
+  <button id="prev" title="Sebelumnya">←</button>
+  <button id="next" title="Berikutnya">→</button>
+  <button id="lang" title="Ganti bahasa">ID / EN</button>
+  <button id="print" title="Cetak ke PDF">Cetak</button>
+</div>
+
+<script>
+const DECK = {
+  id: [
+    {
+      kicker: '01 · masalahnya',
+      title: 'Satu angka sudah cukup untuk membuka percakapan',
+      lead: 'PRJ-002 melaporkan 91.500 halaman terdigitalisasi. Sistem produksinya mencatat 87.240. Selisih 4.260 halaman tidak muncul di laporan mana pun.',
+      body: `<ul>
+        <li>Master dan data produksi disimpan sebagai <b>baris terpisah</b>, bukan dirata-ratakan jadi satu angka.</li>
+        <li>Selisih dihitung ulang setiap impor, sehingga tidak bisa hilang karena laporan diperbarui.</li>
+        <li>Yang dipakai untuk keputusan adalah angka yang <b>bisa dibuktikan</b>, dan yang dilaporkan tetap ditampilkan.</li>
+      </ul>`,
+      note: 'as_of 2026-10-06T17:00 · PRJ-002 Digitalisasi Arsip Beta, target 120.000 halaman'
+    },
+    {
+      kicker: '02 · yang dibangun',
+      title: 'Enam langkah yang harus utuh, bukan dashboard',
+      lead: 'Nilai alat ini bukan pada tabelnya, tapi pada rantai dari baris sumber sampai tindak lanjut. Kalau satu sambungan putus, sisanya jadi tebakan.',
+      body: `<div class="chain">
+        <div><span>01 source</span><strong>Baris sumber</strong><p>CSV dan JSON disimpan apa adanya, termasuk yang tidak memicu temuan.</p></div>
+        <div><span>02 context</span><strong>Konteks proyek</strong><p>Tipe, deadline, cadangan hari, aturan per tipe.</p></div>
+        <div><span>03 evidence</span><strong>Bukti</strong><p>Dua lapis: laporan manusia dan angka sistem.</p></div>
+        <div><span>04 tafsir</span><strong>Interpretasi</strong><p>12 detektor, severity, keyakinan, yang belum diketahui.</p></div>
+        <div><span>05 attention</span><strong>Perhatian</strong><p>Urutan dan pengelompokan agar tidak dibaca satu per satu.</p></div>
+        <div><span>06 follow-up</span><strong>Tindak lanjut</strong><p>Aksi, pemilik, dan penutupan yang butuh bukti.</p></div>
+      </div>`,
+      note: 'Setiap nomor di layar bisa ditelusuri balik ke salah satu dari enam kotak ini.'
+    },
+    {
+      kicker: '03 · datanya',
+      title: 'Yang masuk, dan seberapa tebal buktinya',
+      lead: 'Enam proyek, 41 baris sumber, 92 nilai observasi. Tapi tidak semua baris punya bobot yang sama.',
+      body: `<div class="split">
+        <div class="box">
+          <h3>Komposisi sumber</h3>
+          <div class="big">41 <span style="font-size:16px;color:var(--muted)">baris</span></div>
+          <div class="small">6 master · 23 update lapangan · 12 record produksi</div>
+          <div class="small" style="margin-top:14px">92 nilai observasi diekstrak dari baris itu, masing-masing menyimpan asal dan waktu.</div>
+        </div>
+        <div class="box">
+          <h3>Bobot bukti</h3>
+          <div class="big warn">29 <span style="font-size:16px;color:var(--muted)">dilaporkan</span></div>
+          <div class="big ok" style="margin-top:6px">12 <span style="font-size:16px;color:var(--muted)">operasional</span></div>
+          <div class="small" style="margin-top:10px">Sistem ini sebagian besar menilai laporan manusia terhadap angka sistem. Itu keterbatasan yang saya sebut, bukan yang saya sembunyikan.</div>
+        </div>
+      </div>`,
+      note: 'Provenance REPORTED vs OPERATIONAL disimpan per baris, bukan per proyek.'
+    },
+    {
+      kicker: '04 · mesinnya',
+      title: 'Status dari PIC tidak dipakai sebagai kesimpulan',
+      lead: 'PRJ-002 berstatus ON TRACK di laporan. Dengan sisa 4,3 hari, untuk selesai tepat waktu dibutuhkan 7.633 halaman per hari. Laju sekarang 3.266.',
+      body: `<ul>
+        <li><b>12 detektor</b> menilai progress, jadwal, kesegaran data, dependensi, kapasitas, kualitas, konsistensi internal, dan kontradiksi status.</li>
+        <li>Dua basis dihitung terpisah: <b>laporan</b> dan <b>tervalidasi</b>. Kalau keduanya berbeda kesimpulan, severity ditahan dan temuan ditandai borderline.</li>
+        <li>Setiap temuan membawa record bukti, tingkat keyakinan, dan daftar hal yang belum bisa dipastikan.</li>
+      </ul>`,
+      note: 'Angka PRJ-002 dihitung dari 4,3 hari sisa dan target 120.000 halaman, bukan dari kalimat di laporan.'
+    },
+    {
+      kicker: '05 · hasilnya',
+      title: 'Urutan yang bisa dipertanggungjawabkan',
+      lead: 'Enam proyek, satu urutan. Yang paling atas bukan yang paling banyak masalahnya, tapi yang paling mendesak dan paling yakin buktinya.',
+      body: `<table class="rank">
+        <thead><tr><th>#</th><th>Proyek</th><th>Severity</th><th>Waktu</th><th class="num">Sisa hari</th><th class="num">Temuan</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>PRJ-002 Digitalisasi Arsip Beta</td><td><span class="tag critical">Kritis</span></td><td>Mendekat</td><td class="num">4,3</td><td class="num">4</td></tr>
+          <tr><td>2</td><td>PRJ-005 Integrasi API Epsilon</td><td><span class="tag critical">Kritis</span></td><td>Mendekat</td><td class="num">7,3</td><td class="num">2</td></tr>
+          <tr><td>3</td><td>PRJ-004 Verifikasi Data Delta</td><td><span class="tag critical">Kritis</span></td><td>Masih jauh</td><td class="num">30,3</td><td class="num">3</td></tr>
+          <tr><td>4</td><td>PRJ-001 Penataan Arsip Inaktif Alpha</td><td><span class="tag attention">Perhatian</span></td><td>Mendekat</td><td class="num">9,3</td><td class="num">2</td></tr>
+          <tr><td>5</td><td>PRJ-003 Arsip Gamma</td><td><span class="tag watch">Pantau</span></td><td>Masih jauh</td><td class="num">14,3</td><td class="num">3</td></tr>
+          <tr><td>—</td><td>PRJ-006 Implementasi DMS Zeta</td><td><span class="tag info">Info</span></td><td>Selesai</td><td class="num">—</td><td class="num">0</td></tr>
+        </tbody>
+      </table>
+      <p class="small" style="margin-top:12px">PRJ-006 punya satu temuan informasi karena penutupannya terbukti, dan temuan itu tidak membuka isu. PRJ-001 sengaja tidak dinaikkan: laporannya 0,99x dari laju yang dibutuhkan, bukti tervalidasi 1,26x. Dua basis sah yang berselisih tidak boleh dijadikan kritis tanpa keputusan manusia.</p>`,
+      note: 'Peringkat memakai lima kunci: severity, tekanan waktu, keyakinan, jumlah kelompok temuan, lalu sisa hari.'
+    },
+    {
+      kicker: '06 · kejujurannya',
+      title: 'Temuan yang menyebut batas dirinya',
+      lead: 'Setiap temuan membawa daftar hal yang tidak bisa dipastikan dari data yang ada. Contohnya PRJ-002.',
+      body: `<div class="split">
+        <div class="box">
+          <h3>Yang diklaim</h3>
+          <p class="quote" style="font-size:16px;margin:0">Master mencatat 91.500 halaman, bukti operasional 87.240. Sisanya 4.260 halaman tidak diakui sumber mana pun.</p>
+          <div class="small" style="margin-top:12px">Bukti: PRJ-002 (master, dilaporkan) dan SCAN-BETA-001 (produksi, operasional).</div>
+        </div>
+        <div class="box">
+          <h3>Yang tidak diklaim</h3>
+          <ul style="gap:9px">
+            <li style="font-size:14px">Apakah angka master berasal dari hitungan lapangan yang belum masuk sistem.</li>
+            <li style="font-size:14px">Klaim kapasitas 4.500 halaman per hari hanya ada di teks bebas, jadi tidak dipakai menghitung.</li>
+          </ul>
+        </div>
+      </div>`,
+      note: 'Keyakinan rendah atau sedang menurunkan severity, bukan menaikkan. Ketiadaan bukti tidak dianggap bukti.'
+    },
+    {
+      kicker: '07 · kesalahpahaman yang paling mahal',
+      title: 'Selesai bukan berarti beres',
+      lead: 'Follow-up bisa ditandai selesai oleh siapa pun. Isu hanya tertutup kalau ada record baru yang membuktikan perbaikan.',
+      body: `<ul>
+        <li>Penutupan isu menolak permintaan tanpa bukti: <b>EVIDENCE_REQUIRED</b>.</li>
+        <li>Record yang sudah ada saat isu dibuka ditolak: bukan bukti baru, hanya pengulangan.</li>
+        <li>Temuan yang berhenti muncul diberi status <b>NOT_DETECTED</b>, bukan terverifikasi. Mesin tidak menyatakan beres.</li>
+      </ul>
+      <div class="err-line">Record SCAN-BETA-001 sudah ada saat isu dibuka, jadi tidak bisa dipakai sebagai bukti perbaikan.</div>`,
+      note: 'Pesan itu datang dari API, bukan ditulis ulang di antarmuka. Layar menampilkan penolakan yang sama dengan yang dilihat pemanggil API.'
+    },
+    {
+      kicker: '08 · keputusan',
+      title: 'Tiga keputusan yang bisa diperdebatkan',
+      lead: 'Ini bukan detail teknis. Ini hal yang saya putuskan sendiri karena brief tidak mengaturnya, dan saya bersedia mempertanggungjawabkannya.',
+      body: `<ul>
+        <li><b>Deadline dibaca akhir hari.</b> Membuat PRJ-001 borderline 0,99x, bukan terlambat. Ganti ke tengah malam dan kesimpulannya bergeser.</li>
+        <li><b>Dua basis berselisih tidak jadi kritis.</b> Schedule risk ditahan di perhatian saat laporan dan bukti berbeda arah.</li>
+        <li><b>Temuan info bukan isu.</b> Proyek selesai dengan bukti lengkap tetap punya temuan informasi, tapi tidak membuka baris tindak lanjut.</li>
+      </ul>
+      <p class="small" style="margin-top:14px">Ambang severity juga buatan sendiri: rasio laju di atas 1,05 jadi perhatian, di atas 1,25 jadi kritis; selisih internal di atas 1 poin persen jadi pantau, di atas 5 jadi perhatian; data basi di atas dua kali cadangan yang diharapkan. Semua angka itu terbuka untuk diganti.</p>`,
+      note: 'Ambang ada di kode dan diuji, tapi tidak divalidasi terhadap kebenaran bisnis. Itu batas yang tidak bisa ditutup test.'
+    },
+    {
+      kicker: '09 · buktinya',
+      title: 'Cara saya tahu ini bekerja',
+      lead: 'Bukan karena tampilannya rapi, tapi karena ada test yang gagal ketika perilakunya berubah.',
+      body: `<div class="split">
+        <div>
+          <ul>
+            <li><b>108 test</b> di 8 berkas: parser, importer, normalisasi, detektor, peringkat, API, dan kasus tepi.</li>
+            <li><b>10 bug</b> ditemukan selama pengerjaan, semuanya tercatat dengan gejala, penyebab, dan test penjaganya.</li>
+            <li>Impor kedua tidak menggandakan apa pun: 41 baris dikenali sebagai duplikat, nol baris baru.</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Cakupan pernyataan</h3>
+          <div class="big ok">90%</div>
+          <div class="small">modul inti 100% (interpretasi, presence, basis data)</div>
+          <div class="small" style="margin-top:10px">API 76%, isu dan follow-up 92%, impor 91%.</div>
+        </div>
+      </div>`,
+      note: 'Enam bug tertangkap test, empat tertangkap penyisiran manual dan pemeriksaan UI. Daftarnya ada di docs/BUG_LOG.md.'
+    },
+    {
+      kicker: '10 · batas',
+      title: 'Apa yang belum bisa dijawab alat ini',
+      lead: 'Lebih baik disebut sekarang daripada ditemukan saat dipakai.',
+      body: `<ul>
+        <li><b>Teks bebas belum dibaca mesin.</b> Klaim kapasitas 4.500 halaman per hari dan alasan penundaan hanya tersimpan, belum dinilai.</li>
+        <li><b>Perubahan deadline belum dilacak.</b> Tabel riwayatnya ada, tapi belum diisi oleh importer.</li>
+        <li><b>Belum ada auth dan deploy.</b> Sesuai lingkup brief: ini prototipe lokal dengan data contoh.</li>
+        <li><b>Penutupan isu tetap butuh manusia.</b> Sistem hanya memastikan buktinya nyata dan baru; ia tidak menilai apakah perbaikannya cukup.</li>
+      </ul>`,
+      note: 'Langkah berikutnya kalau dipakai sungguhan: kesepakatan ambang, pembacaan teks bebas, dan penjadwalan impor berkala.'
+    }
+  ],
+  en: [
+    {
+      kicker: '01 · the problem',
+      title: 'One number is enough to start the conversation',
+      lead: 'PRJ-002 reports 91,500 pages digitised. The production system records 87,240. The 4,260 page gap appears in no report.',
+      body: `<ul>
+        <li>Master and production data are stored as <b>separate rows</b>, never averaged into one figure.</li>
+        <li>The gap is recomputed on every import, so a report update cannot erase it.</li>
+        <li>Decisions use the figure that can be <b>evidenced</b>; the reported figure stays visible.</li>
+      </ul>`,
+      note: 'as_of 2026-10-06T17:00 · PRJ-002 Digitalisasi Arsip Beta, target 120,000 pages'
+    },
+    {
+      kicker: '02 · what was built',
+      title: 'Six links that must hold, not a dashboard',
+      lead: 'The value is not the tables. It is the chain from a source row to a follow-up. One broken link turns the rest into guesswork.',
+      body: `<div class="chain">
+        <div><span>01 source</span><strong>Source rows</strong><p>CSV and JSON stored as received, including rows that raise nothing.</p></div>
+        <div><span>02 context</span><strong>Project context</strong><p>Type, deadline, day allowance, per-type rules.</p></div>
+        <div><span>03 evidence</span><strong>Evidence</strong><p>Two layers: human reports and system figures.</p></div>
+        <div><span>04 reading</span><strong>Interpretation</strong><p>12 detectors, severity, confidence, open questions.</p></div>
+        <div><span>05 attention</span><strong>Attention</strong><p>Ranked and grouped so nobody reads row by row.</p></div>
+        <div><span>06 follow-up</span><strong>Follow-up</strong><p>Actions, owners, closure that demands evidence.</p></div>
+      </div>`,
+      note: 'Every number on screen traces back to one of these six boxes.'
+    },
+    {
+      kicker: '03 · the data',
+      title: 'What came in, and how thick the evidence is',
+      lead: 'Six projects, 41 source rows, 92 observation values. Not every row carries the same weight.',
+      body: `<div class="split">
+        <div class="box">
+          <h3>Source mix</h3>
+          <div class="big">41 <span style="font-size:16px;color:var(--muted)">rows</span></div>
+          <div class="small">6 master · 23 field updates · 12 production records</div>
+          <div class="small" style="margin-top:14px">92 observation values extracted, each keeping its origin and timestamp.</div>
+        </div>
+        <div class="box">
+          <h3>Evidence weight</h3>
+          <div class="big warn">29 <span style="font-size:16px;color:var(--muted)">reported</span></div>
+          <div class="big ok" style="margin-top:6px">12 <span style="font-size:16px;color:var(--muted)">operational</span></div>
+          <div class="small" style="margin-top:10px">The system mostly judges human reports against system figures. That is a limitation I state, not one I hide.</div>
+        </div>
+      </div>`,
+      note: 'Provenance REPORTED vs OPERATIONAL is stored per row, not per project.'
+    },
+    {
+      kicker: '04 · the engine',
+      title: 'The PIC status is not the conclusion',
+      lead: 'PRJ-002 is ON TRACK in its report. With 4.3 days left, finishing on time needs 7,633 pages per day. Current pace is 3,266.',
+      body: `<ul>
+        <li><b>12 detectors</b> cover progress, schedule, data freshness, dependencies, capacity, quality, internal consistency, and status contradictions.</li>
+        <li>Two bases are computed separately: <b>reported</b> and <b>validated</b>. When they disagree, severity is held back and the finding is marked borderline.</li>
+        <li>Every finding carries its evidence rows, a confidence level, and the list of what remains unknown.</li>
+      </ul>`,
+      note: 'The PRJ-002 figures come from 4.3 remaining days and a 120,000 page target, not from a sentence in the report.'
+    },
+    {
+      kicker: '05 · the result',
+      title: 'An order that can be defended',
+      lead: 'Six projects, one order. The top item is not the one with the most problems, it is the most urgent with the strongest evidence.',
+      body: `<table class="rank">
+        <thead><tr><th>#</th><th>Project</th><th>Severity</th><th>Time</th><th class="num">Days left</th><th class="num">Findings</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>PRJ-002 Digitalisasi Arsip Beta</td><td><span class="tag critical">Critical</span></td><td>Approaching</td><td class="num">4.3</td><td class="num">4</td></tr>
+          <tr><td>2</td><td>PRJ-005 Integrasi API Epsilon</td><td><span class="tag critical">Critical</span></td><td>Approaching</td><td class="num">7.3</td><td class="num">2</td></tr>
+          <tr><td>3</td><td>PRJ-004 Verifikasi Data Delta</td><td><span class="tag critical">Critical</span></td><td>Distant</td><td class="num">30.3</td><td class="num">3</td></tr>
+          <tr><td>4</td><td>PRJ-001 Penataan Arsip Inaktif Alpha</td><td><span class="tag attention">Attention</span></td><td>Approaching</td><td class="num">9.3</td><td class="num">2</td></tr>
+          <tr><td>5</td><td>PRJ-003 Arsip Gamma</td><td><span class="tag watch">Watch</span></td><td>Distant</td><td class="num">14.3</td><td class="num">3</td></tr>
+          <tr><td>—</td><td>PRJ-006 Implementasi DMS Zeta</td><td><span class="tag info">Info</span></td><td>Closed</td><td class="num">—</td><td class="num">0</td></tr>
+        </tbody>
+      </table>
+      <p class="small" style="margin-top:12px">PRJ-006 carries one informational finding because its closure is evidenced, and that finding opens no issue. PRJ-001 was deliberately not escalated: its report implies 0.99x of the required pace, its validated evidence implies 1.26x. Two valid bases that disagree must not become critical without a human call.</p>`,
+      note: 'Ranking uses five keys: severity, time pressure, confidence, grouped finding count, then days left.'
+    },
+    {
+      kicker: '06 · the honesty',
+      title: 'Findings that state their own limits',
+      lead: 'Each finding carries the things the data cannot settle. PRJ-002 is the clearest case.',
+      body: `<div class="split">
+        <div class="box">
+          <h3>What is claimed</h3>
+          <p class="quote" style="font-size:16px;margin:0">Master records 91,500 pages, operational evidence 87,240. The remaining 4,260 pages are not acknowledged by any source.</p>
+          <div class="small" style="margin-top:12px">Evidence: PRJ-002 (master, reported) and SCAN-BETA-001 (production, operational).</div>
+        </div>
+        <div class="box">
+          <h3>What is not claimed</h3>
+          <ul style="gap:9px">
+            <li style="font-size:14px">Whether the master figure comes from field counts that never reached the system.</li>
+            <li style="font-size:14px">The 4,500 pages per day capacity claim exists only in free text, so it is not used in any calculation.</li>
+          </ul>
+        </div>
+      </div>`,
+      note: 'Low or medium confidence lowers severity, never raises it. Missing evidence is not evidence.'
+    },
+    {
+      kicker: '07 · the expensive misunderstanding',
+      title: 'Done does not mean resolved',
+      lead: 'Anyone can mark a follow-up done. An issue closes only when a new record proves the fix.',
+      body: `<ul>
+        <li>Closure rejects requests without evidence: <b>EVIDENCE_REQUIRED</b>.</li>
+        <li>A record that already existed when the issue opened is rejected: repetition is not new evidence.</li>
+        <li>Findings that stop appearing become <b>NOT_DETECTED</b>, not verified. The engine never declares the work finished.</li>
+      </ul>
+      <div class="err-line">Record SCAN-BETA-001 already existed when the issue opened, so it cannot serve as proof of a fix.</div>`,
+      note: 'That message comes from the API, not rewritten in the interface. The screen shows the same rejection an API caller receives.'
+    },
+    {
+      kicker: '08 · decisions',
+      title: 'Three decisions worth arguing about',
+      lead: 'These are not technical details. I made them because the brief is silent, and I will defend them.',
+      body: `<ul>
+        <li><b>Deadlines are read end of day.</b> That keeps PRJ-001 borderline at 0.99x instead of late. Move it to midnight and the conclusion shifts.</li>
+        <li><b>Conflicting bases do not become critical.</b> Schedule risk is held at attention when report and evidence point in different directions.</li>
+        <li><b>Info findings are not issues.</b> A closed project with full evidence still carries an informational finding but opens no follow-up row.</li>
+      </ul>
+      <p class="small" style="margin-top:14px">The severity thresholds are mine too: pace ratio above 1.05 becomes attention, above 1.25 critical; internal difference above 1 percentage point becomes watch, above 5 attention; stale data beyond twice the expected cadence. All of them are open to change.</p>`,
+      note: 'The thresholds live in code and are tested, but not validated against business truth. Tests cannot close that gap.'
+    },
+    {
+      kicker: '09 · the evidence of work',
+      title: 'How I know this works',
+      lead: 'Not because the screens look tidy, but because tests fail when the behaviour changes.',
+      body: `<div class="split">
+        <div>
+          <ul>
+            <li><b>108 tests</b> across 8 files: parser, importer, normalisation, detectors, ranking, API, edge cases.</li>
+            <li><b>10 bugs</b> found along the way, each recorded with symptom, cause, and the test that now guards it.</li>
+            <li>A second import duplicates nothing: 41 rows recognised as duplicates, zero new rows.</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Statement coverage</h3>
+          <div class="big ok">90%</div>
+          <div class="small">core modules at 100% (interpretation, presence, database)</div>
+          <div class="small" style="margin-top:10px">API 76%, issues and follow-ups 92%, ingest 91%.</div>
+        </div>
+      </div>`,
+      note: 'Six bugs were caught by tests, four by manual review and UI checks. The list lives in docs/BUG_LOG.md.'
+    },
+    {
+      kicker: '10 · limits',
+      title: 'What this tool still cannot answer',
+      lead: 'Better said now than discovered in use.',
+      body: `<ul>
+        <li><b>Free text is not read by the engine.</b> The 4,500 pages per day capacity claim and delay reasons are stored, not interpreted.</li>
+        <li><b>Deadline changes are not tracked yet.</b> The history table exists but the importer does not fill it.</li>
+        <li><b>No auth and no deployment.</b> Matching the brief: a local prototype on sample data.</li>
+        <li><b>Closing an issue stays a human act.</b> The system guarantees the evidence is real and new; it does not judge whether the fix is enough.</li>
+      </ul>`,
+      note: 'Next steps for real use: agree on thresholds, read the free text, schedule recurring imports.'
+    }
+  ]
+};
+
+const stage = document.getElementById('stage');
+const dots = document.getElementById('dots');
+const counter = document.getElementById('counter');
+let lang = 'id';
+let idx = 0;
+
+function render() {
+  const slides = DECK[lang];
+  stage.innerHTML = slides.map((s, i) => `
+    <section class="slide${i === idx ? ' on' : ''}">
+      <div class="kicker">${s.kicker}</div>
+      <h2>${s.title}</h2>
+      <p class="lead">${s.lead}</p>
+      ${s.body}
+      <div class="note">${s.note}</div>
+    </section>`).join('');
+  dots.innerHTML = slides.map((_, i) => `<span class="dot${i === idx ? ' on' : ''}" data-i="${i}"></span>`).join('');
+  counter.textContent = `${idx + 1} / ${slides.length}`;
+  document.querySelectorAll('#dots .dot').forEach((d) => d.addEventListener('click', () => {
+    idx = Number(d.dataset.i); render();
+  }));
+  document.documentElement.lang = lang;
+}
+
+function go(n) {
+  const total = DECK[lang].length;
+  idx = Math.max(0, Math.min(total - 1, n));
+  render();
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); go(idx + 1); }
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(idx - 1); }
+  if (e.key === 'Home') go(0);
+  if (e.key === 'End') go(DECK[lang].length - 1);
+});
+
+document.getElementById('next').addEventListener('click', () => go(idx + 1));
+document.getElementById('prev').addEventListener('click', () => go(idx - 1));
+document.getElementById('print').addEventListener('click', () => window.print());
+document.getElementById('lang').addEventListener('click', () => {
+  lang = lang === 'id' ? 'en' : 'id';
+  document.getElementById('lang').textContent = lang === 'id' ? 'ID / EN' : 'EN / ID';
+  render();
+});
+
+function fit() {
+  const scale = Math.min(window.innerWidth / 1280, (window.innerHeight - 42) / 720);
+  stage.style.transform = `scale(${scale})`;
+}
+
+window.addEventListener('resize', fit);
+fit();
+render();
+</script>
+</body>
+</html>
