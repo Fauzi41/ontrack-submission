@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import type { Database } from 'better-sqlite3';
 import { DATA_DIR, FIXTURES } from '../config';
 import { DB, getMeta, setMeta } from '../db/db';
 import { parseCsv, toObjects } from './csv';
@@ -28,6 +29,19 @@ export interface ImportInventory {
   observationValues: number;
 }
 
+export interface ProjectFieldChange {
+  project_id: string;
+  field: string;
+  from: unknown;
+  to: unknown;
+}
+
+export interface ProjectDiff {
+  added: string[];
+  removed: string[];
+  changed: ProjectFieldChange[];
+}
+
 export interface ImportReport {
   started_at: string;
   finished_at: string;
@@ -40,6 +54,43 @@ export interface ImportReport {
   orphans: number;
   issues: ImportIssue[];
   inventory: ImportInventory;
+  impact: ProjectDiff;
+}
+
+const TRACKED_FIELDS = [
+  'target',
+  'target_unit',
+  'reported_actual',
+  'reported_progress_pct',
+  'reported_status',
+  'deadline',
+  'start_date',
+  'pic',
+  'active',
+] as const;
+
+type ProjectSnapshot = Map<string, Record<string, unknown>>;
+
+function snapshotProjects(db: Database): ProjectSnapshot {
+  const rows = db.prepare('SELECT * FROM projects').all() as Array<Record<string, unknown> & { project_id: string }>;
+  return new Map(rows.map((r) => [r.project_id, r]));
+}
+
+function diffProjects(before: ProjectSnapshot, after: ProjectSnapshot): ProjectDiff {
+  const added = [...after.keys()].filter((id) => !before.has(id)).sort();
+  const removed = [...before.keys()].filter((id) => !after.has(id)).sort();
+  const changed: ProjectFieldChange[] = [];
+  for (const [id, next] of after) {
+    const prev = before.get(id);
+    if (!prev) continue;
+    for (const field of TRACKED_FIELDS) {
+      if (prev[field] !== next[field]) {
+        changed.push({ project_id: id, field, from: prev[field] ?? null, to: next[field] ?? null });
+      }
+    }
+  }
+  changed.sort((a, b) => (a.project_id === b.project_id ? a.field.localeCompare(b.field) : a.project_id.localeCompare(b.project_id)));
+  return { added, removed, changed };
 }
 
 export class ImportError extends Error {
@@ -351,6 +402,7 @@ export function runImport(db: DB, opts: { dataDir?: string } = {}): ImportReport
     }
   });
 
+  const beforeProjects = snapshotProjects(db);
   writeAll();
 
   // ---- as_of: pakai generated_at dataset; fallback ke observasi terbaru ----
@@ -376,6 +428,7 @@ export function runImport(db: DB, opts: { dataDir?: string } = {}): ImportReport
     ...counters,
     issues,
     inventory,
+    impact: diffProjects(beforeProjects, snapshotProjects(db)),
   };
 
   const info = db

@@ -1,17 +1,66 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import Fastify from 'fastify';
+import Fastify, { type FastifyReply } from 'fastify';
 import cors from '@fastify/cors';
 import fastifyStatic from '@fastify/static';
-import { API_PORT, REPO_ROOT } from '../config';
+import { REPO_ROOT } from '../config';
 import { openDb } from '../db/db';
 import { ImportError, currentAsOf, runImport } from '../ingest/importer';
+import { assemblePortfolio } from '../interpret/engine';
+import { loadFacts, readAsOf } from '../interpret/load';
+import { ISSUE_STATUSES, IssueError, type IssueStatus, listIssues, setIssueStatus, syncIssues } from '../store/issues';
+import {
+  FollowupError,
+  createFollowup,
+  getFollowup,
+  listEvents,
+  listFollowups,
+  updateFollowup,
+} from '../store/followups';
+import { ResponseError, addResponse, listResponses } from '../store/responses';
+import { diffFindings } from './impact';
+
+const nowIso = (): string => new Date().toISOString();
+
+function fail(reply: FastifyReply, err: unknown) {
+  if (err instanceof IssueError) {
+    const code =
+      err.code === 'ISSUE_NOT_FOUND'
+        ? 404
+        : err.code === 'EVIDENCE_STALE' || err.code === 'EVIDENCE_OTHER_PROJECT'
+          ? 409
+          : 422;
+    return reply.code(code).send({ error: err.code, message: err.message });
+  }
+  if (err instanceof FollowupError) {
+    const code = err.code === 'FOLLOWUP_NOT_FOUND' || err.code === 'PROJECT_NOT_FOUND' ? 404 : 400;
+    return reply.code(code).send({ error: err.code, message: err.message });
+  }
+  if (err instanceof ResponseError) {
+    return reply.code(err.code === 'EVIDENCE_UNKNOWN' ? 422 : 400).send({ error: err.code, message: err.message });
+  }
+  if (err instanceof ImportError) {
+    return reply.code(422).send({ error: err.code, message: err.message });
+  }
+  throw err;
+}
 
 export function buildServer(dbPath?: string) {
   const db = openDb(dbPath);
   const app = Fastify({ logger: false });
 
   app.register(cors, { origin: true });
+
+  // DB ditutup bersama server. Tanpa ini, file database tetap terkunci setelah
+  // test selesai dan pembersihan direktori sementara gagal di Windows.
+  app.addHook('onClose', async () => {
+    db.close();
+  });
+
+  const portfolioNow = () => {
+    const asOf = readAsOf(db);
+    return assemblePortfolio(asOf, loadFacts(db, asOf));
+  };
 
   app.get('/healthz', async () => {
     const asOf = currentAsOf(db);
@@ -23,6 +72,145 @@ export function buildServer(dbPath?: string) {
       )
       .get();
     return { ok: true, as_of: asOf, counts };
+  });
+
+  app.get('/api/portfolio', async () => {
+    const portfolio = portfolioNow();
+    const rows = db.prepare('SELECT status, COUNT(*) AS count FROM issues GROUP BY status').all() as Array<{
+      status: string;
+      count: number;
+    }>;
+    const issue_counts: Record<string, number> = {};
+    for (const row of rows) issue_counts[row.status] = row.count;
+    return { ...portfolio, issue_counts };
+  });
+
+  app.get('/api/projects/:projectId', async (req, reply) => {
+    const { projectId } = req.params as { projectId: string };
+    const portfolio = portfolioNow();
+    const assessment = portfolio.projects.find((p) => p.project_id === projectId);
+    if (!assessment) {
+      return reply.code(404).send({ error: 'PROJECT_NOT_FOUND', message: `Proyek ${projectId} tidak ada.` });
+    }
+    const responses = db.prepare('SELECT * FROM finding_responses WHERE project_id = ? ORDER BY id').all(projectId);
+    return {
+      ...assessment,
+      issues: listIssues(db, projectId),
+      followups: listFollowups(db, projectId),
+      responses,
+      as_of: portfolio.as_of,
+    };
+  });
+
+  app.get('/api/issues', async (req, reply) => {
+    const { status, project_id: projectId } = req.query as { status?: string; project_id?: string };
+    if (status && !ISSUE_STATUSES.includes(status as IssueStatus)) {
+      return reply
+        .code(400)
+        .send({ error: 'BAD_STATUS', message: `Status harus salah satu dari ${ISSUE_STATUSES.join(', ')}.` });
+    }
+    const where: string[] = [];
+    const params: unknown[] = [];
+    if (status) {
+      where.push('i.status = ?');
+      params.push(status);
+    }
+    if (projectId) {
+      where.push('i.project_id = ?');
+      params.push(projectId);
+    }
+    const sql = `SELECT i.*, p.project_name FROM issues i LEFT JOIN projects p ON p.project_id = i.project_id
+      ${where.length ? `WHERE ${where.join(' AND ')}` : ''} ORDER BY i.project_id, i.id`;
+    const issues = db.prepare(sql).all(...params);
+    return { issues, filters: { status: status ?? null, project_id: projectId ?? null } };
+  });
+
+  app.post('/api/issues/:id/status', async (req, reply) => {
+    const id = Number((req.params as { id: string }).id);
+    if (!Number.isInteger(id)) {
+      return reply.code(400).send({ error: 'BAD_ID', message: 'Id isu harus angka.' });
+    }
+    const body = (req.body ?? {}) as { status?: string; evidence_ref?: string | null };
+    try {
+      const issue = setIssueStatus(db, id, body.status as IssueStatus, body.evidence_ref ?? null, nowIso());
+      return { issue };
+    } catch (err) {
+      return fail(reply, err);
+    }
+  });
+
+  app.get('/api/projects/:projectId/followups', async (req) => {
+    const { projectId } = req.params as { projectId: string };
+    return { followups: listFollowups(db, projectId) };
+  });
+
+  app.post('/api/projects/:projectId/followups', async (req, reply) => {
+    const { projectId } = req.params as { projectId: string };
+    const body = (req.body ?? {}) as {
+      title?: string;
+      description?: string;
+      owner?: string;
+      owner_kind?: string;
+      due_date?: string | null;
+      issue_id?: number | null;
+      fingerprint?: string | null;
+      actor?: string;
+    };
+    try {
+      const followup = createFollowup(db, projectId, body, body.actor ?? 'api', nowIso());
+      return reply.code(201).send({ followup, events: listEvents(db, followup.id) });
+    } catch (err) {
+      return fail(reply, err);
+    }
+  });
+
+  app.get('/api/followups/:id', async (req, reply) => {
+    try {
+      const followup = getFollowup(db, (req.params as { id: string }).id);
+      return { followup, events: listEvents(db, followup.id) };
+    } catch (err) {
+      return fail(reply, err);
+    }
+  });
+
+  app.patch('/api/followups/:id', async (req, reply) => {
+    const { id } = req.params as { id: string };
+    const body = (req.body ?? {}) as {
+      status?: string;
+      owner?: string;
+      due_date?: string | null;
+      note?: string;
+      actor?: string;
+    };
+    try {
+      const followup = updateFollowup(db, id, body, body.actor ?? 'api', nowIso());
+      return {
+        followup,
+        events: listEvents(db, followup.id),
+        note: 'Status follow-up tidak mengubah status isu. Isu hanya tertutup lewat bukti baru.',
+      };
+    } catch (err) {
+      return fail(reply, err);
+    }
+  });
+
+  app.get('/api/projects/:projectId/findings/:fingerprint/responses', async (req) => {
+    const { projectId, fingerprint } = req.params as { projectId: string; fingerprint: string };
+    return { responses: listResponses(db, projectId, fingerprint) };
+  });
+
+  app.post('/api/projects/:projectId/findings/:fingerprint/responses', async (req, reply) => {
+    const { projectId, fingerprint } = req.params as { projectId: string; fingerprint: string };
+    const body = (req.body ?? {}) as { actor?: string; kind?: string; note?: string; evidence_ref?: string | null };
+    if (!portfolioNow().projects.some((p) => p.project_id === projectId)) {
+      return reply.code(404).send({ error: 'PROJECT_NOT_FOUND', message: `Proyek ${projectId} tidak ada.` });
+    }
+    try {
+      const response = addResponse(db, projectId, fingerprint, body, nowIso());
+      return reply.code(201).send({ response });
+    } catch (err) {
+      return fail(reply, err);
+    }
   });
 
   app.get('/api/source-inventory', async () => {
@@ -49,12 +237,15 @@ export function buildServer(dbPath?: string) {
 
   app.post('/api/import', async (_req, reply) => {
     try {
-      return runImport(db);
+      const hadData = (db.prepare('SELECT COUNT(*) AS c FROM projects').get() as { c: number }).c > 0;
+      const before = hadData ? portfolioNow() : null;
+      const report = runImport(db);
+      const after = portfolioNow();
+      const findings_impact = diffFindings(before, after);
+      const issues_sync = syncIssues(db, after, report.finished_at);
+      return { report, findings_impact, issues_sync, as_of: after.as_of };
     } catch (err) {
-      if (err instanceof ImportError) {
-        return reply.code(422).send({ error: err.code, message: err.message });
-      }
-      throw err;
+      return fail(reply, err);
     }
   });
 

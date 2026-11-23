@@ -145,6 +145,18 @@ describe('impor yang tidak bersih', () => {
     expect(report.issues.map((i) => i.code)).toContain('UNREADABLE_NUMBER');
     expect(report.rejected).toBe(0);
   });
+
+  it('menyebut field mana yang berubah saat master diperbarui', () => {
+    const dir = copyFixtures();
+    const db = inMemoryDb();
+    runImport(db, { dataDir: dir });
+    const path = join(dir, FIXTURES.master);
+    writeFileSync(path, readFileSync(path, 'utf8').replace(',318,', ',322,'));
+    const report = runImport(db, { dataDir: dir });
+    const change = report.impact.changed.find((c) => c.field === 'reported_actual' && c.project_id === 'PRJ-001');
+    expect(change).toMatchObject({ from: 318, to: 322 });
+    expect(report.impact.added).toEqual([]);
+  });
 });
 
 describe('aturan tipe proyek', () => {
