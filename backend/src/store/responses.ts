@@ -21,7 +21,80 @@ export interface ResponseRow {
   note: string;
   evidence_ref: string | null;
   needs_review: number;
+  reviewed_at: string | null;
+  reviewed_by: string | null;
+  review_decision: string | null;
+  review_note: string | null;
   created_at: string;
+}
+
+export interface ReviewRow {
+  id: number;
+  project_id: string;
+  project_name: string;
+  fingerprint: string;
+  actor: string;
+  kind: ResponseKind;
+  note: string;
+  evidence_ref: string | null;
+  created_at: string;
+  issue_status: string | null;
+}
+
+/**
+ * Antrean tinjauan: tanggapan manusia yang belum diputuskan. Urutannya
+ * bantahan lebih dulu, karena itu yang menuntut keputusan.
+ *
+ * Detector dan severity tidak diambil dari tabel, karena temuan tidak disimpan:
+ * keduanya dihitung saat permintaan dan ditempelkan oleh rute.
+ */
+export function listReviewQueue(db: Database): ReviewRow[] {
+  return db
+    .prepare(
+      `SELECT r.id, r.project_id, p.project_name, r.fingerprint,
+              r.actor, r.kind, r.note, r.evidence_ref, r.created_at, i.status AS issue_status
+       FROM finding_responses r
+       LEFT JOIN projects p ON p.project_id = r.project_id
+       LEFT JOIN issues i ON i.project_id = r.project_id AND i.fingerprint = r.fingerprint
+       WHERE r.needs_review = 1 AND r.reviewed_at IS NULL
+       ORDER BY CASE r.kind WHEN 'DISPUTED' THEN 0 WHEN 'EXPLAINED' THEN 1 ELSE 2 END, r.created_at`,
+    )
+    .all() as ReviewRow[];
+}
+
+export const REVIEW_DECISIONS = ['UPHELD', 'DENIED'] as const;
+export type ReviewDecision = (typeof REVIEW_DECISIONS)[number];
+
+/**
+ * Keputusan manusia atas sebuah tanggapan. Severity temuan tidak diubah di sini:
+ * yang dicatat adalah penilaian manusia, bukan penulisan ulang keluaran mesin.
+ */
+export function reviewResponse(
+  db: Database,
+  id: number,
+  input: { decision?: string; note?: string; actor?: string },
+  now: string,
+): ResponseRow {
+  const existing = db.prepare('SELECT * FROM finding_responses WHERE id = ?').get(id) as ResponseRow | undefined;
+  if (!existing) throw new ResponseError('REVIEW_NOT_FOUND', `Tanggapan ${id} tidak ada.`);
+  if (existing.reviewed_at) {
+    throw new ResponseError('ALREADY_REVIEWED', `Tanggapan ${id} sudah diputuskan pada ${existing.reviewed_at}.`);
+  }
+  if (!REVIEW_DECISIONS.includes(input.decision as ReviewDecision)) {
+    throw new ResponseError('DECISION_INVALID', `Keputusan harus salah satu dari ${REVIEW_DECISIONS.join(', ')}.`);
+  }
+  const note = (input.note ?? '').trim();
+  if (note.length < 3) throw new ResponseError('NOTE_REQUIRED', 'Keputusan tanpa alasan tidak bisa ditelusuri.');
+  const actor = (input.actor ?? '').trim();
+  if (!actor) throw new ResponseError('ACTOR_REQUIRED', 'Keputusan harus punya nama peninjau.');
+
+  db.prepare(
+    `UPDATE finding_responses
+     SET needs_review = 0, reviewed_at = ?, reviewed_by = ?, review_decision = ?, review_note = ?
+     WHERE id = ?`,
+  ).run(now, actor, input.decision, note, id);
+
+  return db.prepare('SELECT * FROM finding_responses WHERE id = ?').get(id) as ResponseRow;
 }
 
 export function listResponses(db: Database, projectId: string, fingerprint: string): ResponseRow[] {

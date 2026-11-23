@@ -25,7 +25,7 @@ const match = (text, re) => (text.match(re) ?? [])[1] ?? 'tidak terbaca';
 const testLine = match(tests, /Tests\s+(\d+ passed[^\n]*)/);
 const verifyLine = match(verify, /(\d+\/\d+) pemeriksaan lulus/);
 const coverageLine = match(coverage, /All files\s+\|\s+([\d.]+)\s+\|\s+([\d.]+)/);
-const bundle = match(build, /index-\w+\.js\s+([\d.]+ kB)/);
+const bundle = match(build, /index-[\w-]+\.js\s+([\d.]+ kB)/);
 
 const projects = (portfolio.projects ?? []).map((p) => ({
   id: p.project_id,

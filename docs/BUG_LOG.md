@@ -22,6 +22,8 @@ yang bersih biasanya berarti pencatatannya kurang teliti, bukan kodenya bersih.
 | B-009 | test API | penutupan isu | semua penutupan gagal 500 |
 | B-010 | pemeriksaan UI | persentase progress | dua angka berbeda tampil identik |
 | B-011 | skrip verifikasi | tanggapan temuan | pemanggil API tanpa nama pelaku ditolak, follow-up tidak |
+| B-012 | implementasi antrean tinjauan | tabel findings | tabel yang tidak pernah ditulis dipakai sebagai acuan |
+| B-013 | test antrean tinjauan | tanggapan temuan | bantahan untuk temuan yang tidak ada tetap diterima |
 
 ---
 
@@ -181,6 +183,30 @@ untuk baris yang benar-benar ditolak.
 **Perbaikan.** Rute tanggapan memakai nilai bawaan yang sama.
 
 **Penjaga.** `npm run verify -w backend` memanggil rute itu tanpa `actor` dan mengharapkan `201`. Skrip itu yang menemukannya.
+
+---
+
+## B-012 Tabel `findings` tidak pernah ditulis, tapi dipakai sebagai acuan
+
+**Gejala.** Rute antrean tinjauan menjawab `500`, karena kuerinya melakukan join ke tabel `findings` yang kosong. Severity dan detector pada kartu tinjauan selalu kosong.
+
+**Penyebab.** Skema menyiapkan tabel `findings` sejak fase 1, tetapi tidak ada kode yang menulisinya. Temuan selalu dihitung saat permintaan. Rute baru saya memperlakukan tabel itu sebagai sumber data.
+
+**Perbaikan.** Tabel `findings` dibuang dari skema. Rute tinjauan menempelkan detector dan severity dari hasil hitung yang sama dengan yang dipakai layar.
+
+**Penjaga.** `tests/api.test.ts`, kasus "menampilkan bantahan beserta nama proyek dan status isu" memeriksa severity ikut terisi.
+
+---
+
+## B-013 Bantahan untuk temuan yang tidak ada tetap diterima
+
+**Gejala.** `POST /api/projects/PRJ-002/findings/apa-saja/responses` dijawab `201`, dan barisnya masuk antrean tinjauan dengan fingerprint yang tidak pernah ada.
+
+**Penyebab.** Rute hanya memeriksa proyek, tidak memeriksa temuan.
+
+**Perbaikan.** Rute memeriksa fingerprint terhadap temuan proyek yang sedang hidup, dan menjawab `404 FINDING_NOT_FOUND` bila tidak ada.
+
+**Penjaga.** `tests/api.test.ts` pada blok antrean tinjauan, dan `npm run verify -w backend`.
 
 ---
 

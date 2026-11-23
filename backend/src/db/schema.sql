@@ -98,26 +98,10 @@ CREATE TABLE IF NOT EXISTS ingest_issues (
 
 -- ---- Fase 3+ (skema sudah siap, belum ditulis kodenya) ----
 
-CREATE TABLE IF NOT EXISTS findings (
-  id              INTEGER PRIMARY KEY AUTOINCREMENT,
-  project_id      TEXT NOT NULL,
-  detector_key    TEXT NOT NULL,
-  fingerprint     TEXT NOT NULL,
-  group_key       TEXT,
-  severity        TEXT NOT NULL,   -- critical | attention | watch | info
-  severity_final  TEXT NOT NULL,   -- setelah penyesuaian confidence
-  confidence      TEXT NOT NULL,   -- high | medium | low
-  method          TEXT,            -- projection | required_pace | rule
-  reason          TEXT NOT NULL,
-  unknowns_json   TEXT NOT NULL DEFAULT '[]',
-  evidence_json   TEXT NOT NULL DEFAULT '[]',
-  recommended_action TEXT,
-  suggested_owner_role TEXT,
-  suggestion_rationale TEXT,
-  computed_at     TEXT NOT NULL,
-  as_of           TEXT NOT NULL,
-  UNIQUE (project_id, fingerprint, as_of)
-);
+-- Temuan tidak disimpan di tabel. Mesin menghitungnya saat permintaan, karena
+-- hasilnya bergantung pada as_of dan pada isu yang sedang berjalan. Tabel yang
+-- sempat ada di sini tidak pernah ditulis siapa pun dan sudah dibuang supaya
+-- tidak menjadi acuan palsu (B-012).
 
 CREATE TABLE IF NOT EXISTS issues (
   id             INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -142,6 +126,10 @@ CREATE TABLE IF NOT EXISTS finding_responses (
   note          TEXT NOT NULL,
   evidence_ref  TEXT,
   needs_review  INTEGER NOT NULL DEFAULT 1,
+  reviewed_at   TEXT,
+  reviewed_by   TEXT,
+  review_decision TEXT,          -- UPHELD | DENIED
+  review_note   TEXT,
   created_at    TEXT NOT NULL
 );
 

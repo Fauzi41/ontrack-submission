@@ -48,6 +48,8 @@ Isu hanya berpindah ke `VERIFIED_RESOLVED` kalau ada record bukti yang dimiliki 
 
 Hari pertama untuk jalur data pada skala, karena itu satu-satunya bagian yang sudah saya ketahui akan gagal dan belum saya buktikan dengan beban nyata. Sasaran konkretnya: kueri agregat untuk portofolio, paginasi, dan impor bertahap. Saya ingin menutupnya dengan uji beban buatan 500 proyek supaya klaim di pertanyaan nomor 3 berubah dari dugaan menjadi angka.
 
-Hari kedua untuk antrean tinjauan manusia. Saat ini tanggapan sudah tersimpan (`ACKNOWLEDGED`, `DISPUTED`, `EXPLAINED`) dan yang berstatus `DISPUTED` ditandai perlu ditinjau, tetapi belum ada tempat di layar untuk melihat daftar yang menunggu tinjauan. Akibatnya, bantahan dari PIC tersimpan rapi dan tidak pernah dibaca. Itu celah yang paling merusak makna alat ini, karena seluruh nilainya bergantung pada keputusan manusia yang benar-benar terjadi.
+Hari kedua untuk membuat antrean tinjauan itu berguna pada skala. Antrean sudah ada: tab Tinjauan menampilkan setiap bantahan dan penjelasan yang belum diputuskan, dan keputusan manusia tercatat bersama alasannya tanpa mengubah severity mesin. Yang belum ada adalah tenggat, eskalasi, dan penyaringan per pemilik, sehingga pada 500 proyek antrean itu akan menjadi daftar panjang tanpa urutan Prioritas. Saya akan menambahkan batas waktu tanggapan, penanda lewat tenggat, dan penyaring per pengelola, lalu mengukurnya dengan uji beban yang sama seperti hari pertama.
+
+Catatan jujur: antrean ini baru dibangun setelah dokumen ini pertama kali ditulis. Sebelumnya bantahan hanya tersimpan dan tidak pernah terbaca, dan itu saya sebut sebagai celah paling merusak di penilaian awal.
 
 Yang sengaja tidak saya dahulukan: notifikasi keluar, autentikasi, dan penyuntingan temuan oleh manusia. Ketiganya menambah permukaan tanpa mengubah kebenaran angka, dan kebenaran angka adalah satu-satunya alasan alat ini ada.

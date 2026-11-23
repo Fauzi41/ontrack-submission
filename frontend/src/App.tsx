@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ApiError, runImport, type ImportSummary } from './api';
+import { ApiError, getReviewQueue, runImport, type ImportSummary } from './api';
 import PortfolioView from './views/Portfolio';
 import ProjectView from './views/Project';
+import ReviewView from './views/Review';
 import SourcesView from './views/Sources';
 
-type View = { kind: 'portfolio' } | { kind: 'project'; id: string } | { kind: 'sources' };
+type View = { kind: 'portfolio' } | { kind: 'project'; id: string } | { kind: 'review' } | { kind: 'sources' };
 
 export default function App() {
   const [view, setView] = useState<View>({ kind: 'portfolio' });
@@ -13,6 +14,7 @@ export default function App() {
   const [reloadKey, setReloadKey] = useState(0);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [reviewCount, setReviewCount] = useState(0);
 
   const loadMeta = useCallback(async () => {
     try {
@@ -22,11 +24,17 @@ export default function App() {
     } catch {
       setAsOf(null);
     }
+    try {
+      const queue = await getReviewQueue();
+      setReviewCount(queue.total);
+    } catch {
+      setReviewCount(0);
+    }
   }, []);
 
   useEffect(() => {
     void loadMeta();
-  }, [loadMeta]);
+  }, [loadMeta, view, reloadKey]);
 
   async function onImport() {
     setBusy(true);
@@ -69,6 +77,12 @@ export default function App() {
         >
           Portofolio
         </button>
+        <button
+          className={view.kind === 'review' ? 'tab active' : 'tab'}
+          onClick={() => setView({ kind: 'review' })}
+        >
+          Tinjauan{reviewCount > 0 ? ` (${reviewCount})` : ''}
+        </button>
         <button className={view.kind === 'sources' ? 'tab active' : 'tab'} onClick={() => setView({ kind: 'sources' })}>
           Sumber data
         </button>
@@ -90,6 +104,7 @@ export default function App() {
         <PortfolioView reloadKey={reloadKey} onOpen={(id) => setView({ kind: 'project', id })} />
       )}
       {view.kind === 'project' && <ProjectView projectId={view.id} onBack={() => setView({ kind: 'portfolio' })} />}
+      {view.kind === 'review' && <ReviewView onOpen={(id) => setView({ kind: 'project', id })} />}
       {view.kind === 'sources' && <SourcesView lastImport={lastImport} />}
     </div>
   );

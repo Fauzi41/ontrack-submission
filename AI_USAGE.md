@@ -20,8 +20,8 @@ Keputusan yang diambil model lalu disetujui manusia: pemakaian SQLite, aturan pe
 
 Klaim tanpa keluaran perintah tidak saya anggap selesai. Pemeriksaan yang benar-benar dijalankan:
 
-- `npm test` melaporkan 115 test di 8 berkas
-- `npm run verify -w backend` melaporkan 50 dari 50 pemeriksaan lulus, termasuk gerbang bukti dan empat pemeriksaan integritas SQL
+- `npm test` melaporkan 123 test di 8 berkas
+- `npm run verify -w backend` melaporkan 58 dari 58 pemeriksaan lulus, termasuk gerbang bukti dan empat pemeriksaan integritas SQL
 - `npm run probe:versions` melaporkan 6 dari 6 pemeriksaan lulus, termasuk penolakan record yang lebih tua
 - cakupan diukur dengan `vitest --coverage`, bukan diperkirakan
 - antarmuka diklik di browser sungguhan: menandai isu menunggu bukti, mencoba menutup dengan record lama, membuat follow-up, menandainya selesai, lalu memastikan hitungan isu tidak bergerak

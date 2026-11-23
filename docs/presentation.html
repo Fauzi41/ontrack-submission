@@ -220,10 +220,11 @@ const DECK = {
       body: `<ul>
         <li>Penutupan isu menolak permintaan tanpa bukti: <b>EVIDENCE_REQUIRED</b>.</li>
         <li>Record yang sudah ada saat isu dibuka ditolak: bukan bukti baru, hanya pengulangan.</li>
+        <li>Bantahan dari PIC tidak hilang di kotak masuk: ia masuk antrean Tinjauan sampai ada manusia yang memutuskan.</li>
         <li>Temuan yang berhenti muncul diberi status <b>NOT_DETECTED</b>, bukan terverifikasi. Mesin tidak menyatakan beres.</li>
       </ul>
       <div class="err-line">Record SCAN-BETA-001 sudah ada saat isu dibuka, jadi tidak bisa dipakai sebagai bukti perbaikan.</div>`,
-      note: 'Pesan itu datang dari API, bukan ditulis ulang di antarmuka. Layar menampilkan penolakan yang sama dengan yang dilihat pemanggil API.'
+      note: 'Pesan penolakan itu datang dari API, bukan ditulis ulang di antarmuka. Keputusan tinjauan juga dicatat bersama alasannya, dan tidak mengubah severity mesin.'
     },
     {
       kicker: '08 · keputusan',
@@ -244,9 +245,9 @@ const DECK = {
       body: `<div class="split">
         <div>
           <ul>
-            <li><b>115 test</b> di 8 berkas: parser, importer, normalisasi, detektor, peringkat, API, dan kasus tepi.</li>
-            <li><b>50 pemeriksaan</b> di skrip verifikasi: semua rute, kode jawaban, dan integritas data di SQLite.</li>
-            <li><b>11 bug</b> ditemukan selama pengerjaan, semuanya tercatat dengan gejala, penyebab, dan test penjaganya.</li>
+            <li><b>123 test</b> di 8 berkas: parser, importer, normalisasi, detektor, peringkat, API, dan kasus tepi.</li>
+            <li><b>58 pemeriksaan</b> di skrip verifikasi: semua rute, kode jawaban, dan integritas data di SQLite.</li>
+            <li><b>13 bug</b> ditemukan selama pengerjaan, semuanya tercatat dengan gejala, penyebab, dan test penjaganya.</li>
           </ul>
         </div>
         <div class="box">
@@ -256,7 +257,7 @@ const DECK = {
           <div class="small" style="margin-top:10px">API 80%, isu dan follow-up 92%, impor 86%.</div>
         </div>
       </div>`,
-      note: 'Enam bug tertangkap test, lima tertangkap penyisiran manual, pemeriksaan UI, dan skrip verifikasi. Daftarnya ada di docs/BUG_LOG.md.'
+      note: 'Enam bug tertangkap test, tujuh tertangkap penyisiran manual, pemeriksaan UI, dan skrip verifikasi. Daftarnya ada di docs/BUG_LOG.md.'
     },
     {
       kicker: '10 · batas',
@@ -373,10 +374,11 @@ const DECK = {
       body: `<ul>
         <li>Closure rejects requests without evidence: <b>EVIDENCE_REQUIRED</b>.</li>
         <li>A record that already existed when the issue opened is rejected: repetition is not new evidence.</li>
+        <li>A dispute from the PIC does not vanish into an inbox: it waits in the Review queue for a human decision.</li>
         <li>Findings that stop appearing become <b>NOT_DETECTED</b>, not verified. The engine never declares the work finished.</li>
       </ul>
       <div class="err-line">Record SCAN-BETA-001 already existed when the issue opened, so it cannot serve as proof of a fix.</div>`,
-      note: 'That message comes from the API, not rewritten in the interface. The screen shows the same rejection an API caller receives.'
+      note: 'That rejection comes from the API, not rewritten in the interface. Review decisions are recorded with their reason and leave engine severity untouched.'
     },
     {
       kicker: '08 · decisions',
@@ -397,9 +399,9 @@ const DECK = {
       body: `<div class="split">
         <div>
           <ul>
-            <li><b>115 tests</b> across 8 files: parser, importer, normalisation, detectors, ranking, API, edge cases.</li>
-            <li><b>50 checks</b> in the verification script: every route, expected status codes, and data integrity in SQLite.</li>
-            <li><b>11 bugs</b> found along the way, each recorded with symptom, cause, and the test that now guards it.</li>
+            <li><b>123 tests</b> across 8 files: parser, importer, normalisation, detectors, ranking, API, edge cases.</li>
+            <li><b>58 checks</b> in the verification script: every route, expected status codes, and data integrity in SQLite.</li>
+            <li><b>13 bugs</b> found along the way, each recorded with symptom, cause, and the test that now guards it.</li>
           </ul>
         </div>
         <div class="box">
@@ -409,7 +411,7 @@ const DECK = {
           <div class="small" style="margin-top:10px">API 80%, issues and follow-ups 92%, ingest 86%.</div>
         </div>
       </div>`,
-      note: 'Six bugs were caught by tests, five by manual review, UI checks, and the verification script. The list lives in docs/BUG_LOG.md.'
+      note: 'Six bugs were caught by tests, seven by manual review, UI checks, and the verification script. The list lives in docs/BUG_LOG.md.'
     },
     {
       kicker: '10 · limits',

@@ -303,7 +303,7 @@ describe('penutupan isu butuh bukti', () => {
 describe('tanggapan atas temuan', () => {
   it('menyimpan bantahan dengan alasan', async () => {
     const { app } = await imported();
-    const fingerprint = 'prj-002:schedule_risk';
+    const fingerprint = 'schedule_risk:main';
     const res = await app.inject({
       method: 'POST',
       url: `/api/projects/PRJ-002/findings/${fingerprint}/responses`,
@@ -317,7 +317,7 @@ describe('tanggapan atas temuan', () => {
     const { app } = await imported();
     const res = await app.inject({
       method: 'POST',
-      url: '/api/projects/PRJ-002/findings/apa-saja/responses',
+      url: '/api/projects/PRJ-002/findings/schedule_risk:main/responses',
       payload: { actor: 'rina', kind: 'DISPUTED', note: '' },
     });
     expect(res.statusCode).toBe(400);
@@ -328,7 +328,7 @@ describe('tanggapan atas temuan', () => {
     const { app } = await imported();
     const res = await app.inject({
       method: 'POST',
-      url: '/api/projects/PRJ-002/findings/apa-saja/responses',
+      url: '/api/projects/PRJ-002/findings/schedule_risk:main/responses',
       payload: { actor: 'rina', kind: 'DISPUTED', note: 'Ini bantahan.', evidence_ref: 'TIDAK-ADA-001' },
     });
     expect(res.statusCode).toBe(422);
@@ -382,5 +382,154 @@ describe('jalur galat yang mudah terlewat', () => {
     const res = await app.inject({ method: 'GET', url: '/api/projects/PRJ-002/followups' });
     expect(res.statusCode).toBe(200);
     expect(Array.isArray(res.json().followups)).toBe(true);
+  });
+});
+
+describe('antrean tinjauan', () => {
+  it('kosong sebelum ada tanggapan manusia', async () => {
+    const { app } = await imported();
+    const res = await app.inject({ method: 'GET', url: '/api/review' });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().total).toBe(0);
+  });
+
+  it('menampilkan bantahan beserta nama proyek dan status isu', async () => {
+    const { app } = await imported();
+    await app.inject({
+      method: 'POST',
+      url: '/api/projects/PRJ-002/findings/schedule_risk:main/responses',
+      payload: { actor: 'rina', kind: 'DISPUTED', note: 'Kapasitas 4.500 halaman per hari belum dihitung.' },
+    });
+    const res = await app.inject({ method: 'GET', url: '/api/review' });
+    const body = res.json() as { queue: Array<Record<string, unknown>>; counts: Record<string, number>; total: number };
+    expect(body.total).toBe(1);
+    expect(body.counts.DISPUTED).toBe(1);
+    const item = body.queue[0] as Record<string, unknown>;
+    expect(item.project_id).toBe('PRJ-002');
+    expect(item.project_name).toBe('Digitalisasi Arsip Beta');
+    expect(item.severity).toBe('critical');
+    expect(item.issue_status).toBe('OPEN');
+  });
+
+  it('menaruh bantahan sebelum penjelasan', async () => {
+    const { app } = await imported();
+    await app.inject({
+      method: 'POST',
+      url: '/api/projects/PRJ-002/findings/schedule_risk:main/responses',
+      payload: { actor: 'rina', kind: 'EXPLAINED', note: 'Angka dihitung ulang dari log scanner.' },
+    });
+    await app.inject({
+      method: 'POST',
+      url: '/api/projects/PRJ-002/findings/progress_gap:main/responses',
+      payload: { actor: 'rina', kind: 'DISPUTED', note: 'Selisih berasal dari halaman yang diproses ulang.' },
+    });
+    const body = (await app.inject({ method: 'GET', url: '/api/review' })).json() as {
+      queue: Array<{ kind: string }>;
+    };
+    expect(body.queue.map((q) => q.kind)).toEqual(['DISPUTED', 'EXPLAINED']);
+  });
+
+  it('mencatat keputusan dan mengeluarkan tanggapan dari antrean', async () => {
+    const { app } = await imported();
+    const created = await app.inject({
+      method: 'POST',
+      url: '/api/projects/PRJ-002/findings/schedule_risk:main/responses',
+      payload: { actor: 'rina', kind: 'DISPUTED', note: 'Kapasitas cadangan tidak dihitung.' },
+    });
+    const id = created.json().response.id as number;
+
+    const res = await app.inject({
+      method: 'POST',
+      url: `/api/responses/${id}/review`,
+      payload: { actor: 'budi', decision: 'UPHELD', note: 'Scan log menunjukkan dua unit tambahan sejak 2 Oktober.' },
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().response.review_decision).toBe('UPHELD');
+    expect(res.json().response.reviewed_by).toBe('budi');
+    expect(res.json().queue_remaining).toBe(0);
+
+    const portfolio = (await app.inject({ method: 'GET', url: '/api/portfolio' })).json() as { review_queue: number };
+    expect(portfolio.review_queue).toBe(0);
+  });
+
+  it('tidak mengubah severity temuan, apa pun keputusannya', async () => {
+    const { app } = await imported();
+    const before = (await app.inject({ method: 'GET', url: '/api/projects/PRJ-002' })).json() as {
+      findings: Array<{ fingerprint: string; severity_final: string }>;
+    };
+    const severityBefore = before.findings.find((f) => f.fingerprint === 'schedule_risk:main')?.severity_final;
+
+    const created = await app.inject({
+      method: 'POST',
+      url: '/api/projects/PRJ-002/findings/schedule_risk:main/responses',
+      payload: { actor: 'rina', kind: 'DISPUTED', note: 'Bantahan untuk menguji severity.' },
+    });
+    const id = created.json().response.id as number;
+    await app.inject({
+      method: 'POST',
+      url: `/api/responses/${id}/review`,
+      payload: { actor: 'budi', decision: 'UPHELD', note: 'Bantahan diterima untuk ditinjau manual.' },
+    });
+
+    const after = (await app.inject({ method: 'GET', url: '/api/projects/PRJ-002' })).json() as {
+      findings: Array<{ fingerprint: string; severity_final: string }>;
+    };
+    expect(after.findings.find((f) => f.fingerprint === 'schedule_risk:main')?.severity_final).toBe(severityBefore);
+  });
+
+  it('menolak keputusan kedua atas tanggapan yang sama', async () => {
+    const { app } = await imported();
+    const created = await app.inject({
+      method: 'POST',
+      url: '/api/projects/PRJ-002/findings/schedule_risk:main/responses',
+      payload: { actor: 'rina', kind: 'DISPUTED', note: 'Bantahan pertama.' },
+    });
+    const id = created.json().response.id as number;
+    const payload = { actor: 'budi', decision: 'DENIED', note: 'Tidak ada bukti tambahan.' };
+    await app.inject({ method: 'POST', url: `/api/responses/${id}/review`, payload });
+    const second = await app.inject({ method: 'POST', url: `/api/responses/${id}/review`, payload });
+    expect(second.statusCode).toBe(409);
+    expect(second.json().error).toBe('ALREADY_REVIEWED');
+  });
+
+  it('menolak keputusan tanpa alasan dan keputusan asing', async () => {
+    const { app } = await imported();
+    const created = await app.inject({
+      method: 'POST',
+      url: '/api/projects/PRJ-002/findings/schedule_risk:main/responses',
+      payload: { actor: 'rina', kind: 'DISPUTED', note: 'Bantahan untuk menguji validasi.' },
+    });
+    const id = created.json().response.id as number;
+
+    const noNote = await app.inject({
+      method: 'POST',
+      url: `/api/responses/${id}/review`,
+      payload: { actor: 'budi', decision: 'UPHELD', note: '' },
+    });
+    expect(noNote.statusCode).toBe(400);
+    expect(noNote.json().error).toBe('NOTE_REQUIRED');
+
+    const badDecision = await app.inject({
+      method: 'POST',
+      url: `/api/responses/${id}/review`,
+      payload: { actor: 'budi', decision: 'SETUJU', note: 'Keputusan tidak dikenal.' },
+    });
+    expect(badDecision.statusCode).toBe(400);
+    expect(badDecision.json().error).toBe('DECISION_INVALID');
+  });
+
+  it('menolak id yang bukan angka dan id yang tidak ada', async () => {
+    const { app } = await imported();
+    const bad = await app.inject({ method: 'POST', url: '/api/responses/abc/review', payload: { decision: 'UPHELD', note: 'Uji.' } });
+    expect(bad.statusCode).toBe(400);
+    expect(bad.json().error).toBe('BAD_ID');
+
+    const missing = await app.inject({
+      method: 'POST',
+      url: '/api/responses/999999/review',
+      payload: { decision: 'UPHELD', note: 'Uji.' },
+    });
+    expect(missing.statusCode).toBe(404);
+    expect(missing.json().error).toBe('REVIEW_NOT_FOUND');
   });
 });

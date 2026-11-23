@@ -71,8 +71,8 @@ proof                   keluaran mesin yang bisa dibangun ulang
 
 | Perintah | Gunanya |
 |---|---|
-| `npm test` | 115 test di 8 berkas |
-| `npm run verify -w backend` | 50 pemeriksaan rute dan integritas data pada basis data sementara |
+| `npm test` | 123 test di 8 berkas |
+| `npm run verify -w backend` | 58 pemeriksaan rute dan integritas data pada basis data sementara |
 | `npm run evaluate -w backend` | keluaran mesin dalam bentuk teks |
 | `npm run probe:versions` | membuktikan riwayat versi record bekerja |
 | `bash scripts/proof.sh` | membangun ulang seluruh proof pack dari nol |
@@ -87,7 +87,7 @@ Mesin tidak meramalkan. Tidak ada model bahasa, tidak ada proyeksi. Semua angka 
 
 ## API
 
-Empat belas rute, semuanya tanpa autentikasi karena brief melarangnya.
+Enam belas rute, semuanya tanpa autentikasi karena brief melarangnya.
 
 | Metode | Rute | Gunanya |
 |---|---|---|
@@ -102,6 +102,8 @@ Empat belas rute, semuanya tanpa autentikasi karena brief melarangnya.
 | PATCH | `/api/followups/:id` | ubah status, pemilik, atau tanggal |
 | GET | `/api/projects/:id/findings/:fingerprint/responses` | tanggapan atas satu temuan |
 | POST | `/api/projects/:id/findings/:fingerprint/responses` | akui, bantah, atau jelaskan |
+| GET | `/api/review` | antrean tanggapan yang menunggu keputusan manusia |
+| POST | `/api/responses/:id/review` | terima atau tolak bantahan, dengan alasan |
 | GET | `/api/source-inventory` | sebaran baris sumber dan impor terakhir |
 | GET | `/api/import-runs/latest` | hasil impor terakhir |
 | POST | `/api/import` | baca ulang berkas sumber dan selaraskan isu |
@@ -110,7 +112,7 @@ Kode galat sengaja dibedakan, bukan satu kode untuk semua penolakan: `EVIDENCE_R
 
 ## Model data
 
-Empat belas tabel. Yang penting untuk membaca perilakunya:
+Tiga belas tabel. Yang penting untuk membaca perilakunya:
 
 | Tabel | Isinya |
 |---|---|
@@ -118,10 +120,9 @@ Empat belas tabel. Yang penting untuk membaca perilakunya:
 | `observation_values` | nilai yang diekstrak dari record, satu baris per metrik |
 | `record_versions` | versi lama record dengan alasan `SUPERSEDED` atau `LATE_ARRIVAL` |
 | `projects`, `project_types` | master proyek dan aturan basis progress per tipe |
-| `findings` | temuan hasil detektor, dengan fingerprint dan severity |
 | `issues` | daftar kerja: OPEN, AWAITING_EVIDENCE, VERIFIED_RESOLVED, NOT_DETECTED |
 | `followups`, `followup_events` | tindakan manusia dan riwayat perubahannya |
-| `finding_responses` | tanggapan manusia atas temuan |
+| `finding_responses` | tanggapan manusia atas temuan, beserta keputusan tinjauannya (`review_decision`, `reviewed_by`, `review_note`) |
 | `import_runs`, `ingest_issues` | catatan impor dan peringatan normalisasi |
 | `deadline_history`, `meta` | perubahan deadline dan waktu acuan `as_of` |
 
@@ -155,7 +156,7 @@ Rentang kerja yang tercatat 3 jam 49 menit. Sisanya membaca brief, memeriksa has
 
 - `AI_USAGE.md` apa yang dikerjakan model, dan apa yang diperiksa manusia
 - `docs/DECISION_LOG.md` keputusan rancangan, alternatif yang ditolak, dan biaya membaliknya
-- `docs/BUG_LOG.md` sebelas bug beserta gejala, penyebab, dan test penjaganya
+- `docs/BUG_LOG.md` tiga belas bug beserta gejala, penyebab, dan test penjaganya
 - `docs/PROOF_PACK.md` peta klaim ke berkas bukti
 - `docs/REFLECTION.md` lima pertanyaan refleksi dari panduan pengiriman
 - `docs/PRESENTATION.pdf` sepuluh slide bahasa Inggris, `docs/PRESENTATION-ID.pdf` versi Indonesia

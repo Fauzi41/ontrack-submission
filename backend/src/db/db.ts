@@ -15,8 +15,28 @@ export function openDb(dbPath: string = DB_PATH): DB {
   db.pragma('journal_mode = WAL');
   db.pragma('foreign_keys = ON');
   db.exec(SCHEMA_SQL);
+  migrate(db);
   seedProjectTypes(db);
   return db;
+}
+
+/**
+ * `CREATE TABLE IF NOT EXISTS` tidak menambah kolom pada tabel yang sudah ada,
+ * jadi kolom baru ditambahkan di sini. Aman dijalankan berkali-kali.
+ */
+function migrate(db: DB): void {
+  const columns = new Set(
+    (db.prepare('PRAGMA table_info(finding_responses)').all() as Array<{ name: string }>).map((c) => c.name),
+  );
+  const additions: Array<[string, string]> = [
+    ['reviewed_at', 'TEXT'],
+    ['reviewed_by', 'TEXT'],
+    ['review_decision', 'TEXT'],
+    ['review_note', 'TEXT'],
+  ];
+  for (const [name, type] of additions) {
+    if (!columns.has(name)) db.exec(`ALTER TABLE finding_responses ADD COLUMN ${name} ${type}`);
+  }
 }
 
 export function inMemoryDb(): DB {

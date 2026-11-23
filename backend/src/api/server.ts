@@ -17,7 +17,7 @@ import {
   listFollowups,
   updateFollowup,
 } from '../store/followups';
-import { ResponseError, addResponse, listResponses } from '../store/responses';
+import { ResponseError, addResponse, listResponses, listReviewQueue, reviewResponse } from '../store/responses';
 import { diffFindings } from './impact';
 
 const nowIso = (): string => new Date().toISOString();
@@ -37,7 +37,15 @@ function fail(reply: FastifyReply, err: unknown) {
     return reply.code(code).send({ error: err.code, message: err.message });
   }
   if (err instanceof ResponseError) {
-    return reply.code(err.code === 'EVIDENCE_UNKNOWN' ? 422 : 400).send({ error: err.code, message: err.message });
+    const code =
+      err.code === 'REVIEW_NOT_FOUND' || err.code === 'FINDING_NOT_FOUND'
+        ? 404
+        : err.code === 'ALREADY_REVIEWED'
+          ? 409
+          : err.code === 'EVIDENCE_UNKNOWN'
+            ? 422
+            : 400;
+    return reply.code(code).send({ error: err.code, message: err.message });
   }
   if (err instanceof ImportError) {
     return reply.code(422).send({ error: err.code, message: err.message });
@@ -92,7 +100,12 @@ export function buildServer(dbPath?: string) {
     }>;
     const issue_counts: Record<string, number> = {};
     for (const row of rows) issue_counts[row.status] = row.count;
-    return { ...portfolio, issue_counts };
+    const review_queue = (
+      db.prepare('SELECT COUNT(*) AS c FROM finding_responses WHERE needs_review = 1 AND reviewed_at IS NULL').get() as {
+        c: number;
+      }
+    ).c;
+    return { ...portfolio, issue_counts, review_queue };
   });
 
   app.get('/api/projects/:projectId', async (req, reply) => {
@@ -212,12 +225,45 @@ export function buildServer(dbPath?: string) {
   app.post('/api/projects/:projectId/findings/:fingerprint/responses', async (req, reply) => {
     const { projectId, fingerprint } = req.params as { projectId: string; fingerprint: string };
     const body = (req.body ?? {}) as { actor?: string; kind?: string; note?: string; evidence_ref?: string | null };
-    if (!portfolioNow().projects.some((p) => p.project_id === projectId)) {
+    const project = portfolioNow().projects.find((p) => p.project_id === projectId);
+    if (!project) {
       return reply.code(404).send({ error: 'PROJECT_NOT_FOUND', message: `Proyek ${projectId} tidak ada.` });
+    }
+    if (!project.findings.some((f) => f.fingerprint === fingerprint)) {
+      return reply
+        .code(404)
+        .send({ error: 'FINDING_NOT_FOUND', message: `Temuan ${fingerprint} tidak ada pada proyek ${projectId}.` });
     }
     try {
       const response = addResponse(db, projectId, fingerprint, { ...body, actor: body.actor ?? 'api' }, nowIso());
       return reply.code(201).send({ response });
+    } catch (err) {
+      return fail(reply, err);
+    }
+  });
+
+  app.get('/api/review', async () => {
+    const portfolio = portfolioNow();
+    const queue = listReviewQueue(db).map((item) => {
+      const finding = portfolio.projects
+        .find((p) => p.project_id === item.project_id)
+        ?.findings.find((f) => f.fingerprint === item.fingerprint);
+      return { ...item, detector: finding?.detector ?? null, severity: finding?.severity_final ?? null };
+    });
+    const counts: Record<string, number> = {};
+    for (const item of queue) counts[item.kind] = (counts[item.kind] ?? 0) + 1;
+    return { queue, counts, total: queue.length };
+  });
+
+  app.post('/api/responses/:id/review', async (req, reply) => {
+    const id = Number((req.params as { id: string }).id);
+    if (!Number.isInteger(id) || id <= 0) {
+      return reply.code(400).send({ error: 'BAD_ID', message: 'Id tanggapan harus angka.' });
+    }
+    const body = (req.body ?? {}) as { decision?: string; note?: string; actor?: string };
+    try {
+      const response = reviewResponse(db, id, { ...body, actor: body.actor ?? 'api' }, nowIso());
+      return { response, queue_remaining: listReviewQueue(db).length };
     } catch (err) {
       return fail(reply, err);
     }

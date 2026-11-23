@@ -135,17 +135,35 @@ async function main() {
   await app.inject({ method: 'GET', url: '/api/followups/FU-TIDAK-ADA' }).then((r) => record('follow-up tak dikenal', 404, r.statusCode));
 
   // ---- tanggapan ----
-  await call('POST', '/api/projects/PRJ-002/findings/apa-saja/responses', {
+  await call('POST', '/api/projects/PRJ-002/findings/schedule_risk:main/responses', {
     kind: 'DISPUTED',
     note: 'Klaim kapasitas 4.500 halaman per hari belum dihitung.',
   }, 201);
   const emptyNote = await app.inject({
     method: 'POST',
-    url: '/api/projects/PRJ-002/findings/apa-saja/responses',
+    url: '/api/projects/PRJ-002/findings/schedule_risk:main/responses',
     payload: { kind: 'DISPUTED', note: '' },
   });
   record('tanggapan tanpa alasan', 400, emptyNote.statusCode);
-  await call('GET', '/api/projects/PRJ-002/findings/apa-saja/responses');
+  await call('GET', '/api/projects/PRJ-002/findings/schedule_risk:main/responses');
+
+  // ---- tinjauan ----
+  const queue = await call('GET', '/api/review');
+  record('antrean tinjauan berisi satu bantahan', 1, queue.total);
+  const reviewId = (queue.queue as Array<{ id: number }>)[0]?.id ?? 0;
+  const decided = await call('POST', `/api/responses/${reviewId}/review`, {
+    actor: 'budi',
+    decision: 'UPHELD',
+    note: 'Dua unit cadangan berjalan sejak 2 Oktober, kapasitas perlu dihitung ulang.',
+  });
+  record('keputusan tercatat', 'UPHELD', decided.response.review_decision);
+  const afterReview = await call('GET', '/api/review');
+  record('antrean kosong setelah diputuskan', 0, afterReview.total);
+
+  const reviewedFinding = (
+    (await call('GET', '/api/projects/PRJ-002')).findings as Array<{ fingerprint: string; severity_final: string }>
+  ).find((f) => f.fingerprint === 'schedule_risk:main');
+  record('severity tidak berubah karena keputusan', 'critical', reviewedFinding?.severity_final ?? 'hilang');
 
   // ---- integritas data ----
   const conn = openDb(dbFile);

@@ -18,8 +18,8 @@ Perintah itu memakai basis data baru di `proof/ontrack.db`, jadi data kerja di `
 | `json/portfolio.json` | `npm run dump -w backend` | jawaban `GET /api/portfolio` apa adanya |
 | `json/issues.json` | sama | jawaban `GET /api/issues` |
 | `json/source-inventory.json` | sama | jawaban `GET /api/source-inventory` |
-| `04-test.txt` | `npm test` | 115 test, 8 berkas |
-| `05-verifikasi.txt` | `npm run verify -w backend` | 50 pemeriksaan rute dan integritas data |
+| `04-test.txt` | `npm test` | 123 test, 8 berkas |
+| `05-verifikasi.txt` | `npm run verify -w backend` | 58 pemeriksaan rute dan integritas data |
 | `06-cakupan.txt` | `vitest --coverage` | cakupan per modul |
 | `07-build.txt` | `npm run build -w frontend` | ukuran bundel |
 | `08-versi.txt` | `npm run probe:versions` | bukti `record_versions` bekerja |
@@ -42,8 +42,9 @@ Setiap kalimat di deck dan README bisa ditelusuri ke salah satu baris di bawah.
 | Impor kedua tidak menggandakan data | 41 duplikat, 0 baris baru, portofolio identik | `05-verifikasi.txt` |
 | Isu hanya tertutup dengan bukti baru | tanpa bukti 422, record lama 409, record proyek lain 409, record baru 200 | `05-verifikasi.txt` |
 | Follow-up selesai tidak menutup isu | status follow-up `DONE`, hitungan isu tidak bergerak | `05-verifikasi.txt` |
+| Bantahan menunggu keputusan manusia | antrean berisi 1, keputusan tercatat, antrean kembali 0, severity tetap `critical` | `05-verifikasi.txt` |
 | Riwayat versi record benar-benar tersimpan | 2 versi: satu `SUPERSEDED`, satu `LATE_ARRIVAL` ditolak | `08-versi.txt` |
-| Kode diuji, bukan hanya dijalankan sekali | 115 test, 50 pemeriksaan rute, cakupan 96,34% | `04-test.txt`, `05-verifikasi.txt`, `06-cakupan.txt` |
+| Kode diuji, bukan hanya dijalankan sekali | 123 test, 58 pemeriksaan rute, cakupan 96,45% | `04-test.txt`, `05-verifikasi.txt`, `06-cakupan.txt` |
 
 ## Uji dari salinan bersih
 
@@ -52,8 +53,8 @@ Rantai yang sama dijalankan ulang pada klon baru di direktori sementara, dengan 
 ```
 git clone <repo> ontrack-dryrun
 npm install                        283 paket, tanpa langkah tambahan
-npm test                           115 test lulus
-npm run verify -w backend          50/50 pemeriksaan lulus
+npm test                           123 test lulus
+npm run verify -w backend          58/58 pemeriksaan lulus
 npm run import -w backend          41 baris masuk, 6 proyek terbaca
 npm run build -w frontend          165,69 kB
 npm start -w backend               API dan antarmuka dari satu port

@@ -110,6 +110,22 @@ Alternatif yang ditolak: mengizinkan penutupan dengan catatan bebas. Itu membuat
 
 Biaya membalik: rendah di kode, tinggi di makna. Tanpa aturan ini alatnya berubah menjadi dashboard status biasa.
 
+## D-015 Keputusan tinjauan dicatat, severity mesin tidak diubah
+
+Bantahan dan penjelasan dari PIC masuk ke antrean `GET /api/review`. Manusia memutuskan `UPHELD` atau `DENIED` lewat `POST /api/responses/:id/review`, dengan alasan wajib dan nama peninjau. Keputusan itu tersimpan di baris tanggapan, bukan menimpa hasil hitung mesin.
+
+Alternatif yang ditolak: keputusan `UPHELD` langsung menurunkan severity temuan. Cara itu membuat satu klik manusia bisa menghapus temuan yang belum tentu salah, dan menghilangkan jejak bahwa mesin pernah menyimpulkan lain.
+
+Biaya membalik: rendah di kode, tinggi di keterlacakan. Kalau severity ikut berubah, riwayat "apa yang mesin katakan" hilang.
+
+## D-016 Tabel `findings` dibuang, temuan tetap dihitung saat permintaan
+
+Skema awal menyiapkan tabel `findings`, tetapi tidak ada kode yang menulisinya. Temuan dihitung dari konteks dan bukti setiap kali dibutuhkan, karena hasilnya bergantung pada `as_of` dan pada status isu. Tabel itu dihapus supaya tidak ada yang mengira ada simpanan temuan.
+
+Alternatif yang ditolak: menyimpan temuan setiap impor. Itu menambah satu sumber kebenaran kedua yang bisa berselisih dengan hasil hitung, persis masalah yang alat ini coba hindari.
+
+Biaya membalik: sedang. Kalau suatu hari temuan perlu riwayat, tabel itu harus dibuat lagi dengan kunci `(project_id, fingerprint, as_of)` dan ditulis oleh satu jalur saja.
+
 ## D-014 Urutan pengerjaan deck sebelum proof pack
 
 Slide dua bahasa dikerjakan lebih dulu daripada proof pack dan dokumen, karena itu bagian dengan risiko waktu tertinggi dan hasilnya memaksa angka terakhir dibekukan lebih awal.

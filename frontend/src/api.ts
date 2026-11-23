@@ -67,6 +67,28 @@ export interface Portfolio {
   projects: Assessment[];
   counts: Partial<Record<Severity, number>>;
   issue_counts: Record<string, number>;
+  review_queue: number;
+}
+
+export interface ReviewItem {
+  id: number;
+  project_id: string;
+  project_name: string;
+  fingerprint: string;
+  detector: string | null;
+  severity: Severity | null;
+  actor: string;
+  kind: 'ACKNOWLEDGED' | 'DISPUTED' | 'EXPLAINED';
+  note: string;
+  evidence_ref: string | null;
+  created_at: string;
+  issue_status: string | null;
+}
+
+export interface ReviewQueue {
+  queue: ReviewItem[];
+  counts: Record<string, number>;
+  total: number;
 }
 
 export interface Issue {
@@ -205,6 +227,19 @@ export const addResponse = (
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ ...body, actor: 'ui' }),
   }).then((r) => parse<{ response: ResponseRow }>(r));
+
+export const getReviewQueue = (): Promise<ReviewQueue> =>
+  fetch('/api/review').then((r) => parse<ReviewQueue>(r));
+
+export const decideReview = (
+  id: number,
+  body: { decision: 'UPHELD' | 'DENIED'; note: string },
+): Promise<{ response: ResponseRow; queue_remaining: number }> =>
+  fetch(`/api/responses/${id}/review`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ ...body, actor: 'ui' }),
+  }).then((r) => parse<{ response: ResponseRow; queue_remaining: number }>(r));
 
 export const LABEL = {
   severity: { critical: 'Kritis', attention: 'Perhatian', watch: 'Pantau', info: 'Info' } as Record<string, string>,
