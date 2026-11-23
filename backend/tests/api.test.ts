@@ -190,6 +190,25 @@ describe('follow-up', () => {
     expect(res.statusCode).toBe(400);
     expect(res.json().error).toBe('DUE_DATE_FORMAT');
   });
+
+  it('menolak follow-up kembar yang masih berjalan, lalu menerimanya setelah selesai', async () => {
+    const { app } = await imported();
+    const body = { title: 'Tambah shift pemindaian malam', owner: 'Rina' };
+
+    const first = await app.inject({ method: 'POST', url: '/api/projects/PRJ-002/followups', payload: body });
+    expect(first.statusCode).toBe(201);
+
+    const second = await app.inject({ method: 'POST', url: '/api/projects/PRJ-002/followups', payload: body });
+    expect(second.statusCode).toBe(409);
+    expect(second.json().error).toBe('DUPLICATE_FOLLOWUP');
+
+    const id = first.json().followup.id as string;
+    const done = await app.inject({ method: 'PATCH', url: `/api/followups/${id}`, payload: { status: 'DONE' } });
+    expect(done.statusCode).toBe(200);
+
+    const third = await app.inject({ method: 'POST', url: '/api/projects/PRJ-002/followups', payload: body });
+    expect(third.statusCode).toBe(201);
+  });
 });
 
 describe('penutupan isu butuh bukti', () => {

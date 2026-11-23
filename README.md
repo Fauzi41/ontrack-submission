@@ -71,7 +71,7 @@ proof                   keluaran mesin yang bisa dibangun ulang
 
 | Perintah | Gunanya |
 |---|---|
-| `npm test` | 123 test di 8 berkas |
+| `npm test` | 124 test di 8 berkas |
 | `npm run verify -w backend` | 58 pemeriksaan rute dan integritas data pada basis data sementara |
 | `npm run evaluate -w backend` | keluaran mesin dalam bentuk teks |
 | `npm run probe:versions` | membuktikan riwayat versi record bekerja |

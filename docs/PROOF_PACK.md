@@ -18,7 +18,7 @@ Perintah itu memakai basis data baru di `proof/ontrack.db`, jadi data kerja di `
 | `json/portfolio.json` | `npm run dump -w backend` | jawaban `GET /api/portfolio` apa adanya |
 | `json/issues.json` | sama | jawaban `GET /api/issues` |
 | `json/source-inventory.json` | sama | jawaban `GET /api/source-inventory` |
-| `04-test.txt` | `npm test` | 123 test, 8 berkas |
+| `04-test.txt` | `npm test` | 124 test, 8 berkas |
 | `05-verifikasi.txt` | `npm run verify -w backend` | 58 pemeriksaan rute dan integritas data |
 | `06-cakupan.txt` | `vitest --coverage` | cakupan per modul |
 | `07-build.txt` | `npm run build -w frontend` | ukuran bundel |
@@ -44,7 +44,7 @@ Setiap kalimat di deck dan README bisa ditelusuri ke salah satu baris di bawah.
 | Follow-up selesai tidak menutup isu | status follow-up `DONE`, hitungan isu tidak bergerak | `05-verifikasi.txt` |
 | Bantahan menunggu keputusan manusia | antrean berisi 1, keputusan tercatat, antrean kembali 0, severity tetap `critical` | `05-verifikasi.txt` |
 | Riwayat versi record benar-benar tersimpan | 2 versi: satu `SUPERSEDED`, satu `LATE_ARRIVAL` ditolak | `08-versi.txt` |
-| Kode diuji, bukan hanya dijalankan sekali | 123 test, 58 pemeriksaan rute, cakupan 96,45% | `04-test.txt`, `05-verifikasi.txt`, `06-cakupan.txt` |
+| Kode diuji, bukan hanya dijalankan sekali | 124 test, 58 pemeriksaan rute, cakupan 96,45% | `04-test.txt`, `05-verifikasi.txt`, `06-cakupan.txt` |
 
 ## Uji dari salinan bersih
 

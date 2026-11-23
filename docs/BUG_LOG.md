@@ -210,6 +210,18 @@ untuk baris yang benar-benar ditolak.
 
 ---
 
+## B-014 Dua klik menghasilkan dua follow-up identik
+
+**Gejala.** Basis data kerja berisi dua follow-up dengan judul, pemilik, dan proyek yang sama, keduanya `DONE`. Yang kedua muncul dari klik ulang pada tombol yang sama.
+
+**Penyebab.** Tombol dikunci selama permintaan berjalan, tetapi setelah selesai tombol kembali hidup, dan server tidak pernah memeriksa apakah hal yang sama sudah tercatat.
+
+**Perbaikan.** Follow-up identik untuk pemilik yang sama ditolak `409 DUPLICATE_FOLLOWUP` selama yang lama belum selesai. Setelah `DONE`, judul yang sama boleh dipakai lagi, karena pekerjaan berikutnya bisa berulang.
+
+**Penjaga.** `tests/api.test.ts`, kasus "menolak follow-up kembar yang masih berjalan".
+
+---
+
 ## Pembersihan yang bukan bug
 
 - `worstSeverity` diekspor dari `types.ts` tapi tidak pernah dipanggil. Dihapus,

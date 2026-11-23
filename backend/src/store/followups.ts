@@ -87,6 +87,21 @@ export function createFollowup(
   }
 
   const id = `FU-${randomUUID().slice(0, 8)}`;
+
+  // Dua klik beruntun pada tombol yang sama tidak boleh menjadi dua tagihan
+  // untuk orang yang sama. Follow-up identik yang masih berjalan dianggap
+  // duplikat; setelah selesai, judul yang sama boleh dipakai lagi.
+  const twin = db
+    .prepare(
+      `SELECT id FROM followups
+       WHERE project_id = ? AND owner = ? AND title = ? AND status IN ('OPEN','IN_PROGRESS')
+       LIMIT 1`,
+    )
+    .get(projectId, owner, title) as { id: string } | undefined;
+  if (twin) {
+    throw new FollowupError('DUPLICATE_FOLLOWUP', `Follow-up yang sama masih berjalan: ${twin.id}.`);
+  }
+
   db.transaction(() => {
     db.prepare(
       `INSERT INTO followups (id, project_id, issue_id, fingerprint, title, description, owner, owner_kind, status, due_date, created_at, updated_at)

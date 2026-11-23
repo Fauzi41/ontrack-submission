@@ -33,7 +33,12 @@ function fail(reply: FastifyReply, err: unknown) {
     return reply.code(code).send({ error: err.code, message: err.message });
   }
   if (err instanceof FollowupError) {
-    const code = err.code === 'FOLLOWUP_NOT_FOUND' || err.code === 'PROJECT_NOT_FOUND' ? 404 : 400;
+    const code =
+      err.code === 'FOLLOWUP_NOT_FOUND' || err.code === 'PROJECT_NOT_FOUND'
+        ? 404
+        : err.code === 'DUPLICATE_FOLLOWUP'
+          ? 409
+          : 400;
     return reply.code(code).send({ error: err.code, message: err.message });
   }
   if (err instanceof ResponseError) {

@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "verify": "tsx src/cli/verify.ts",
     "dump": "tsx src/cli/dump.ts",
-    "probe:versions": "tsx src/cli/probe-versions.ts"
+    "probe:versions": "tsx src/cli/probe-versions.ts",
+    "audit": "tsx src/cli/audit.ts"
   },
   "dependencies": {
     "@fastify/cors": "^10.0.1",

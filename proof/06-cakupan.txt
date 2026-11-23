@@ -4,32 +4,33 @@ npm notice run vitest run --coverage --coverage.reporter=text
  RUN  v2.1.9 C:/Users/Fore/git/assessment/tata/ontrack/backend
       Coverage enabled with v8
 
- ✓ tests/csv.test.ts (7 tests) 9ms
- ✓ tests/normalize.test.ts (8 tests) 10ms
- ✓ tests/detectors.test.ts (22 tests) 23ms
- ✓ tests/edge-cases.test.ts (20 tests) 31ms
- ✓ tests/portfolio.test.ts (13 tests) 105ms
- ✓ tests/importer.test.ts (13 tests) 437ms
+ ✓ tests/normalize.test.ts (8 tests) 12ms
+ ✓ tests/csv.test.ts (7 tests) 10ms
+ ✓ tests/detectors.test.ts (22 tests) 24ms
+ ✓ tests/edge-cases.test.ts (20 tests) 28ms
+ ✓ tests/portfolio.test.ts (13 tests) 14ms
+ ✓ tests/importer.test.ts (13 tests) 337ms
  ✓ tests/presence.test.ts (5 tests) 7ms
- ✓ tests/api.test.ts (35 tests) 2449ms
+ ✓ tests/api.test.ts (36 tests) 2247ms
+   ✓ impor lewat API > melaporkan apa yang lahir dari impor, bukan hanya jumlah baris 359ms
 
  Test Files  8 passed (8)
-      Tests  123 passed (123)
-   Start at  09:51:42
-   Duration  4.52s (transform 2.21s, setup 0ms, collect 4.18s, tests 3.07s, environment 2ms, prepare 1.55s)
+      Tests  124 passed (124)
+   Start at  10:14:35
+   Duration  4.06s (transform 937ms, setup 0ms, collect 2.68s, tests 2.68s, environment 3ms, prepare 1.67s)
 
  % Coverage report from v8
 -------------------|---------|----------|---------|---------|-------------------
 File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -------------------|---------|----------|---------|---------|-------------------
-All files          |   96.45 |    87.69 |   97.91 |   96.45 |                   
+All files          |   96.48 |    87.86 |   97.91 |   96.48 |                   
  backend           |       0 |        0 |       0 |       0 |                   
   vitest.config.ts |       0 |        0 |       0 |       0 | 1-17              
  backend/src       |     100 |        0 |     100 |     100 |                   
   config.ts        |     100 |        0 |     100 |     100 | 11                
- backend/src/api   |   84.17 |     80.8 |     100 |   84.17 |                   
+ backend/src/api   |   84.45 |    81.18 |     100 |   84.45 |                   
   impact.ts        |     100 |    82.35 |     100 |     100 | 55-56,59          
-  server.ts        |   81.58 |    80.48 |     100 |   81.58 | ...86-291,304-305 
+  server.ts        |   81.96 |    80.95 |     100 |   81.96 | ...91-296,309-310 
  backend/src/core  |     100 |       92 |     100 |     100 |                   
   presence.ts      |     100 |       92 |     100 |     100 | 36,49             
  backend/src/db    |     100 |    83.33 |     100 |     100 |                   
@@ -38,18 +39,18 @@ All files          |   96.45 |    87.69 |   97.91 |   96.45 |
   csv.ts           |     100 |    90.62 |     100 |     100 | 68,70,93          
   importer.ts      |   85.57 |    79.22 |     100 |   85.57 | ...87-390,392-400 
   normalize.ts     |   97.61 |    92.85 |     100 |   97.61 | 97-98,159-160     
- .../src/interpret |     100 |     88.3 |     100 |     100 |                   
+ .../src/interpret |     100 |    88.27 |     100 |     100 |                   
   context.ts       |     100 |    85.55 |     100 |     100 | ...09-112,131,134 
-  detectors.ts     |     100 |    89.53 |     100 |     100 | ...68,372,404,433 
+  detectors.ts     |     100 |    89.49 |     100 |     100 | ...68,372,404,433 
   engine.ts        |     100 |    88.63 |     100 |     100 | ...77-179,182,189 
   load.ts          |     100 |    82.35 |     100 |     100 | 68-71             
   types.ts         |     100 |      100 |     100 |     100 |                   
- backend/src/store |    94.8 |    73.91 |   94.11 |    94.8 |                   
-  followups.ts     |   93.16 |    62.16 |     100 |   93.16 | ...57-158,160-161 
+ backend/src/store |   94.94 |    76.04 |   94.11 |   94.94 |                   
+  followups.ts     |    93.6 |    68.29 |     100 |    93.6 | ...72-173,175-176 
   issues.ts        |      99 |    90.32 |     100 |      99 | 90                
   responses.ts     |   91.66 |    70.83 |      80 |   91.66 | 101-104,116-117   
- backend/tests     |   99.85 |    96.96 |     100 |   99.85 |                   
-  api.test.ts      |   99.57 |    96.72 |     100 |   99.57 | 26,86             
+ backend/tests     |   99.85 |    96.98 |     100 |   99.85 |                   
+  api.test.ts      |   99.58 |    96.77 |     100 |   99.58 | 26,86             
   csv.test.ts      |     100 |      100 |     100 |     100 |                   
   ...ctors.test.ts |     100 |      100 |     100 |     100 |                   
   ...cases.test.ts |     100 |      100 |     100 |     100 |                   

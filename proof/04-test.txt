@@ -5,18 +5,18 @@ npm notice run vitest run
 
  RUN  v2.1.9 C:/Users/Fore/git/assessment/tata/ontrack/backend
 
- ✓ tests/csv.test.ts (7 tests) 8ms
+ ✓ tests/csv.test.ts (7 tests) 7ms
  ✓ tests/normalize.test.ts (8 tests) 9ms
- ✓ tests/detectors.test.ts (22 tests) 18ms
- ✓ tests/edge-cases.test.ts (20 tests) 19ms
- ✓ tests/portfolio.test.ts (13 tests) 17ms
- ✓ tests/importer.test.ts (13 tests) 399ms
- ✓ tests/presence.test.ts (5 tests) 6ms
- ✓ tests/api.test.ts (35 tests) 2228ms
-   ✓ impor lewat API > melaporkan apa yang lahir dari impor, bukan hanya jumlah baris 317ms
+ ✓ tests/detectors.test.ts (22 tests) 21ms
+ ✓ tests/edge-cases.test.ts (20 tests) 18ms
+ ✓ tests/portfolio.test.ts (13 tests) 11ms
+ ✓ tests/importer.test.ts (13 tests) 531ms
+ ✓ tests/presence.test.ts (5 tests) 7ms
+ ✓ tests/api.test.ts (36 tests) 2117ms
+   ✓ impor lewat API > melaporkan apa yang lahir dari impor, bukan hanya jumlah baris 320ms
 
  Test Files  8 passed (8)
-      Tests  123 passed (123)
-   Start at  09:51:34
-   Duration  4.12s (transform 1.61s, setup 0ms, collect 3.66s, tests 2.70s, environment 2ms, prepare 1.60s)
+      Tests  124 passed (124)
+   Start at  10:14:25
+   Duration  4.25s (transform 2.00s, setup 0ms, collect 3.80s, tests 2.72s, environment 2ms, prepare 2.60s)
 

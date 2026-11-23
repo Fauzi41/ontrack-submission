@@ -3,8 +3,8 @@ npm notice run tsx src/cli/import.ts
 
 IMPORT REPORT
 ────────────────────────────────────────────────────────────────
-  started_at           2026-11-23T02:51:30.821Z
-  finished_at          2026-11-23T02:51:30.829Z
+  started_at           2026-11-23T03:14:19.987Z
+  finished_at          2026-11-23T03:14:19.995Z
   as_of                2026-10-06T17:00:00
   inserted             41
   updated              0
