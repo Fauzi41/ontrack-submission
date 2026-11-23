@@ -45,6 +45,22 @@ Setiap kalimat di deck dan README bisa ditelusuri ke salah satu baris di bawah.
 | Riwayat versi record benar-benar tersimpan | 2 versi: satu `SUPERSEDED`, satu `LATE_ARRIVAL` ditolak | `08-versi.txt` |
 | Kode diuji, bukan hanya dijalankan sekali | 115 test, 50 pemeriksaan rute, cakupan 96,34% | `04-test.txt`, `05-verifikasi.txt`, `06-cakupan.txt` |
 
+## Uji dari salinan bersih
+
+Rantai yang sama dijalankan ulang pada klon baru di direktori sementara, dengan `node_modules` kosong:
+
+```
+git clone <repo> ontrack-dryrun
+npm install                        283 paket, tanpa langkah tambahan
+npm test                           115 test lulus
+npm run verify -w backend          50/50 pemeriksaan lulus
+npm run import -w backend          41 baris masuk, 6 proyek terbaca
+npm run build -w frontend          165,69 kB
+npm start -w backend               API dan antarmuka dari satu port
+```
+
+Antarmuka pada salinan itu dibuka di peramban pada port 3011 dan menampilkan enam proyek, empat kartu ringkasan (3 kritis, 1 perhatian, 1 pantau, 14 isu terbuka), dan waktu acuan `2026-10-06T17:00:00`. Tidak ada berkas di luar repositori yang dibutuhkan.
+
 ## Yang tidak dibuktikan di sini
 
 Ambang severity adalah keputusan rancangan, bukan hasil pengukuran. Rasio pace 1,05 dan 1,25, selisih 1 dan 5 poin persentase, dan batas data basi 2 kali cadence tidak punya pembenaran statistik di baliknya. Semuanya terbuka untuk diubah, dan alasannya ditulis di `DECISION_LOG.md`.
