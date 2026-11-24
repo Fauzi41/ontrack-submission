@@ -16,18 +16,77 @@ import type { ActivePersona, PortfolioOverview, ProjectIntelligence } from './ty
 const DEFAULT_AS_OF = '2026-10-06T17:00:00';
 const DIRECTOR_PERSONA: ActivePersona = { role: 'DIRECTOR', name: 'Director (Management)' };
 
+interface AppRoute {
+  viewMode: 'PORTFOLIO' | 'DATA_MANAGER';
+  projectId: string | null;
+}
+
+function parseRouteFromHash(hash: string): AppRoute {
+  const clean = hash.replace(/^#/, '');
+  if (clean === '/data-manager') {
+    return { viewMode: 'DATA_MANAGER', projectId: null };
+  }
+  const projectMatch = clean.match(/^\/projects\/([^/?#]+)$/);
+  if (projectMatch && projectMatch[1]) {
+    return { viewMode: 'PORTFOLIO', projectId: decodeURIComponent(projectMatch[1]) };
+  }
+  return { viewMode: 'PORTFOLIO', projectId: null };
+}
+
+function routeToHash(route: AppRoute): string {
+  if (route.projectId) {
+    return `#/projects/${encodeURIComponent(route.projectId)}`;
+  }
+  if (route.viewMode === 'DATA_MANAGER') {
+    return '#/data-manager';
+  }
+  return '#/';
+}
+
 export function App() {
+  const initialRoute = parseRouteFromHash(window.location.hash);
   const [asOf, setAsOf] = useState(DEFAULT_AS_OF);
   const [persona, setPersona] = useState<ActivePersona>(DIRECTOR_PERSONA);
   const [portfolio, setPortfolio] = useState<PortfolioOverview | null>(null);
-  const [viewMode, setViewMode] = useState<'PORTFOLIO' | 'DATA_MANAGER'>('PORTFOLIO');
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'PORTFOLIO' | 'DATA_MANAGER'>(initialRoute.viewMode);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(initialRoute.projectId);
   const [selectedProject, setSelectedProject] = useState<ProjectIntelligence | null>(null);
   const [loading, setLoading] = useState(true);
   const [resetting, setResetting] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [refreshOpen, setRefreshOpen] = useState(false);
+
+  const navigate = useCallback((next: AppRoute, replace = false) => {
+    const nextHash = routeToHash(next);
+    if (window.location.hash !== nextHash) {
+      if (replace) {
+        window.history.replaceState(next, '', nextHash);
+      } else {
+        window.history.pushState(next, '', nextHash);
+      }
+    }
+    setViewMode(next.viewMode);
+    setSelectedProjectId(next.projectId);
+  }, []);
+
+  // Ensure browser/mouse Back & Forward buttons sync app navigation seamlessly
+  useEffect(() => {
+    if (!window.location.hash) {
+      window.history.replaceState(initialRoute, '', routeToHash(initialRoute));
+    }
+    const syncFromHistory = () => {
+      const parsed = parseRouteFromHash(window.location.hash);
+      setViewMode(parsed.viewMode);
+      setSelectedProjectId(parsed.projectId);
+    };
+    window.addEventListener('popstate', syncFromHistory);
+    window.addEventListener('hashchange', syncFromHistory);
+    return () => {
+      window.removeEventListener('popstate', syncFromHistory);
+      window.removeEventListener('hashchange', syncFromHistory);
+    };
+  }, []);
 
   const availablePics = useMemo(() => {
     if (!portfolio) return [];
@@ -57,12 +116,12 @@ export function App() {
       } catch (err) {
         setError((err as Error).message);
         setSelectedProject(null);
-        setSelectedProjectId(null);
+        navigate({ viewMode: 'PORTFOLIO', projectId: null }, true);
       } finally {
         setLoading(false);
       }
     },
-    []
+    [navigate]
   );
 
   useEffect(() => {
@@ -126,10 +185,7 @@ export function App() {
       <header className="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
           <div
-            onClick={() => {
-              setSelectedProjectId(null);
-              setViewMode('PORTFOLIO');
-            }}
+            onClick={() => navigate({ viewMode: 'PORTFOLIO', projectId: null })}
             className="flex items-center gap-2.5 cursor-pointer"
           >
             <div className="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-xs">
@@ -164,7 +220,9 @@ export function App() {
                     setPersona(DIRECTOR_PERSONA);
                   } else if (val.startsWith('PIC:')) {
                     setPersona({ role: 'PIC', name: val.slice(4) });
-                    setSelectedProjectId(null);
+                    if (selectedProjectId) {
+                      navigate({ viewMode: 'PORTFOLIO', projectId: null });
+                    }
                     setRefreshOpen(false);
                   }
                 }}
@@ -245,7 +303,7 @@ export function App() {
             project={selectedProject}
             persona={persona}
             onSwitchToDirector={() => setPersona(DIRECTOR_PERSONA)}
-            onBack={() => setSelectedProjectId(null)}
+            onBack={() => navigate({ viewMode: 'PORTFOLIO', projectId: null })}
             onRefreshProject={async () => {
               await loadProject(selectedProject.project_id, asOf, persona);
               await loadPortfolio(asOf, persona);
@@ -258,11 +316,8 @@ export function App() {
             asOf={asOf}
             onSwitchToDirector={() => setPersona(DIRECTOR_PERSONA)}
             onDataChanged={handleDataChanged}
-            onOpenProject={(id) => {
-              setViewMode('PORTFOLIO');
-              setSelectedProjectId(id);
-            }}
-            onBack={() => setViewMode('PORTFOLIO')}
+            onOpenProject={(id) => navigate({ viewMode: 'PORTFOLIO', projectId: id })}
+            onBack={() => navigate({ viewMode: 'PORTFOLIO', projectId: null })}
           />
         ) : portfolio ? (
           <PortfolioView
@@ -270,11 +325,8 @@ export function App() {
             persona={persona}
             resetting={resetting}
             onSwitchToDirector={() => setPersona(DIRECTOR_PERSONA)}
-            onSelectProject={(id) => setSelectedProjectId(id)}
-            onOpenDataManager={() => {
-              setSelectedProjectId(null);
-              setViewMode('DATA_MANAGER');
-            }}
+            onSelectProject={(id) => navigate({ viewMode: 'PORTFOLIO', projectId: id })}
+            onOpenDataManager={() => navigate({ viewMode: 'DATA_MANAGER', projectId: null })}
             onQuickReset={handleQuickReset}
             onOpenIngest={() => setRefreshOpen(true)}
           />

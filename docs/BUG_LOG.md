@@ -47,5 +47,19 @@ Catatan bug nyata yang ditemukan selama pembangunan, pengujian, dan uji interakt
 ---
 
 ### BUG-005 — Inkonsistensi Binding `localhost` vs `127.0.0.1` pada Vite Dev Server (`frontend/vite.config.ts`)
-- **Gejala:** Pada sebagian lingkungan Windows, Vite default bind ke `localhost` (IPv6 `::1`) sehingga membuka `http://127.0.0.1:5173` bisa gagal tersambung.
-- **Perbaikan:** Menetapkan `server: { host: '127.0.0.1', port: 5173 }` dan proxy `/api` ke `http://127.0.0.1:4000` agar instruksi pembukaan `http://127.0.0.1:5173` konsisten di semua mesin.
+- **Gejala:** Pada sebagian lingkungan Windows, Vite default bind ke `localhost` (IPv6 `::1`) sehingga membuka `http://127.0.0.1:5173` bisa gagal tersambung atau tidak dapat diakses dari perangkat mobile di LAN.
+- **Perbaikan:** Menetapkan `server: { host: true, port: 5173 }` dan proxy `/api` ke `http://127.0.0.1:4000` agar dapat diakses konsisten lewat `http://127.0.0.1:5173` maupun IP LAN.
+
+---
+
+### BUG-006 — Mengubah `Reported Actual` Tidak Otomatis Memperbarui `Reported Progress (%)` (`frontend/src/components/DataManagerView.tsx`)
+- **Gejala:** Saat mengubah `reported_actual` pada `PRJ-005` (Kevin) dari `9` menjadi `5` (dari target `10`), kolom `Reported Progress (%)` tetap bertahan di `90%` kecuali tombol manual *"Hitung Otomatis %"* diklik.
+- **Akar Masalah:** Handler `onChange` pada input `reported_actual` dan `target` hanya memperbarui field masing-masing tanpa menghitung ulang `reported_progress_pct`.
+- **Perbaikan:** Menambahkan mode sinkronisasi otomatis (`autoCalcPct`, aktif secara default) sehingga setiap perubahan pada `reported_actual` atau `target` langsung menghitung ulang `reported_progress_pct = round((actual / target) * 100, 2)` secara real-time (`5 / 10` → langsung `50%`). Jika pengguna sengaja mengedit kolom `%` secara manual (misalnya untuk menguji aturan `R1_REPORT_MATH_MISMATCH`), mode berpindah ke `(Manual)` dan dapat dikembalikan ke `(Auto)` lewat tombol *"Hitung Otomatis %"*.
+
+---
+
+### BUG-007 — Tombol Back & Forward Mouse / Browser Tidak Berfungsi (`frontend/src/App.tsx`)
+- **Gejala:** Saat berpindah dari Portfolio → Project Detail → Kelola Data, menekan tombol *Back* atau *Forward* pada mouse maupun browser tidak berpindah ke halaman sebelumnya/berikutnya.
+- **Akar Masalah:** Navigasi sebelumnya hanya dikelola menggunakan React `useState` (`viewMode`, `selectedProjectId`) tanpa terhubung dengan Browser History API.
+- **Perbaikan:** Menambahkan sinkronisasi *hash history* (`#/`, `#/projects/:id`, `#/data-manager`) menggunakan `window.history.pushState` / `replaceState` serta listener `popstate` dan `hashchange`, sehingga tombol Back/Forward mouse, Back/Forward browser, dan reload halaman (F5) bekerja penuh.

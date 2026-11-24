@@ -85,6 +85,7 @@ export function DataManagerView({
     editableProjects[0]?.project_id ?? portfolio.projects[0]?.project_id ?? 'PRJ-002'
   );
   const [isNewProject, setIsNewProject] = useState(false);
+  const [autoCalcPct, setAutoCalcPct] = useState(true);
 
   // Auto-scope selectedId whenever persona switches (e.g., Director -> PIC Kevin -> PIC Maya)
   useEffect(() => {
@@ -159,6 +160,7 @@ export function DataManagerView({
   useEffect(() => {
     if (!isNewProject && activeProject) {
       setMasterForm({ ...activeProject.master });
+      setAutoCalcPct(true);
       const suggested = suggestPresetForProject(activeProject);
       setProdPreset(suggested);
       setUpdSourceName(activeProject.master.pic);
@@ -186,6 +188,7 @@ export function DataManagerView({
 
   function startNewProject() {
     setIsNewProject(true);
+    setAutoCalcPct(true);
     setSuccessMsg(null);
     setError(null);
     const nextNum = String(portfolio.projects.length + 1).padStart(3, '0');
@@ -638,7 +641,18 @@ export function DataManagerView({
                     min="0.01"
                     required
                     value={masterForm.target}
-                    onChange={(e) => setMasterForm({ ...masterForm, target: Number(e.target.value) })}
+                    onChange={(e) => {
+                      const nextTarget = Number(e.target.value);
+                      const nextPct =
+                        autoCalcPct && Number.isFinite(nextTarget) && nextTarget > 0
+                          ? Number(((masterForm.reported_actual / nextTarget) * 100).toFixed(2))
+                          : masterForm.reported_progress_pct;
+                      setMasterForm({
+                        ...masterForm,
+                        target: nextTarget,
+                        reported_progress_pct: nextPct,
+                      });
+                    }}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg font-mono"
                   />
                 </div>
@@ -661,18 +675,36 @@ export function DataManagerView({
                     min="0"
                     required
                     value={masterForm.reported_actual}
-                    onChange={(e) =>
-                      setMasterForm({ ...masterForm, reported_actual: Number(e.target.value) })
-                    }
+                    onChange={(e) => {
+                      const nextActual = Number(e.target.value);
+                      const nextPct =
+                        autoCalcPct &&
+                        Number.isFinite(nextActual) &&
+                        Number.isFinite(masterForm.target) &&
+                        masterForm.target > 0
+                          ? Number(((nextActual / masterForm.target) * 100).toFixed(2))
+                          : masterForm.reported_progress_pct;
+                      setMasterForm({
+                        ...masterForm,
+                        reported_actual: nextActual,
+                        reported_progress_pct: nextPct,
+                      });
+                    }}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg font-mono"
                   />
                 </div>
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="font-semibold text-slate-700">Reported Progress (%) *</label>
+                    <label className="font-semibold text-slate-700">
+                      Reported Progress (%) *{' '}
+                      <span className="font-normal text-[10px] text-slate-500">
+                        {autoCalcPct ? '(Auto)' : '(Manual)'}
+                      </span>
+                    </label>
                     <button
                       type="button"
                       onClick={() => {
+                        setAutoCalcPct(true);
                         if (masterForm.target > 0) {
                           const pct = Number(
                             ((masterForm.reported_actual / masterForm.target) * 100).toFixed(2)
@@ -692,12 +724,13 @@ export function DataManagerView({
                     max="200"
                     required
                     value={masterForm.reported_progress_pct}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      setAutoCalcPct(false);
                       setMasterForm({
                         ...masterForm,
                         reported_progress_pct: Number(e.target.value),
-                      })
-                    }
+                      });
+                    }}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg font-mono"
                   />
                 </div>
