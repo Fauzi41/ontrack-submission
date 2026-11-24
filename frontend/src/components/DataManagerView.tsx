@@ -50,6 +50,49 @@ type ProdPreset =
   | 'API_ENV'
   | 'DMS_USAGE';
 
+const THROUGHPUT_UNIT_OPTIONS = [
+  { value: 'ML', label: 'ML — Meter Linear (Throughput)' },
+  { value: 'pages', label: 'pages — Halaman Dokumen (Throughput)' },
+  { value: 'boxes', label: 'boxes — Box Arsip (Throughput)' },
+  { value: 'records', label: 'records — Record Data (Throughput)' },
+] as const;
+
+const DISCRETE_UNIT_OPTIONS = [
+  { value: 'endpoints', label: 'endpoints — API Endpoint (Discrete / Milestone)' },
+  { value: 'system', label: 'system — Sistem / Implementasi (Discrete / Binary)' },
+  { value: 'modules', label: 'modules — Modul Software (Discrete / Milestone)' },
+  { value: 'features', label: 'features — Fitur Aplikasi (Discrete / Milestone)' },
+  { value: 'milestones', label: 'milestones — Milestone Proyek (Discrete)' },
+  { value: 'deliverables', label: 'deliverables — Deliverable (Discrete)' },
+] as const;
+
+const DISCRETE_UNIT_SET = new Set<string>([
+  'endpoints',
+  'endpoint',
+  'system',
+  'systems',
+  'modules',
+  'module',
+  'features',
+  'feature',
+  'milestones',
+  'milestone',
+  'phases',
+  'phase',
+  'deliverables',
+  'deliverable',
+  'applications',
+  'deployments',
+  'integrations',
+  'releases',
+  'sites',
+]);
+
+const KNOWN_UNIT_VALUES = new Set<string>([
+  ...THROUGHPUT_UNIT_OPTIONS.map((o) => o.value),
+  ...DISCRETE_UNIT_OPTIONS.map((o) => o.value),
+]);
+
 function suggestPresetForProject(p: ProjectIntelligence | undefined): ProdPreset {
   if (!p) return 'PAGES';
   const unit = p.master.target_unit.toLowerCase();
@@ -658,12 +701,37 @@ export function DataManagerView({
                 </div>
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1">Target Unit *</label>
-                  <input
+                  <select
                     required
                     value={masterForm.target_unit}
                     onChange={(e) => setMasterForm({ ...masterForm, target_unit: e.target.value })}
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg font-mono"
-                  />
+                  >
+                    <optgroup label="Volume / Throughput (Linear Run-Rate)">
+                      {THROUGHPUT_UNIT_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Milestone / Diskrit (Non-Linear Gate)">
+                      {DISCRETE_UNIT_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </optgroup>
+                    {!KNOWN_UNIT_VALUES.has(masterForm.target_unit) && masterForm.target_unit && (
+                      <optgroup label="Unit Kustom (Dataset)">
+                        <option value={masterForm.target_unit}>{masterForm.target_unit}</option>
+                      </optgroup>
+                    )}
+                  </select>
+                  <div className="text-[10.5px] text-slate-500 mt-1">
+                    {DISCRETE_UNIT_SET.has(masterForm.target_unit.trim().toLowerCase())
+                      ? 'Model: DISCRETE_MILESTONE — proyeksi tanggal linier dinonaktifkan (evaluasi berbasis gerbang validasi).'
+                      : 'Model: THROUGHPUT_LINEAR — proyeksi jadwal menggunakan run-rate harian & batas kapasitas.'}
+                  </div>
                 </div>
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1">
@@ -1277,8 +1345,11 @@ export function DataManagerView({
                 <div className="flex justify-between pt-1.5 border-t border-slate-200">
                   <span className="text-slate-600 font-medium">Proyeksi Selesai:</span>
                   <span className="font-mono font-extrabold text-slate-900">
-                    {da.projected_completion_date_operational ?? 'Blocked / N/A'}
-                    {da.projected_slip_days_operational !== null &&
+                    {da.is_discrete_unit
+                      ? 'Non-Linear (Gate-Based)'
+                      : da.projected_completion_date_operational ?? 'Blocked / N/A'}
+                    {!da.is_discrete_unit &&
+                      da.projected_slip_days_operational !== null &&
                       da.projected_slip_days_operational > 0 && (
                         <span className="text-rose-700 ml-1">
                           (+{da.projected_slip_days_operational}d)

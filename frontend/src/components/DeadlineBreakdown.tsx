@@ -19,7 +19,12 @@ export function DeadlineBreakdown({ analysis }: { analysis: DeadlineAnalysis }) 
               Analisis Deadline, Laju Produksi & Kelayakan Jadwal (Transparent Calculation)
             </h3>
             <p className="text-xs text-slate-500">
-              Tanggal Acuan (As-Of Date): <span className="font-mono font-semibold text-slate-700">{analysis.as_of_date}</span> • Metode: Selisih hari kalender (UTC date delta)
+              Tanggal Acuan (As-Of Date): <span className="font-mono font-semibold text-slate-700">{analysis.as_of_date}</span> • Model:{' '}
+              <span className="font-mono font-semibold text-slate-700">
+                {analysis.is_discrete_unit
+                  ? `DISCRETE_MILESTONE (${analysis.unit})`
+                  : `THROUGHPUT_LINEAR (${analysis.unit})`}
+              </span>
             </p>
           </div>
         </div>
@@ -27,6 +32,14 @@ export function DeadlineBreakdown({ analysis }: { analysis: DeadlineAnalysis }) 
       </div>
 
       <div className="p-5 space-y-5">
+        {analysis.is_discrete_unit && (
+          <div className="p-3 rounded-lg bg-indigo-50 border border-indigo-200 text-xs text-indigo-950">
+            <strong>Unit Diskrit / Milestone ({analysis.unit}):</strong> Kompleksitas tiap item
+            tidak seragam dan bergantung pada gerbang integrasi/validasi. Proyeksi tanggal selesai
+            linier dinonaktifkan untuk mencegah <em>false precision</em>; fokus evaluasi pada
+            sinyal gerbang validasi &amp; kesiapan environment.
+          </div>
+        )}
         {/* Visual Timeline & Progress Bars */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="p-3.5 rounded-lg border border-slate-200 bg-slate-50/50">
@@ -125,8 +138,11 @@ export function DeadlineBreakdown({ analysis }: { analysis: DeadlineAnalysis }) 
                 <div className="flex justify-between pt-1 border-t border-slate-200">
                   <span className="text-slate-600">Proyeksi Selesai:</span>
                   <span className="font-mono font-bold text-slate-900">
-                    {analysis.projected_completion_date_operational ?? 'Blocked / Unverified'}
-                    {analysis.projected_slip_days_operational !== null &&
+                    {analysis.is_discrete_unit
+                      ? 'Non-Linear (Gate-Based)'
+                      : analysis.projected_completion_date_operational ?? 'Blocked / Unverified'}
+                    {!analysis.is_discrete_unit &&
+                      analysis.projected_slip_days_operational !== null &&
                       analysis.projected_slip_days_operational > 0 && (
                         <span className="text-rose-700 ml-1">
                           (+{analysis.projected_slip_days_operational}d)

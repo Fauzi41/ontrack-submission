@@ -6,6 +6,7 @@ import {
   diffHours,
   extractDateOnly,
   extractStatedDailyCapacity,
+  isDiscreteMilestoneUnit,
 } from '../backend/src/deadlineEngine.js';
 import type { ProjectMasterRecord, ProjectUpdateRecord } from '../backend/src/types.js';
 
@@ -154,6 +155,8 @@ describe('deadlineEngine.ts — Calendar Math, Capacity Parsing & Feasibility Ve
       updates: [],
     });
     expect(res.feasibility_verdict).toBe('COMPLETED_ON_TIME');
+    expect(res.is_discrete_unit).toBe(true);
+    expect(res.unit_measurement_model).toBe('DISCRETE_MILESTONE');
     expect(res.total_duration_days).toBe(91);
     expect(res.calculation_steps).toHaveLength(3);
   });
@@ -262,7 +265,12 @@ describe('deadlineEngine.ts — Calendar Math, Capacity Parsing & Feasibility Ve
     expect(res.feasibility_verdict).toBe('MATHEMATICALLY_INFEASIBLE');
   });
 
-  it('20. computes AT_HIGH_RISK when operational verified is 0 and remaining_days <= 10', () => {
+  it('20. computes AT_HIGH_RISK and suppresses linear finish projection for discrete endpoints unit', () => {
+    expect(isDiscreteMilestoneUnit('endpoints')).toBe(true);
+    expect(isDiscreteMilestoneUnit('system')).toBe(true);
+    expect(isDiscreteMilestoneUnit('pages')).toBe(false);
+    expect(isDiscreteMilestoneUnit('ML')).toBe(false);
+
     const res = computeDeadlineAnalysis({
       master: makeMaster({
         start_date: '2026-09-01',
@@ -278,8 +286,30 @@ describe('deadlineEngine.ts — Calendar Math, Capacity Parsing & Feasibility Ve
       operationalSnapshotDate: '2026-10-06T07:30:00',
       updates: [],
     });
+    expect(res.is_discrete_unit).toBe(true);
+    expect(res.unit_measurement_model).toBe('DISCRETE_MILESTONE');
     expect(res.feasibility_verdict).toBe('AT_HIGH_RISK');
     expect(res.projected_completion_date_operational).toBeNull();
+    expect(res.projected_completion_date_reported).toBeNull();
+
+    // Even when 5/10 endpoints are tested, discrete unit still suppresses false-precision linear date projection
+    const partial = computeDeadlineAnalysis({
+      master: makeMaster({
+        start_date: '2026-09-01',
+        deadline: '2026-10-13',
+        target: 10,
+        target_unit: 'endpoints',
+        reported_actual: 5,
+        reported_progress_pct: 50,
+      }),
+      asOfDate: '2026-10-06T17:00:00',
+      operationalVerifiedActual: 5,
+      operationalPendingActual: null,
+      operationalSnapshotDate: '2026-10-06T12:00:00',
+      updates: [],
+    });
+    expect(partial.projected_completion_date_operational).toBeNull();
+    expect(partial.feasibility_verdict).toBe('PRESSURED');
   });
 
   it('21. computes AT_HIGH_RISK for PRJ-004 pace deficit (+13 days projected slip)', () => {

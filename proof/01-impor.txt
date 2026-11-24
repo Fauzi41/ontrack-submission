@@ -1,8 +1,8 @@
 === STARTUP INGESTION ===
 {
-  "run_id": "RUN-1795488472316-G65N",
+  "run_id": "RUN-1795491189716-B5GQ",
   "trigger": "STARTUP",
-  "executed_at": "2026-11-24T02:47:52.315Z",
+  "executed_at": "2026-11-24T03:33:09.715Z",
   "masters_upserted": 6,
   "updates_inserted": 23,
   "updates_duplicate_skipped": 0,
@@ -18,9 +18,9 @@
 
 === IDEMPOTENT REFRESH CHECK ===
 {
-  "run_id": "RUN-1795488472329-EPQ0",
+  "run_id": "RUN-1795491189727-7PT4",
   "trigger": "DISK_REFRESH",
-  "executed_at": "2026-11-24T02:47:52.329Z",
+  "executed_at": "2026-11-24T03:33:09.727Z",
   "masters_upserted": 0,
   "updates_inserted": 0,
   "updates_duplicate_skipped": 23,

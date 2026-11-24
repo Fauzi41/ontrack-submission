@@ -99,6 +99,8 @@ export interface DeadlineAnalysis {
   time_elapsed_pct: number;
   target: number;
   unit: string;
+  is_discrete_unit: boolean;
+  unit_measurement_model: 'THROUGHPUT_LINEAR' | 'DISCRETE_MILESTONE';
   reported_actual: number;
   reported_progress_pct: number;
   computed_reported_pct: number;

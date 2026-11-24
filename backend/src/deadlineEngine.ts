@@ -7,6 +7,37 @@ import type {
 
 const MS_PER_DAY = 86_400_000;
 
+/**
+ * Units that represent discrete, non-linear milestones or deliverables whose effort
+ * per unit is heterogeneous and often gate-dependent (e.g., API endpoints, full systems).
+ * Linear daily run-rate projections are suppressed for these units to prevent false precision.
+ */
+export const DISCRETE_MILESTONE_UNITS = new Set<string>([
+  'endpoints',
+  'endpoint',
+  'system',
+  'systems',
+  'modules',
+  'module',
+  'features',
+  'feature',
+  'milestones',
+  'milestone',
+  'phases',
+  'phase',
+  'deliverables',
+  'deliverable',
+  'applications',
+  'deployments',
+  'integrations',
+  'releases',
+  'sites',
+]);
+
+export function isDiscreteMilestoneUnit(unit: string): boolean {
+  return DISCRETE_MILESTONE_UNITS.has(unit.trim().toLowerCase());
+}
+
 export function extractDateOnly(iso: string): string {
   return iso.slice(0, 10);
 }
@@ -87,6 +118,10 @@ export function computeDeadlineAnalysis(input: DeadlineInput): DeadlineAnalysis 
   } = input;
 
   const isCompleted = master.reported_status.toUpperCase() === 'COMPLETED';
+  const isDiscreteUnit = isDiscreteMilestoneUnit(master.target_unit);
+  const unitMeasurementModel: DeadlineAnalysis['unit_measurement_model'] = isDiscreteUnit
+    ? 'DISCRETE_MILESTONE'
+    : 'THROUGHPUT_LINEAR';
   const totalDurationDays = Math.max(1, diffCalendarDays(master.start_date, master.deadline));
   const rawElapsed = diffCalendarDays(master.start_date, asOfDate);
   const elapsedDays = Math.max(1, Math.min(totalDurationDays, rawElapsed));
@@ -138,8 +173,9 @@ export function computeDeadlineAnalysis(input: DeadlineInput): DeadlineAnalysis 
       ? round2(requiredRateOperational / historicalRateOperational)
       : null;
 
+  // Suppress linear finish-date extrapolation for discrete/milestone units (non-uniform complexity)
   const projDaysReported =
-    !isCompleted && historicalRateReported && historicalRateReported > 0
+    !isCompleted && !isDiscreteUnit && historicalRateReported && historicalRateReported > 0
       ? round2(remainingReported / historicalRateReported)
       : null;
   const projCompletionReported =
@@ -151,6 +187,7 @@ export function computeDeadlineAnalysis(input: DeadlineInput): DeadlineAnalysis 
 
   const projDaysOperational =
     !isCompleted &&
+    !isDiscreteUnit &&
     remainingOperational !== null &&
     historicalRateOperational !== null &&
     historicalRateOperational > 0
@@ -170,7 +207,7 @@ export function computeDeadlineAnalysis(input: DeadlineInput): DeadlineAnalysis 
   let projCompCap: string | null = null;
   let projSlipCap: number | null = null;
 
-  if (statedCap && !isCompleted) {
+  if (statedCap && !isCompleted && !isDiscreteUnit) {
     const baseRemaining = remainingOperational ?? remainingReported;
     projDaysCap = round2(baseRemaining / statedCap.capacity);
     projCompCap = addCalendarDays(asOfDate, Math.ceil(projDaysCap));
@@ -188,20 +225,22 @@ export function computeDeadlineAnalysis(input: DeadlineInput): DeadlineAnalysis 
   } else if (isStaleActive) {
     verdict = 'INSUFFICIENT_DATA';
   } else if (
-    (statedCap && requiredRateOperational !== null && requiredRateOperational > statedCap.capacity * 1.15) ||
-    (accelOperational !== null && accelOperational >= 1.75) ||
-    (accelReported !== null && accelReported >= 1.75)
+    !isDiscreteUnit &&
+    ((statedCap && requiredRateOperational !== null && requiredRateOperational > statedCap.capacity * 1.15) ||
+      (accelOperational !== null && accelOperational >= 1.75) ||
+      (accelReported !== null && accelReported >= 1.75))
   ) {
     verdict = 'MATHEMATICALLY_INFEASIBLE';
   } else if (
     (operationalVerifiedActual === 0 && remainingDays <= 10) ||
-    (accelOperational !== null && accelOperational >= 1.35) ||
-    (projSlipOperational !== null && projSlipOperational >= 7)
+    (!isDiscreteUnit && accelOperational !== null && accelOperational >= 1.35) ||
+    (!isDiscreteUnit && projSlipOperational !== null && projSlipOperational >= 7)
   ) {
     verdict = 'AT_HIGH_RISK';
   } else if (
-    (accelOperational !== null && accelOperational >= 1.1) ||
-    (projSlipOperational !== null && projSlipOperational >= 2)
+    (!isDiscreteUnit && accelOperational !== null && accelOperational >= 1.1) ||
+    (!isDiscreteUnit && projSlipOperational !== null && projSlipOperational >= 2) ||
+    (isDiscreteUnit && remainingDays <= 7 && (remainingOperational ?? remainingReported) > 0)
   ) {
     verdict = 'PRESSURED';
   }
@@ -252,9 +291,11 @@ export function computeDeadlineAnalysis(input: DeadlineInput): DeadlineAnalysis 
           ? `Reported: ${historicalRateReported} ${master.target_unit}/hari | Operational: ${historicalRateOperational} ${master.target_unit}/hari`
           : `Reported: ${historicalRateReported} ${master.target_unit}/hari`,
       note:
-        isStaleActive && operationalSnapshotDate
-          ? `Laju operasional dihitung sampai tanggal snapshot terakhir (${extractDateOnly(operationalSnapshotDate)}, hari ke-${effectiveElapsedForOp}) agar tidak mengasumsikan output 0 selama periode tanpa laporan.`
-          : undefined,
+        isDiscreteUnit
+          ? `Satuan "${master.target_unit}" terdeteksi sebagai DISCRETE_MILESTONE (bobot tiap item tidak seragam). Laju harian hanya indikasi kasar.`
+          : isStaleActive && operationalSnapshotDate
+            ? `Laju operasional dihitung sampai tanggal snapshot terakhir (${extractDateOnly(operationalSnapshotDate)}, hari ke-${effectiveElapsedForOp}) agar tidak mengasumsikan output 0 selama periode tanpa laporan.`
+            : undefined,
     });
 
     steps.push({
@@ -275,23 +316,33 @@ export function computeDeadlineAnalysis(input: DeadlineInput): DeadlineAnalysis 
 
     steps.push({
       step: 6,
-      label: 'Faktor Akselerasi & Proyeksi Tanggal Selesai (Pace Ratio & Projected Slip)',
-      formula:
-        'Acceleration = Required Pace / Historical Pace | Projected Finish = As-Of + ceil(Remaining / Historical Pace)',
-      substitution:
-        accelOperational !== null && projDaysOperational !== null
+      label: isDiscreteUnit
+        ? 'Evaluasi Gerbang Milestone (Non-Linear — Tanpa Ekstrapolasi Tanggal Linier)'
+        : 'Faktor Akselerasi & Proyeksi Tanggal Selesai (Pace Ratio & Projected Slip)',
+      formula: isDiscreteUnit
+        ? 'Discrete/Milestone Gate Check (bukan proyeksi linier Remaining / Historical Pace)'
+        : 'Acceleration = Required Pace / Historical Pace | Projected Finish = As-Of + ceil(Remaining / Historical Pace)',
+      substitution: isDiscreteUnit
+        ? `Unit "${master.target_unit}" termasuk DISCRETE_MILESTONE_UNITS | Sisa: ${remainingOperational ?? remainingReported} ${master.target_unit} dalam ${remainingDays} hari`
+        : accelOperational !== null && projDaysOperational !== null
           ? `Operational Ratio: ${requiredRateOperational} / ${historicalRateOperational} = ${accelOperational}x | Proyeksi: ${extractDateOnly(asOfDate)} + ceil(${projDaysOperational}) hari`
           : operationalVerifiedActual === 0
             ? `Operational verified = 0 ${master.target_unit} sehingga laju terverifikasi 0/hari (tidak bisa diproyeksikan selesai sebelum blocker terbuka).`
             : `Reported Ratio: ${requiredRateReported} / ${historicalRateReported} = ${accelReported}x`,
-      result:
-        projCompletionOperational !== null && projSlipOperational !== null
+      result: isDiscreteUnit
+        ? operationalVerifiedActual === 0
+          ? 'Blocked — 0 output terverifikasi di production (evaluasi lewat gerbang validasi & environment)'
+          : `Proyeksi tanggal linier dinonaktifkan (sisa ${remainingOperational ?? remainingReported} ${master.target_unit} harus divalidasi lewat milestone/UAT, bukan rata-rata harian)`
+        : projCompletionOperational !== null && projSlipOperational !== null
           ? `Proyeksi selesai (laju operasional): ${projCompletionOperational} (${projSlipOperational > 0 ? `+${projSlipOperational} hari terlambat` : projSlipOperational === 0 ? 'tepat waktu' : `${Math.abs(projSlipOperational)} hari lebih cepat`})`
           : operationalVerifiedActual === 0
             ? 'Blocked — 0 output terverifikasi di production'
             : projCompletionReported !== null
               ? `Proyeksi selesai (reported): ${projCompletionReported}`
               : 'Tidak dapat diproyeksikan',
+      note: isDiscreteUnit
+        ? 'Mencegah false precision: kompleksitas 1 endpoint/system terakhir bisa berbeda jauh dari item sebelumnya.'
+        : undefined,
     });
 
     if (statedCap && projDaysCap !== null && projCompCap !== null && projSlipCap !== null) {
@@ -317,6 +368,8 @@ export function computeDeadlineAnalysis(input: DeadlineInput): DeadlineAnalysis 
     time_elapsed_pct: timeElapsedPct,
     target: master.target,
     unit: master.target_unit,
+    is_discrete_unit: isDiscreteUnit,
+    unit_measurement_model: unitMeasurementModel,
     reported_actual: master.reported_actual,
     reported_progress_pct: master.reported_progress_pct,
     computed_reported_pct: computedReportedPct,
