@@ -1,0 +1,62 @@
+=== OnTrack Backend Verification Suite (Routes & Data Integrity) ===
+
+  [PASS 01] (DATA) 02_Project_Master.csv exists and is non-empty
+  [PASS 02] (DATA) 03_Project_Updates.csv exists and is non-empty
+  [PASS 03] (DATA) 04_Production_Data.json exists and is non-empty
+  [PASS 04] (DATA) Startup ingestion loads 6 project masters
+  [PASS 05] (DATA) Startup ingestion loads 23 project updates
+  [PASS 06] (DATA) Startup ingestion loads 12 production records
+  [PASS 07] (DATA) Startup ingestion has 0 quarantined records
+  [PASS 08] (DATA) Referential integrity: all updates link to existing master project_id
+  [PASS 09] (DATA) Referential integrity: all production records link to existing master project_id
+  [PASS 10] (DATA) Idempotent refresh skips 23 duplicate updates without reinserting
+  [PASS 11] (DATA) Idempotent refresh skips 12 duplicate production records without reinserting
+  [PASS 12] (DATA) Conflicting duplicate production ID is flagged and original preserved
+  [PASS 13] (DATA) Conflicting duplicate update ID is flagged and original preserved
+  [PASS 14] (DATA) Older historical production snapshot archived without overwriting latest snapshot
+  [PASS 15] (DATA) Resilience P6: invalid master CSV rows quarantined cleanly
+  [PASS 16] (DATA) Resilience P6: malformed JSON & non-numeric operational field quarantined cleanly
+  [PASS 17] (INTEL) PRJ-001 detects explained workflow-state gap (301.5 + 16.5 = 318 ML)
+  [PASS 18] (INTEL) PRJ-001 detects operational hold/rework risk (R4D)
+  [PASS 19] (INTEL) PRJ-001 deadline math computes 9 remaining days and 10.94 ML/day verified required pace
+  [PASS 20] (INTEL) PRJ-002 classified CRITICAL with MATHEMATICALLY_INFEASIBLE schedule verdict
+  [PASS 21] (INTEL) PRJ-002 deadline math computes 4 days left, 8190 req/day vs 4500 max capacity
+  [PASS 22] (INTEL) PRJ-002 detects scanner degradation (SCN-B LIMITED) and +4,260 pages discrepancy
+  [PASS 23] (INTEL) PRJ-003 classified HIGH uncertainty with INSUFFICIENT_DATA verdict (no overclaim)
+  [PASS 24] (INTEL) PRJ-003 detects 144-hour (6-day) staleness blind spot (R5)
+  [PASS 25] (INTEL) PRJ-003 detects +2.0% report arithmetic mismatch (92% computed vs 94% reported)
+  [PASS 26] (INTEL) PRJ-004 detects +7.0% report arithmetic mismatch (45% computed vs 52% reported)
+  [PASS 27] (INTEL) PRJ-004 deadline math computes 1833.33 req/day and +13 days projected slip
+  [PASS 28] (INTEL) PRJ-004 detects 3,200 skipped records (R4C) and missing operator capacity unknown
+  [PASS 29] (INTEL) PRJ-005 classified CRITICAL with 0/10 production-tested DoD gap (R2C)
+  [PASS 30] (INTEL) PRJ-005 detects production NOT_CONFIGURED (R4B) with 7 remaining days
+  [PASS 31] (INTEL) PRJ-005 flags explicit unknown for missing external customer ETA
+  [PASS 32] (INTEL) PRJ-006 control baseline has LOW attention and 0 false alarms
+  [PASS 33] (INTEL) PRJ-006 schedule verdict is COMPLETED_ON_TIME
+  [PASS 34] (INTEL) PRJ-006 operational telemetry confirms DMS ONLINE with 14 active users
+  [PASS 35] (ROUTE) GET /api/health returns 200 with status=ok and projects_loaded=6
+  [PASS 36] (ROUTE) GET /api/portfolio returns 200 with 6 projects and 6 available_pics
+  [PASS 37] (ROUTE) GET /api/portfolio?asOf=invalid-date returns 400
+  [PASS 38] (ROUTE) GET /api/projects/PRJ-002 returns 200 with 7 deadline calculation steps
+  [PASS 39] (ROUTE) GET /api/projects/PRJ-NOPE returns 404
+  [PASS 40] (ROUTE) POST /api/followups with invalid payload returns 400
+  [PASS 41] (ROUTE) POST /api/followups valid returns 201 with OPEN status & audit history
+  [PASS 42] (ROUTE) PATCH /api/followups/:id to RESOLVED enforces AWAITING_EVIDENCE (Section 11)
+  [PASS 43] (ROUTE) POST /api/followups/:id/verify rejects pre-resolution evidence with 400
+  [PASS 44] (ROUTE) POST /api/ingest accepts new post-resolution operational snapshot (200)
+  [PASS 45] (ROUTE) POST /api/followups/:id/verify succeeds with post-resolution evidence -> VERIFIED_BY_EVIDENCE
+  [PASS 46] (ROUTE) GET /api/projects/PRJ-005?asOf=2026-10-07T12:00:00 clears R4B_ENVIRONMENT_NOT_READY
+  [PASS 47] (ROUTE) POST /api/data/master updates PRJ-002 and immediately recalculates required pace
+  [PASS 48] (ROUTE) POST /api/data/production appends operational snapshot and recalculates verified actual
+  [PASS 49] (ROUTE) POST /api/data/updates appends field update (201) into timeline
+  [PASS 50] (ROUTE) POST /api/data/reset restores initial authoritative data (91,500 / 87,240 — not empty)
+  [PASS 51] (RBAC) GET /api/portfolio as PIC Andi scopes KPI total_projects=1 and returns only PRJ-003
+  [PASS 52] (RBAC) GET /api/projects/PRJ-006 (Maya) as PIC Andi returns 403 Forbidden
+  [PASS 53] (RBAC) POST /api/data/master on PRJ-006 (Maya) as PIC Kevin returns 403 Forbidden
+  [PASS 54] (RBAC) POST /api/data/updates on PRJ-006 (Maya) as PIC Kevin returns 403 Forbidden
+  [PASS 55] (RBAC) POST /api/data/production as PIC Kevin returns 403 (Separation of Duties)
+  [PASS 56] (RBAC) POST /api/followups/:id/verify as PIC Kevin returns 403 (Separation of Duties)
+  [PASS 57] (RBAC) POST /api/data/reset blocks portfolio-wide reset for PIC (403) and allows scope=OWN (200)
+  [PASS 58] (RBAC) GET /api/ingestion/runs blocks PIC (403) and allows Director (200)
+
+=== Verification Summary: 58/58 passed, 0 failed ===

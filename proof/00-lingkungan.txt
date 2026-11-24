@@ -1,5 +1,8 @@
-waktu (UTC): 2026-11-23T03:14:18Z
-komit: 83aff55
-node: v24.15.0
-npm: 12.2.0
-sistem: MSYS_NT-10.0-26300 3.6.10-5a1665c8.x86_64
+Generated At : 2026-11-24T02:47:51.227Z
+OS           : Windows_NT 10.0.26300 (x64)
+Node.js      : v24.15.0
+npm          : 12.2.0
+Authoritative Source Fixtures:
+- data/02_Project_Master.csv (1041 bytes)
+- data/03_Project_Updates.csv (4184 bytes)
+- data/04_Production_Data.json (4194 bytes)

@@ -1,6 +1,0 @@
-npm notice run backend@0.1.0 dump
-npm notice run tsx src/cli/dump.ts C:/Users/Fore/git/assessment/tata/ontrack/proof/json
-portfolio.json  /api/portfolio  200
-issues.json  /api/issues  200
-source-inventory.json  /api/source-inventory  200
-healthz.json  /healthz  200

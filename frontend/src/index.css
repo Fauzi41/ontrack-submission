@@ -1,0 +1,382 @@
+@import "tailwindcss";
+
+/*
+ * OnTrack Dark Theme — exact palette & typography from original submission theme:
+ * --bg: #0e1116 | --panel: #151a22 | --panel-2: #121821 | --input: #0f151d
+ * --line: #242c37 | --text: #e6ebf2 | --muted: #8b97a8
+ * --accent: #6ea8fe | --warn: #d9a441 | --err: #e06c75 | --ok: #8fd39a
+ */
+:root {
+  color-scheme: dark;
+  --bg: #0e1116;
+  --panel: #151a22;
+  --panel-2: #121821;
+  --input: #0f151d;
+  --line: #242c37;
+  --row-line: #1b222c;
+  --text: #e6ebf2;
+  --muted: #8b97a8;
+  --accent: #6ea8fe;
+  --accent-bg: #111a25;
+  --accent-line: #23364f;
+  --warn: #d9a441;
+  --warn-text: #e3c07a;
+  --warn-bg: #1d1810;
+  --warn-line: #4a3c1c;
+  --err: #e06c75;
+  --err-bg: #1d1113;
+  --err-line: #4d2529;
+  --ok: #8fd39a;
+  --ok-bg: #101b14;
+  --ok-line: #23452c;
+  --purple: #c5a3f5;
+  --purple-bg: #1a1524;
+  --purple-line: #3b2d54;
+}
+
+@layer base {
+  html,
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  code,
+  pre,
+  .font-mono {
+    font-family: 'Cascadia Mono', Consolas, 'Courier New', monospace;
+  }
+
+  code {
+    color: var(--accent);
+  }
+
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  input,
+  select,
+  textarea {
+    background-color: var(--input);
+    color: var(--text);
+    border-color: var(--line);
+  }
+
+  select option {
+    background-color: var(--panel);
+    color: var(--text);
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+}
+
+/* ===== Theme Palette Mapping (Visual-Only, Preserves All Layout & Functionality) ===== */
+
+/* Core surfaces */
+.bg-slate-50,
+.bg-slate-50\/70,
+.bg-slate-50\/50,
+.bg-slate-50\/40 {
+  background-color: var(--bg) !important;
+}
+
+/* Nested cards/headers inside panels use --panel-2 for subtle depth */
+.bg-white .bg-slate-50,
+.bg-white .bg-slate-50\/70,
+.bg-white .bg-slate-50\/50,
+.bg-white .bg-slate-50\/40,
+section.bg-white .bg-slate-50,
+section.bg-white .bg-slate-50\/70,
+section.bg-white .bg-slate-50\/50,
+section.bg-white .bg-slate-50\/40 {
+  background-color: var(--panel-2) !important;
+}
+
+.bg-white,
+.bg-white\/95,
+.bg-white\/80 {
+  background-color: var(--panel) !important;
+}
+
+/* Active filter pills & primary dark buttons (originally bg-slate-900 text-white) */
+button.bg-slate-900,
+.bg-slate-900.text-white {
+  background-color: var(--accent-bg) !important;
+  color: var(--accent) !important;
+  border: 1px solid var(--accent-line) !important;
+}
+
+button.bg-slate-900:hover:not(:disabled) {
+  border-color: var(--accent) !important;
+  color: var(--text) !important;
+  background-color: #172436 !important;
+}
+
+/* Inactive pill surfaces slightly softer than active */
+.bg-slate-100,
+.bg-slate-200 {
+  background-color: var(--panel-2) !important;
+}
+
+/* Brand mark / active dark pill */
+div.bg-slate-900.text-white {
+  background-color: var(--accent-bg) !important;
+  color: var(--accent) !important;
+  border: 1px solid var(--accent-line) !important;
+}
+
+pre.bg-slate-900 {
+  background-color: #090c10 !important;
+  color: var(--text) !important;
+  border: 1px solid var(--line) !important;
+}
+
+/* Text ink hierarchy */
+.text-slate-900,
+.text-slate-800 {
+  color: var(--text) !important;
+}
+
+.text-slate-700 {
+  color: #cdd6e4 !important;
+}
+
+.text-slate-600,
+.text-slate-500,
+.text-slate-400 {
+  color: var(--muted) !important;
+}
+
+/* Borders & Dividers */
+.border-slate-300,
+.border-slate-200,
+.border-slate-100,
+.border-slate-200\/70 {
+  border-color: var(--line) !important;
+}
+
+.divide-slate-100 > :not(:last-child) {
+  border-color: var(--row-line) !important;
+}
+
+/* Interactive hover surfaces */
+.hover\:bg-slate-50\/70:hover,
+.hover\:bg-slate-50\/60:hover,
+.hover\:bg-slate-100:hover,
+.hover\:bg-slate-200:hover {
+  background-color: #1a222d !important;
+}
+
+.hover\:border-slate-300:hover {
+  border-color: var(--accent) !important;
+}
+
+.hover\:text-slate-900:hover {
+  color: var(--accent) !important;
+}
+
+/* Progress bar tracks & fills */
+.bg-slate-700 {
+  background-color: var(--accent) !important;
+}
+
+/* Semantic: Rose / Critical (--err: #e06c75) */
+.bg-rose-50,
+.bg-rose-50\/70,
+.bg-rose-100,
+.bg-rose-200 {
+  background-color: var(--err-bg) !important;
+}
+.border-rose-200,
+.border-rose-300,
+.border-rose-400 {
+  border-color: var(--err-line) !important;
+}
+.border-l-rose-600 {
+  border-left-color: var(--err) !important;
+}
+.text-rose-900,
+.text-rose-800,
+.text-rose-700,
+.text-rose-600 {
+  color: var(--err) !important;
+}
+button.bg-rose-700 {
+  background-color: var(--err-bg) !important;
+  color: var(--err) !important;
+  border: 1px solid var(--err-line) !important;
+}
+button.bg-rose-700:hover:not(:disabled) {
+  border-color: var(--err) !important;
+  background-color: #291518 !important;
+}
+
+/* Semantic: Amber / Warning (--warn: #d9a441) */
+.bg-amber-50,
+.bg-amber-50\/70,
+.bg-amber-50\/40,
+.bg-amber-100 {
+  background-color: var(--warn-bg) !important;
+}
+.border-amber-200,
+.border-amber-300,
+.border-amber-400 {
+  border-color: var(--warn-line) !important;
+}
+.border-l-amber-500 {
+  border-left-color: var(--warn) !important;
+}
+.text-amber-950,
+.text-amber-900,
+.text-amber-800 {
+  color: var(--warn-text) !important;
+}
+.text-amber-700,
+.text-amber-600 {
+  color: var(--warn) !important;
+}
+button.bg-amber-900,
+button.bg-amber-700 {
+  background-color: var(--warn-bg) !important;
+  color: var(--warn-text) !important;
+  border: 1px solid var(--warn-line) !important;
+}
+button.bg-amber-900:hover:not(:disabled),
+button.bg-amber-700:hover:not(:disabled),
+.hover\:bg-amber-100:hover {
+  border-color: var(--warn) !important;
+  background-color: #282014 !important;
+}
+
+/* Semantic: Emerald & Teal / Operational Evidence & Verified OK (--ok: #8fd39a) */
+.bg-emerald-50,
+.bg-emerald-100,
+.bg-teal-50,
+.bg-teal-50\/70,
+.bg-teal-50\/60,
+.bg-teal-50\/50 {
+  background-color: var(--ok-bg) !important;
+}
+.border-emerald-200,
+.border-emerald-300,
+.border-teal-200,
+.border-teal-300 {
+  border-color: var(--ok-line) !important;
+}
+.border-l-emerald-500 {
+  border-left-color: var(--ok) !important;
+}
+.text-emerald-900,
+.text-emerald-800,
+.text-emerald-700,
+.text-emerald-600,
+.text-teal-950,
+.text-teal-900,
+.text-teal-800,
+.text-teal-700 {
+  color: var(--ok) !important;
+}
+.bg-teal-600 {
+  background-color: var(--ok) !important;
+}
+button.bg-teal-700 {
+  background-color: var(--accent) !important;
+  color: #06121f !important;
+  border: 1px solid var(--accent) !important;
+}
+button.bg-teal-700:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+.hover\:bg-teal-100:hover {
+  background-color: #16291c !important;
+  border-color: var(--ok) !important;
+}
+
+/* Semantic: Indigo, Sky & Blue / Accent & Updates (--accent: #6ea8fe) */
+.bg-indigo-50,
+.bg-indigo-50\/80,
+.bg-sky-100,
+.bg-blue-50 {
+  background-color: var(--accent-bg) !important;
+}
+.border-indigo-200,
+.border-indigo-300,
+.border-sky-300,
+.border-blue-200 {
+  border-color: var(--accent-line) !important;
+}
+.border-l-sky-500 {
+  border-left-color: var(--accent) !important;
+}
+.text-indigo-950,
+.text-indigo-900,
+.text-indigo-800,
+.text-indigo-700,
+.text-sky-900,
+.text-blue-700 {
+  color: var(--accent) !important;
+}
+.bg-indigo-500 {
+  background-color: var(--accent) !important;
+}
+button.bg-indigo-900 {
+  background-color: var(--accent) !important;
+  color: #06121f !important;
+  border: 1px solid var(--accent) !important;
+}
+button.bg-indigo-900:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+.hover\:bg-indigo-100:hover {
+  background-color: #172436 !important;
+}
+
+/* Semantic: Purple / Uncertainty */
+.bg-purple-50,
+.bg-purple-50\/60,
+.bg-purple-50\/40,
+.bg-purple-100 {
+  background-color: var(--purple-bg) !important;
+}
+.border-purple-100,
+.border-purple-200,
+.border-purple-300 {
+  border-color: var(--purple-line) !important;
+}
+.text-purple-950,
+.text-purple-900,
+.text-purple-800,
+.text-purple-700,
+.text-purple-600 {
+  color: var(--purple) !important;
+}
+
+/* Inputs & disabled states */
+input.bg-white,
+select.bg-white,
+textarea.bg-white,
+input.bg-slate-50,
+select.bg-slate-50,
+textarea.bg-slate-50 {
+  background-color: var(--input) !important;
+  color: var(--text) !important;
+  border-color: var(--line) !important;
+}
+
+input:disabled,
+select:disabled {
+  background-color: #121720 !important;
+  color: var(--muted) !important;
+}
+
+/* Modal backdrop */
+.bg-slate-900\/50 {
+  background-color: rgba(5, 8, 12, 0.78) !important;
+}

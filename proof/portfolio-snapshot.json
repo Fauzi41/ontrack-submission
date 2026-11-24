@@ -1,0 +1,2124 @@
+{
+  "as_of_date": "2026-10-06T17:00:00",
+  "projects": [
+    {
+      "project_id": "PRJ-001",
+      "master": {
+        "project_id": "PRJ-001",
+        "customer": "Instansi Alpha",
+        "project_name": "Penataan Arsip Inaktif Alpha",
+        "project_type": "Archive Arrangement",
+        "pic": "Raka",
+        "start_date": "2026-09-01",
+        "deadline": "2026-10-15",
+        "target": 400,
+        "target_unit": "ML",
+        "reported_actual": 318,
+        "reported_progress_pct": 79.5,
+        "reported_status": "ON TRACK",
+        "last_reported_update_at": "2026-10-06T11:32:00"
+      },
+      "attention_level": "HIGH",
+      "attention_score": 49,
+      "uncertainty_level": "MODERATE",
+      "executive_summary": "Potensi Rework & Penahanan Produksi Parsial (Hold Klasifikasi). Total 3 temuan terdeteksi lintas sumber.",
+      "key_verdict": "Perlu Perhatian Manajemen — Risiko Tinggi",
+      "deadline_analysis": {
+        "as_of_date": "2026-10-06T17:00:00",
+        "start_date": "2026-09-01",
+        "deadline": "2026-10-15",
+        "is_completed": false,
+        "total_duration_days": 44,
+        "elapsed_days": 35,
+        "remaining_days": 9,
+        "time_elapsed_pct": 79.55,
+        "target": 400,
+        "unit": "ML",
+        "reported_actual": 318,
+        "reported_progress_pct": 79.5,
+        "computed_reported_pct": 79.5,
+        "operational_verified_actual": 301.5,
+        "operational_verified_pct": 75.38,
+        "operational_pending_actual": 16.5,
+        "historical_daily_rate_reported": 9.09,
+        "historical_daily_rate_operational": 8.61,
+        "remaining_volume_reported": 82,
+        "remaining_volume_operational": 98.5,
+        "required_daily_rate_reported": 9.11,
+        "required_daily_rate_operational": 10.94,
+        "acceleration_factor_reported": 1,
+        "acceleration_factor_operational": 1.27,
+        "projected_days_needed_reported": 9.02,
+        "projected_days_needed_operational": 11.44,
+        "projected_completion_date_reported": "2026-10-16",
+        "projected_completion_date_operational": "2026-10-18",
+        "projected_slip_days_reported": 1,
+        "projected_slip_days_operational": 3,
+        "stated_capacity_per_day": null,
+        "stated_capacity_source_ref": null,
+        "projected_days_at_stated_capacity": null,
+        "projected_completion_at_stated_capacity": null,
+        "projected_slip_at_stated_capacity": null,
+        "feasibility_verdict": "PRESSURED",
+        "calculation_steps": [
+          {
+            "step": 1,
+            "label": "Durasi Total Proyek (Total Duration)",
+            "formula": "Deadline - Start Date (selisih hari kalender)",
+            "substitution": "2026-10-15 - 2026-09-01",
+            "result": "44 hari kalender"
+          },
+          {
+            "step": 2,
+            "label": "Waktu Berjalan & Sisa Waktu (Elapsed & Remaining Days)",
+            "formula": "Elapsed = As-Of Date - Start Date | Remaining = Deadline - As-Of Date",
+            "substitution": "Elapsed: 2026-10-06 - 2026-09-01 = 35 hari (79.55%) | Remaining: 2026-10-15 - 2026-10-06 = 9 hari",
+            "result": "35 hari berjalan (79.55%), sisa 9 hari",
+            "note": "Menggunakan tanggal acuan (as-of date) yang didokumentasikan agar hasil deterministik."
+          },
+          {
+            "step": 3,
+            "label": "Verifikasi Matematika Persentase Laporan (Reported Progress Audit)",
+            "formula": "(Reported Actual / Target) × 100%",
+            "substitution": "(318 / 400) × 100%",
+            "result": "79.5% (tercatat di Master: 79.5%)",
+            "note": "Persentase laporan konsisten dengan rasio reported_actual / target."
+          },
+          {
+            "step": 4,
+            "label": "Laju Historis Harian (Historical Average Run-Rate)",
+            "formula": "Actual Volume / Elapsed Days",
+            "substitution": "Reported: 318 / 35 hari | Operational Verified: 301.5 / 35 hari",
+            "result": "Reported: 9.09 ML/hari | Operational: 8.61 ML/hari"
+          },
+          {
+            "step": 5,
+            "label": "Sisa Target & Laju Wajib Harian (Required Daily Pace)",
+            "formula": "(Target - Actual) / Remaining Days",
+            "substitution": "Reported: (400 - 318) / 9 | Operational: (400 - 301.5) / 9",
+            "result": "Reported: 9.11 ML/hari | Operational: 10.94 ML/hari"
+          },
+          {
+            "step": 6,
+            "label": "Faktor Akselerasi & Proyeksi Tanggal Selesai (Pace Ratio & Projected Slip)",
+            "formula": "Acceleration = Required Pace / Historical Pace | Projected Finish = As-Of + ceil(Remaining / Historical Pace)",
+            "substitution": "Operational Ratio: 10.94 / 8.61 = 1.27x | Proyeksi: 2026-10-06 + ceil(11.44) hari",
+            "result": "Proyeksi selesai (laju operasional): 2026-10-18 (+3 hari terlambat)"
+          }
+        ]
+      },
+      "operational_summary": {
+        "latest_timestamp": "2026-10-05T18:00:00",
+        "hours_since_last_operational": 23,
+        "hours_since_last_update": 5.47,
+        "hours_since_last_master_report": 5.47,
+        "verified_quantity": 301.5,
+        "pending_quantity": 16.5,
+        "verified_source_ref": {
+          "ref_id": "PROD-ALPHA-001",
+          "source_kind": "PRODUCTION_EVIDENCE",
+          "source_label": "archive_production_report / production_snapshot",
+          "timestamp": "2026-10-05T18:00:00",
+          "excerpt": "verified_quantity=301.5 ML (VERIFIED)"
+        },
+        "pending_source_ref": {
+          "ref_id": "PROD-ALPHA-002",
+          "source_kind": "PRODUCTION_EVIDENCE",
+          "source_label": "archive_production_report / production_snapshot",
+          "timestamp": "2026-10-05T18:00:00",
+          "excerpt": "pending_internal_check_quantity=16.5 ML"
+        },
+        "quality_skipped_count": null,
+        "quality_skip_rate_pct": null,
+        "integration_developed": null,
+        "integration_configured": null,
+        "integration_production_tested": null,
+        "integration_target": null,
+        "environment_status": null,
+        "scanners": null,
+        "dms_status": null
+      },
+      "signals": [
+        {
+          "signal_id": "PRJ-001-R4D-HOLD-REWORK",
+          "rule_code": "R4D_OPERATIONAL_HOLD_REWORK",
+          "severity": "HIGH",
+          "category": "OPERATIONAL_HEALTH",
+          "title": "Potensi Rework & Penahanan Produksi Parsial (Hold Klasifikasi)",
+          "explanation": "Tim lapangan melaporkan perbedaan interpretasi klasifikasi saat uji petik sehingga sebagian unit/box diminta dicek ulang dan pola serupa sedang di-hold sementara. Meski PM sudah berkoordinasi dengan customer, belum ada bukti operasional atau keputusan tertulis bahwa hold sudah dicabut.",
+          "reported_claim": "ON TRACK (79.5%)",
+          "observed_reality": "Terdapat hold parsial & risiko revisi dari laporan lapangan (UPD-012, UPD-019, UPD-020)",
+          "evidence_refs": [
+            {
+              "ref_id": "UPD-012",
+              "source_kind": "PROJECT_UPDATE",
+              "source_label": "FIELD_TEAM (Operator 1)",
+              "timestamp": "2026-10-05T14:40:00",
+              "excerpt": "Pada uji petik hari ini ada beberapa box yang diminta dicek kembali karena interpretasi klasifikasi berbeda dengan arsiparis customer."
+            },
+            {
+              "ref_id": "UPD-019",
+              "source_kind": "PROJECT_UPDATE",
+              "source_label": "OPERATOR (Operator 2)",
+              "timestamp": "2026-10-06T09:14:00",
+              "excerpt": "Untuk sementara box dengan pola klasifikasi yang sama kami hold dulu sambil menunggu arahan supaya tidak menambah revisi."
+            },
+            {
+              "ref_id": "UPD-020",
+              "source_kind": "PROJECT_UPDATE",
+              "source_label": "PROJECT_MANAGER (Raka)",
+              "timestamp": "2026-10-06T11:32:00",
+              "excerpt": "Sudah koordinasi dengan pihak customer terkait hasil uji petik dan perbedaan interpretasi klasifikasi."
+            },
+            {
+              "ref_id": "UPD-019",
+              "source_kind": "PROJECT_UPDATE",
+              "source_label": "OPERATOR (Operator 2)",
+              "timestamp": "2026-10-06T09:14:00",
+              "excerpt": "Untuk sementara box dengan pola klasifikasi yang sama kami hold dulu sambil menunggu arahan supaya tidak menambah revisi."
+            },
+            {
+              "ref_id": "UPD-020",
+              "source_kind": "PROJECT_UPDATE",
+              "source_label": "PROJECT_MANAGER (Raka)",
+              "timestamp": "2026-10-06T11:32:00",
+              "excerpt": "Sudah koordinasi dengan pihak customer terkait hasil uji petik dan perbedaan interpretasi klasifikasi."
+            }
+          ]
+        },
+        {
+          "signal_id": "PRJ-001-R2A-WORKFLOW",
+          "rule_code": "R2A_WORKFLOW_STATE_GAP",
+          "severity": "MEDIUM",
+          "category": "WORKFLOW_STATE_GAP",
+          "title": "Selisih Definisi Workflow: 16.5 ML Masih Pending Internal Check",
+          "explanation": "Reported actual (318 ML) cocok persis dengan jumlah VERIFIED (301.5 ML) + PENDING_INTERNAL_CHECK (16.5 ML). Ini BUKAN kesalahan pencatatan, melainkan perbedaan definisi status: volume 16.5 ML belum lolos verifikasi final dan rentan revisi.",
+          "reported_claim": "318 ML (79.5%)",
+          "observed_reality": "VERIFIED=301.5 ML (75.38%) + PENDING_INTERNAL_CHECK=16.5 ML",
+          "evidence_refs": [
+            {
+              "ref_id": "PRJ-001:MASTER",
+              "source_kind": "PROJECT_MASTER",
+              "source_label": "Project Master (Raka)",
+              "timestamp": "2026-10-06T11:32:00",
+              "excerpt": "reported_actual=318 ML, reported_progress_pct=79.5%, status=ON TRACK"
+            },
+            {
+              "ref_id": "PROD-ALPHA-001",
+              "source_kind": "PRODUCTION_EVIDENCE",
+              "source_label": "archive_production_report / production_snapshot",
+              "timestamp": "2026-10-05T18:00:00",
+              "excerpt": "verified_quantity=301.5 ML (VERIFIED)"
+            },
+            {
+              "ref_id": "PROD-ALPHA-002",
+              "source_kind": "PRODUCTION_EVIDENCE",
+              "source_label": "archive_production_report / production_snapshot",
+              "timestamp": "2026-10-05T18:00:00",
+              "excerpt": "pending_internal_check_quantity=16.5 ML"
+            },
+            {
+              "ref_id": "UPD-009",
+              "source_kind": "PROJECT_UPDATE",
+              "source_label": "FIELD_TEAM (Operator 1)",
+              "timestamp": "2026-10-05T10:15:00",
+              "excerpt": "Rekap tim hari ini mencatat 318 ML sudah selesai ditata. Sebagian hasil terbaru masih dalam proses pengecekan internal sebelum masuk rekap hasil yang sudah diverifikasi."
+            }
+          ]
+        },
+        {
+          "signal_id": "PRJ-001-R3-PRESSURED",
+          "rule_code": "R3_SCHEDULE_PRESSURED",
+          "severity": "MEDIUM",
+          "category": "SCHEDULE_FEASIBILITY",
+          "title": "Tekanan Jadwal pada Output Terverifikasi (butuh akselerasi 1.27x)",
+          "explanation": "Berdasarkan volume terverifikasi (301.5 ML), sisa 98.5 ML dalam 9 hari membutuhkan 10.94 ML/hari dibanding rata-rata historis terverifikasi 8.61 ML/hari.",
+          "reported_claim": "ON TRACK (79.5%)",
+          "observed_reality": "Verified pace 8.61/hari vs required 10.94/hari (proyeksi 2026-10-18)",
+          "evidence_refs": [
+            {
+              "ref_id": "PRJ-001:MASTER",
+              "source_kind": "PROJECT_MASTER",
+              "source_label": "Project Master (Raka)",
+              "timestamp": "2026-10-06T11:32:00",
+              "excerpt": "reported_actual=318 ML, reported_progress_pct=79.5%, status=ON TRACK"
+            },
+            {
+              "ref_id": "PROD-ALPHA-001",
+              "source_kind": "PRODUCTION_EVIDENCE",
+              "source_label": "archive_production_report / production_snapshot",
+              "timestamp": "2026-10-05T18:00:00",
+              "excerpt": "verified_quantity=301.5 ML (VERIFIED)"
+            }
+          ]
+        }
+      ],
+      "unknowns": [
+        {
+          "code": "UNKNOWN_HOLD_AND_REWORK_VOLUME",
+          "title": "Jumlah box/unit yang di-hold dan terdampak revisi tidak terkuantifikasi",
+          "description": "Laporan lapangan dan koordinasi PM tidak menyebutkan berapa volume (unit) yang tertahan maupun apakah sebagian volume yang sudah tercatat perlu dikerjakan ulang.",
+          "impact": "Volume aktual efektif dapat berkurang jika sebagian output harus diklasifikasi ulang.",
+          "evidence_refs": [
+            {
+              "ref_id": "UPD-012",
+              "source_kind": "PROJECT_UPDATE",
+              "source_label": "FIELD_TEAM (Operator 1)",
+              "timestamp": "2026-10-05T14:40:00",
+              "excerpt": "Pada uji petik hari ini ada beberapa box yang diminta dicek kembali karena interpretasi klasifikasi berbeda dengan arsiparis customer."
+            },
+            {
+              "ref_id": "UPD-019",
+              "source_kind": "PROJECT_UPDATE",
+              "source_label": "OPERATOR (Operator 2)",
+              "timestamp": "2026-10-06T09:14:00",
+              "excerpt": "Untuk sementara box dengan pola klasifikasi yang sama kami hold dulu sambil menunggu arahan supaya tidak menambah revisi."
+            },
+            {
+              "ref_id": "UPD-020",
+              "source_kind": "PROJECT_UPDATE",
+              "source_label": "PROJECT_MANAGER (Raka)",
+              "timestamp": "2026-10-06T11:32:00",
+              "excerpt": "Sudah koordinasi dengan pihak customer terkait hasil uji petik dan perbedaan interpretasi klasifikasi."
+            }
+          ]
+        }
+      ],
+      "timeline": [
+        {
+          "event_id": "UPD-020",
+          "timestamp": "2026-10-06T11:32:00",
+          "layer": "REPORT_UPDATE",
+          "source_type": "PROJECT_MANAGER",
+          "source_name": "Raka",
+          "summary": "Sudah koordinasi dengan pihak customer terkait hasil uji petik dan perbedaan interpretasi klasifikasi.",
+          "details": {
+            "update_id": "UPD-020",
+            "source_type": "PROJECT_MANAGER",
+            "source_name": "Raka",
+            "message": "Sudah koordinasi dengan pihak customer terkait hasil uji petik dan perbedaan interpretasi klasifikasi."
+          }
+        },
+        {
+          "event_id": "UPD-019",
+          "timestamp": "2026-10-06T09:14:00",
+          "layer": "REPORT_UPDATE",
+          "source_type": "OPERATOR",
+          "source_name": "Operator 2",
+          "summary": "Untuk sementara box dengan pola klasifikasi yang sama kami hold dulu sambil menunggu arahan supaya tidak menambah revisi.",
+          "details": {
+            "update_id": "UPD-019",
+            "source_type": "OPERATOR",
+            "source_name": "Operator 2",
+            "message": "Untuk sementara box dengan pola klasifikasi yang sama kami hold dulu sambil menunggu arahan supaya tidak menambah revisi."
+          }
+        },
+        {
+          "event_id": "PROD-ALPHA-001",
+          "timestamp": "2026-10-05T18:00:00",
+          "layer": "OPERATIONAL_EVIDENCE",
+          "source_type": "archive_production_report",
+          "source_name": "archive_production_report",
+          "record_type": "production_snapshot",
+          "summary": "Verified: 301.5 ML",
+          "details": {
+            "source_record_id": "PROD-ALPHA-001",
+            "project_id": "PRJ-001",
+            "source_system": "archive_production_report",
+            "record_type": "production_snapshot",
+            "timestamp": "2026-10-05T18:00:00",
+            "verified_quantity": 301.5,
+            "unit": "ML",
+            "workflow_state": "VERIFIED"
+          }
+        },
+        {
+          "event_id": "PROD-ALPHA-002",
+          "timestamp": "2026-10-05T18:00:00",
+          "layer": "OPERATIONAL_EVIDENCE",
+          "source_type": "archive_production_report",
+          "source_name": "archive_production_report",
+          "record_type": "production_snapshot",
+          "summary": "Pending internal check: 16.5 ML",
+          "details": {
+            "source_record_id": "PROD-ALPHA-002",
+            "project_id": "PRJ-001",
+            "source_system": "archive_production_report",
+            "record_type": "production_snapshot",
+            "timestamp": "2026-10-05T18:00:00",
+            "pending_internal_check_quantity": 16.5,
+            "unit": "ML",
+            "workflow_state": "PENDING_INTERNAL_CHECK"
+          }
+        },
+        {
+          "event_id": "UPD-012",
+          "timestamp": "2026-10-05T14:40:00",
+          "layer": "REPORT_UPDATE",
+          "source_type": "FIELD_TEAM",
+          "source_name": "Operator 1",
+          "summary": "Pada uji petik hari ini ada beberapa box yang diminta dicek kembali karena interpretasi klasifikasi berbeda dengan arsiparis customer.",
+          "details": {
+            "update_id": "UPD-012",
+            "source_type": "FIELD_TEAM",
+            "source_name": "Operator 1",
+            "message": "Pada uji petik hari ini ada beberapa box yang diminta dicek kembali karena interpretasi klasifikasi berbeda dengan arsiparis customer."
+          }
+        },
+        {
+          "event_id": "UPD-009",
+          "timestamp": "2026-10-05T10:15:00",
+          "layer": "REPORT_UPDATE",
+          "source_type": "FIELD_TEAM",
+          "source_name": "Operator 1",
+          "summary": "Rekap tim hari ini mencatat 318 ML sudah selesai ditata. Sebagian hasil terbaru masih dalam proses pengecekan internal sebelum masuk rekap hasil yang sudah diverifikasi.",
+          "details": {
+            "update_id": "UPD-009",
+            "source_type": "FIELD_TEAM",
+            "source_name": "Operator 1",
+            "message": "Rekap tim hari ini mencatat 318 ML sudah selesai ditata. Sebagian hasil terbaru masih dalam proses pengecekan internal sebelum masuk rekap hasil yang sudah diverifikasi."
+          }
+        },
+        {
+          "event_id": "UPD-005",
+          "timestamp": "2026-10-03T16:20:00",
+          "layer": "REPORT_UPDATE",
+          "source_type": "PROJECT_MANAGER",
+          "source_name": "Raka",
+          "summary": "Produksi penataan berjalan sesuai rencana. Tim masih fokus menyelesaikan box pada area kerja yang sudah dibuka.",
+          "details": {
+            "update_id": "UPD-005",
+            "source_type": "PROJECT_MANAGER",
+            "source_name": "Raka",
+            "message": "Produksi penataan berjalan sesuai rencana. Tim masih fokus menyelesaikan box pada area kerja yang sudah dibuka."
+          }
+        }
+      ],
+      "followups": [],
+      "open_followup_count": 0,
+      "resolved_unverified_followup_count": 0
+    },
+    {
+      "project_id": "PRJ-002",
+      "master": {
+        "project_id": "PRJ-002",
+        "customer": "Instansi Beta",
+        "project_name": "Digitalisasi Arsip Beta",
+        "project_type": "Document Digitalisation",
+        "pic": "Nadia",
+        "start_date": "2026-09-10",
+        "deadline": "2026-10-10",
+        "target": 120000,
+        "target_unit": "pages",
+        "reported_actual": 91500,
+        "reported_progress_pct": 76.25,
+        "reported_status": "ON TRACK",
+        "last_reported_update_at": "2026-10-06T08:10:00"
+      },
+      "attention_level": "CRITICAL",
+      "attention_score": 90,
+      "uncertainty_level": "HIGH",
+      "executive_summary": "Target Deadline (2026-10-10, sisa 4 hari) Tidak Feasible Secara Matematis. Total 3 temuan terdeteksi lintas sumber.",
+      "key_verdict": "Perlu Intervensi Segera — Risiko Kritis",
+      "deadline_analysis": {
+        "as_of_date": "2026-10-06T17:00:00",
+        "start_date": "2026-09-10",
+        "deadline": "2026-10-10",
+        "is_completed": false,
+        "total_duration_days": 30,
+        "elapsed_days": 26,
+        "remaining_days": 4,
+        "time_elapsed_pct": 86.67,
+        "target": 120000,
+        "unit": "pages",
+        "reported_actual": 91500,
+        "reported_progress_pct": 76.25,
+        "computed_reported_pct": 76.25,
+        "operational_verified_actual": 87240,
+        "operational_verified_pct": 72.7,
+        "operational_pending_actual": null,
+        "historical_daily_rate_reported": 3519.23,
+        "historical_daily_rate_operational": 3355.38,
+        "remaining_volume_reported": 28500,
+        "remaining_volume_operational": 32760,
+        "required_daily_rate_reported": 7125,
+        "required_daily_rate_operational": 8190,
+        "acceleration_factor_reported": 2.02,
+        "acceleration_factor_operational": 2.44,
+        "projected_days_needed_reported": 8.1,
+        "projected_days_needed_operational": 9.76,
+        "projected_completion_date_reported": "2026-10-15",
+        "projected_completion_date_operational": "2026-10-16",
+        "projected_slip_days_reported": 5,
+        "projected_slip_days_operational": 6,
+        "stated_capacity_per_day": 4500,
+        "stated_capacity_source_ref": "UPD-008",
+        "projected_days_at_stated_capacity": 7.28,
+        "projected_completion_at_stated_capacity": "2026-10-14",
+        "projected_slip_at_stated_capacity": 4,
+        "feasibility_verdict": "MATHEMATICALLY_INFEASIBLE",
+        "calculation_steps": [
+          {
+            "step": 1,
+            "label": "Durasi Total Proyek (Total Duration)",
+            "formula": "Deadline - Start Date (selisih hari kalender)",
+            "substitution": "2026-10-10 - 2026-09-10",
+            "result": "30 hari kalender"
+          },
+          {
+            "step": 2,
+            "label": "Waktu Berjalan & Sisa Waktu (Elapsed & Remaining Days)",
+            "formula": "Elapsed = As-Of Date - Start Date | Remaining = Deadline - As-Of Date",
+            "substitution": "Elapsed: 2026-10-06 - 2026-09-10 = 26 hari (86.67%) | Remaining: 2026-10-10 - 2026-10-06 = 4 hari",
+            "result": "26 hari berjalan (86.67%), sisa 4 hari",
+            "note": "Menggunakan tanggal acuan (as-of date) yang didokumentasikan agar hasil deterministik."
+          },
+          {
+            "step": 3,
+            "label": "Verifikasi Matematika Persentase Laporan (Reported Progress Audit)",
+            "formula": "(Reported Actual / Target) × 100%",
+            "substitution": "(91,500 / 120,000) × 100%",
+            "result": "76.25% (tercatat di Master: 76.25%)",
+            "note": "Persentase laporan konsisten dengan rasio reported_actual / target."
+          },
+          {
+            "step": 4,
+            "label": "Laju Historis Harian (Historical Average Run-Rate)",
+            "formula": "Actual Volume / Elapsed Days",
+            "substitution": "Reported: 91,500 / 26 hari | Operational Verified: 87,240 / 26 hari",
+            "result": "Reported: 3519.23 pages/hari | Operational: 3355.38 pages/hari"
+          },
+          {
+            "step": 5,
+            "label": "Sisa Target & Laju Wajib Harian (Required Daily Pace)",
+            "formula": "(Target - Actual) / Remaining Days",
+            "substitution": "Reported: (120,000 - 91,500) / 4 | Operational: (120,000 - 87,240) / 4",
+            "result": "Reported: 7125 pages/hari | Operational: 8190 pages/hari"
+          },
+          {
+            "step": 6,
+            "label": "Faktor Akselerasi & Proyeksi Tanggal Selesai (Pace Ratio & Projected Slip)",
+            "formula": "Acceleration = Required Pace / Historical Pace | Projected Finish = As-Of + ceil(Remaining / Historical Pace)",
+            "substitution": "Operational Ratio: 8190 / 3355.38 = 2.44x | Proyeksi: 2026-10-06 + ceil(9.76) hari",
+            "result": "Proyeksi selesai (laju operasional): 2026-10-16 (+6 hari terlambat)"
+          },
+          {
+            "step": 7,
+            "label": "Uji Batas Kapasitas Maksimal (Stated Capacity Ceiling Check)",
+            "formula": "Remaining Volume / Stated Max Daily Capacity",
+            "substitution": "32,760 / 4,500 pages/hari (sumber: UPD-008)",
+            "result": "Minimal butuh 7.28 hari kerja penuh -> selesai paling cepat 2026-10-14 (+4 hari melewati deadline)",
+            "note": "Asumsi kapasitas normal penuh sebelum memperhitungkan degradasi alat atau libur."
+          }
+        ]
+      },
+      "operational_summary": {
+        "latest_timestamp": "2026-10-06T15:30:00",
+        "hours_since_last_operational": 1.5,
+        "hours_since_last_update": 1.67,
+        "hours_since_last_master_report": 8.83,
+        "verified_quantity": 87240,
+        "pending_quantity": null,
+        "verified_source_ref": {
+          "ref_id": "SCAN-BETA-001",
+          "source_kind": "PRODUCTION_EVIDENCE",
+          "source_label": "scanner_production_log / production_snapshot",
+          "timestamp": "2026-10-05T23:59:00",
+          "excerpt": "pages_processed_total=87240 pages"
+        },
+        "pending_source_ref": null,
+        "quality_skipped_count": null,
+        "quality_skip_rate_pct": null,
+        "integration_developed": null,
+        "integration_configured": null,
+        "integration_production_tested": null,
+        "integration_target": null,
+        "environment_status": null,
+        "scanners": {
+          "latest_timestamp": "2026-10-06T15:30:00",
+          "source_ref": {
+            "ref_id": "SCAN-BETA-003",
+            "source_kind": "PRODUCTION_EVIDENCE",
+            "source_label": "scanner_production_log / scanner_status",
+            "timestamp": "2026-10-06T15:30:00",
+            "excerpt": "SCN-A:RUNNING, SCN-B:LIMITED, SCN-C:RUNNING"
+          },
+          "units": [
+            {
+              "scanner_id": "SCN-A",
+              "status": "RUNNING"
+            },
+            {
+              "scanner_id": "SCN-B",
+              "status": "LIMITED"
+            },
+            {
+              "scanner_id": "SCN-C",
+              "status": "RUNNING"
+            }
+          ],
+          "previous_snapshot": {
+            "timestamp": "2026-10-06T08:15:00",
+            "source_ref": {
+              "ref_id": "SCAN-BETA-002",
+              "source_kind": "PRODUCTION_EVIDENCE",
+              "source_label": "scanner_production_log / scanner_status",
+              "timestamp": "2026-10-06T08:15:00",
+              "excerpt": "SCN-A:RUNNING, SCN-B:OUT_OF_SERVICE, SCN-C:RUNNING"
+            },
+            "units": [
+              {
+                "scanner_id": "SCN-A",
+                "status": "RUNNING"
+              },
+              {
+                "scanner_id": "SCN-B",
+                "status": "OUT_OF_SERVICE"
+              },
+              {
+                "scanner_id": "SCN-C",
+                "status": "RUNNING"
+              }
+            ]
+          }
+        },
+        "dms_status": null
+      },
+      "signals": [
+        {
+          "signal_id": "PRJ-002-R3-INFEASIBLE",
+          "rule_code": "R3_SCHEDULE_INFEASIBLE",
+          "severity": "CRITICAL",
+          "category": "SCHEDULE_FEASIBILITY",
+          "title": "Target Deadline (2026-10-10, sisa 4 hari) Tidak Feasible Secara Matematis",
+          "explanation": "Dibutuhkan laju 8,190 pages/hari (2.44x dari laju historis 3,355.38/hari) dan melampaui kapasitas penuh normal (4,500/hari). Proyeksi selesai: 2026-10-16 (terlambat +6 hari).",
+          "reported_claim": "ON TRACK (deadline 2026-10-10)",
+          "observed_reality": "Laju wajib: 8190/hari vs historis 3355.38/hari (max normal 4500/hari)",
+          "evidence_refs": [
+            {
+              "ref_id": "PRJ-002:MASTER",
+              "source_kind": "PROJECT_MASTER",
+              "source_label": "Project Master (Nadia)",
+              "timestamp": "2026-10-06T08:10:00",
+              "excerpt": "reported_actual=91500 pages, reported_progress_pct=76.25%, status=ON TRACK"
+            },
+            {
+              "ref_id": "SCAN-BETA-001",
+              "source_kind": "PRODUCTION_EVIDENCE",
+              "source_label": "scanner_production_log / production_snapshot",
+              "timestamp": "2026-10-05T23:59:00",
+              "excerpt": "pages_processed_total=87240 pages"
+            },
+            {
+              "ref_id": "UPD-008",
+              "source_kind": "PROJECT_UPDATE",
+              "source_label": "PROJECT_MANAGER (Nadia)",
+              "timestamp": "2026-10-04T17:15:00",
+              "excerpt": "Produksi hari ini masih berjalan normal dengan tiga scanner. Rata-rata kapasitas tim sekitar 4.500 halaman per hari."
+            }
+          ]
+        },
+        {
+          "signal_id": "PRJ-002-R2B-DISCREPANCY",
+          "rule_code": "R2B_REPORT_VS_OPERATIONAL_GAP",
+          "severity": "HIGH",
+          "category": "SOURCE_DISCREPANCY",
+          "title": "Selisih Volume Laporan vs Log Operasional (+4,260 pages)",
+          "explanation": "Project Master mencatat 91,500 pages (2026-10-06T08:10:00), sedangkan log sistem operasional mencatat 87,240 pages (2026-10-05T23:59:00). Terdapat selisih 4,260 pages dengan jarak waktu 8.18 jam. Kedua nilai tetap dipertahankan tanpa menimpa satu sama lain.",
+          "reported_claim": "91,500 pages @ 2026-10-06T08:10:00",
+          "observed_reality": "87,240 pages @ 2026-10-05T23:59:00",
+          "evidence_refs": [
+            {
+              "ref_id": "PRJ-002:MASTER",
+              "source_kind": "PROJECT_MASTER",
+              "source_label": "Project Master (Nadia)",
+              "timestamp": "2026-10-06T08:10:00",
+              "excerpt": "reported_actual=91500 pages, reported_progress_pct=76.25%, status=ON TRACK"
+            },
+            {
+              "ref_id": "SCAN-BETA-001",
+              "source_kind": "PRODUCTION_EVIDENCE",
+              "source_label": "scanner_production_log / production_snapshot",
+              "timestamp": "2026-10-05T23:59:00",
+              "excerpt": "pages_processed_total=87240 pages"
+            }
+          ]
+        },
+        {
+          "signal_id": "PRJ-002-R4A-RESOURCE",
+          "rule_code": "R4A_OPERATIONAL_RESOURCE_DEGRADED",
+          "severity": "HIGH",
+          "category": "OPERATIONAL_HEALTH",
+          "title": "Kapasitas Perangkat Terdegradasi (SCN-B: LIMITED)",
+          "explanation": "Snapshot operasional terbaru (2026-10-06T15:30:00) menunjukkan 1 dari 3 unit tidak beroperasi penuh (SCN-B=LIMITED). Sebelumnya pada 2026-10-06T08:15:00 tercatat gangguan (SCN-B=OUT_OF_SERVICE). Artinya kapasitas efektif saat ini berada di bawah kondisi normal.",
+          "reported_claim": "ON TRACK",
+          "observed_reality": "SCN-A: RUNNING, SCN-B: LIMITED, SCN-C: RUNNING",
+          "evidence_refs": [
+            {
+              "ref_id": "SCAN-BETA-003",
+              "source_kind": "PRODUCTION_EVIDENCE",
+              "source_label": "scanner_production_log / scanner_status",
+              "timestamp": "2026-10-06T15:30:00",
+              "excerpt": "SCN-A:RUNNING, SCN-B:LIMITED, SCN-C:RUNNING"
+            },
+            {
+              "ref_id": "SCAN-BETA-002",
+              "source_kind": "PRODUCTION_EVIDENCE",
+              "source_label": "scanner_production_log / scanner_status",
+              "timestamp": "2026-10-06T08:15:00",
+              "excerpt": "SCN-A:RUNNING, SCN-B:OUT_OF_SERVICE, SCN-C:RUNNING"
+            },
+            {
+              "ref_id": "UPD-021",
+              "source_kind": "PROJECT_UPDATE",
+              "source_label": "VENDOR (Vendor Scanner)",
+              "timestamp": "2026-10-06T13:35:00",
+              "excerpt": "Pengecekan Scanner B sudah dilakukan. Unit dapat digunakan kembali, tetapi feeding masih perlu dipantau dan kecepatan belum kembali ke kondisi normal."
+            },
+            {
+              "ref_id": "UPD-022",
+              "source_kind": "PROJECT_UPDATE",
+              "source_label": "OPERATOR (Operator 1)",
+              "timestamp": "2026-10-06T15:20:00",
+              "excerpt": "Scanner B sudah dipakai kembali untuk produksi terbatas. Scanner A dan C tetap berjalan normal."
+            }
+          ]
+        }
+      ],
+      "unknowns": [
+        {
+          "code": "UNKNOWN_VOLUME_DELTA",
+          "title": "Sumber selisih 4,260 pages belum terjelaskan",
+          "description": "Belum ada bukti apakah selisih berasal dari jeda sinkronisasi cut-off log, pekerjaan manual di luar log sistem, atau koreksi/over-reporting pada master.",
+          "impact": "Menggeser sisa beban kerja dari 28,500 menjadi 32,760 pages.",
+          "evidence_refs": [
+            {
+              "ref_id": "PRJ-002:MASTER",
+              "source_kind": "PROJECT_MASTER",
+              "source_label": "Project Master (Nadia)",
+              "timestamp": "2026-10-06T08:10:00",
+              "excerpt": "reported_actual=91500 pages, reported_progress_pct=76.25%, status=ON TRACK"
+            },
+            {
+              "ref_id": "SCAN-BETA-001",
+              "source_kind": "PRODUCTION_EVIDENCE",
+              "source_label": "scanner_production_log / production_snapshot",
+              "timestamp": "2026-10-05T23:59:00",
+              "excerpt": "pages_processed_total=87240 pages"
+            }
+          ]
+        },
+        {
+          "code": "UNKNOWN_DEGRADED_THROUGHPUT",
+          "title": "Kecepatan aktual unit berstatus LIMITED belum terukur",
+          "description": "Belum ada log produksi harian pasca perbaikan unit (2026-10-06T15:30:00) sehingga kapasitas riil per jam/hari saat ini belum diketahui pasti.",
+          "impact": "Sulit memastikan apakah lembur/tambahan shift cukup menutup defisit volume.",
+          "evidence_refs": [
+            {
+              "ref_id": "SCAN-BETA-003",
+              "source_kind": "PRODUCTION_EVIDENCE",
+              "source_label": "scanner_production_log / scanner_status",
+              "timestamp": "2026-10-06T15:30:00",
+              "excerpt": "SCN-A:RUNNING, SCN-B:LIMITED, SCN-C:RUNNING"
+            }
+          ]
+        }
+      ],
+      "timeline": [
+        {
+          "event_id": "SCAN-BETA-003",
+          "timestamp": "2026-10-06T15:30:00",
+          "layer": "OPERATIONAL_EVIDENCE",
+          "source_type": "scanner_production_log",
+          "source_name": "scanner_production_log",
+          "record_type": "scanner_status",
+          "summary": "Scanners: SCN-A=RUNNING, SCN-B=LIMITED, SCN-C=RUNNING",
+          "details": {
+            "source_record_id": "SCAN-BETA-003",
+            "project_id": "PRJ-002",
+            "source_system": "scanner_production_log",
+            "record_type": "scanner_status",
+            "timestamp": "2026-10-06T15:30:00",
+            "scanners": [
+              {
+                "scanner_id": "SCN-A",
+                "status": "RUNNING"
+              },
+              {
+                "scanner_id": "SCN-B",
+                "status": "LIMITED"
+              },
+              {
+                "scanner_id": "SCN-C",
+                "status": "RUNNING"
+              }
+            ]
+          }
+        },
+        {
+          "event_id": "UPD-022",
+          "timestamp": "2026-10-06T15:20:00",
+          "layer": "REPORT_UPDATE",
+          "source_type": "OPERATOR",
+          "source_name": "Operator 1",
+          "summary": "Scanner B sudah dipakai kembali untuk produksi terbatas. Scanner A dan C tetap berjalan normal.",
+          "details": {
+            "update_id": "UPD-022",
+            "source_type": "OPERATOR",
+            "source_name": "Operator 1",
+            "message": "Scanner B sudah dipakai kembali untuk produksi terbatas. Scanner A dan C tetap berjalan normal."
+          }
+        },
+        {
+          "event_id": "UPD-021",
+          "timestamp": "2026-10-06T13:35:00",
+          "layer": "REPORT_UPDATE",
+          "source_type": "VENDOR",
+          "source_name": "Vendor Scanner",
+          "summary": "Pengecekan Scanner B sudah dilakukan. Unit dapat digunakan kembali, tetapi feeding masih perlu dipantau dan kecepatan belum kembali ke kondisi normal.",
+          "details": {
+            "update_id": "UPD-021",
+            "source_type": "VENDOR",
+            "source_name": "Vendor Scanner",
+            "message": "Pengecekan Scanner B sudah dilakukan. Unit dapat digunakan kembali, tetapi feeding masih perlu dipantau dan kecepatan belum kembali ke kondisi normal."
+          }
+        },
+        {
+          "event_id": "UPD-018",
+          "timestamp": "2026-10-06T08:43:00",
+          "layer": "REPORT_UPDATE",
+          "source_type": "VENDOR",
+          "source_name": "Vendor Scanner",
+          "summary": "Teknisi dijadwalkan datang siang ini untuk pengecekan unit. Estimasi pemulihan baru dapat diberikan setelah pemeriksaan.",
+          "details": {
+            "update_id": "UPD-018",
+            "source_type": "VENDOR",
+            "source_name": "Vendor Scanner",
+            "message": "Teknisi dijadwalkan datang siang ini untuk pengecekan unit. Estimasi pemulihan baru dapat diberikan setelah pemeriksaan."
+          }
+        },
+        {
+          "event_id": "SCAN-BETA-002",
+          "timestamp": "2026-10-06T08:15:00",
+          "layer": "OPERATIONAL_EVIDENCE",
+          "source_type": "scanner_production_log",
+          "source_name": "scanner_production_log",
+          "record_type": "scanner_status",
+          "summary": "Scanners: SCN-A=RUNNING, SCN-B=OUT_OF_SERVICE, SCN-C=RUNNING",
+          "details": {
+            "source_record_id": "SCAN-BETA-002",
+            "project_id": "PRJ-002",
+            "source_system": "scanner_production_log",
+            "record_type": "scanner_status",
+            "timestamp": "2026-10-06T08:15:00",
+            "scanners": [
+              {
+                "scanner_id": "SCN-A",
+                "status": "RUNNING"
+              },
+              {
+                "scanner_id": "SCN-B",
+                "status": "OUT_OF_SERVICE"
+              },
+              {
+                "scanner_id": "SCN-C",
+                "status": "RUNNING"
+              }
+            ]
+          }
+        },
+        {
+          "event_id": "UPD-017",
+          "timestamp": "2026-10-06T08:10:00",
+          "layer": "REPORT_UPDATE",
+          "source_type": "PROJECT_MANAGER",
+          "source_name": "Nadia",
+          "summary": "Scanner B masih belum dapat digunakan. Vendor sudah dihubungi untuk pengecekan. Produksi tetap berjalan menggunakan scanner yang tersedia.",
+          "details": {
+            "update_id": "UPD-017",
+            "source_type": "PROJECT_MANAGER",
+            "source_name": "Nadia",
+            "message": "Scanner B masih belum dapat digunakan. Vendor sudah dihubungi untuk pengecekan. Produksi tetap berjalan menggunakan scanner yang tersedia."
+          }
+        },
+        {
+          "event_id": "SCAN-BETA-001",
+          "timestamp": "2026-10-05T23:59:00",
+          "layer": "OPERATIONAL_EVIDENCE",
+          "source_type": "scanner_production_log",
+          "source_name": "scanner_production_log",
+          "record_type": "production_snapshot",
+          "summary": "Total pages logged: 87,240",
+          "details": {
+            "source_record_id": "SCAN-BETA-001",
+            "project_id": "PRJ-002",
+            "source_system": "scanner_production_log",
+            "record_type": "production_snapshot",
+            "timestamp": "2026-10-05T23:59:00",
+            "pages_processed_total": 87240,
+            "unit": "pages"
+          }
+        },
+        {
+          "event_id": "UPD-013",
+          "timestamp": "2026-10-05T16:22:00",
+          "layer": "REPORT_UPDATE",
+          "source_type": "OPERATOR",
+          "source_name": "Operator 1",
+          "summary": "Scanner A normal. Scanner B mengalami paper feeding error. Scanner C masih dapat digunakan untuk produksi.",
+          "details": {
+            "update_id": "UPD-013",
+            "source_type": "OPERATOR",
+            "source_name": "Operator 1",
+            "message": "Scanner A normal. Scanner B mengalami paper feeding error. Scanner C masih dapat digunakan untuk produksi."
+          }
+        },
+        {
+          "event_id": "UPD-008",
+          "timestamp": "2026-10-04T17:15:00",
+          "layer": "REPORT_UPDATE",
+          "source_type": "PROJECT_MANAGER",
+          "source_name": "Nadia",
+          "summary": "Produksi hari ini masih berjalan normal dengan tiga scanner. Rata-rata kapasitas tim sekitar 4.500 halaman per hari.",
+          "details": {
+            "update_id": "UPD-008",
+            "source_type": "PROJECT_MANAGER",
+            "source_name": "Nadia",
+            "message": "Produksi hari ini masih berjalan normal dengan tiga scanner. Rata-rata kapasitas tim sekitar 4.500 halaman per hari."
+          }
+        }
+      ],
+      "followups": [],
+      "open_followup_count": 0,
+      "resolved_unverified_followup_count": 0
+    },
+    {
+      "project_id": "PRJ-003",
+      "master": {
+        "project_id": "PRJ-003",
+        "customer": "BUMN Gamma",
+        "project_name": "Penataan dan Pendataan Arsip Gamma",
+        "project_type": "Archive Arrangement",
+        "pic": "Andi",
+        "start_date": "2026-08-15",
+        "deadline": "2026-10-20",
+        "target": 2000,
+        "target_unit": "boxes",
+        "reported_actual": 1840,
+        "reported_progress_pct": 94,
+        "reported_status": "ON TRACK",
+        "last_reported_update_at": "2026-09-30T17:00:00"
+      },
+      "attention_level": "HIGH",
+      "attention_score": 37,
+      "uncertainty_level": "HIGH",
+      "executive_summary": "Data Usang / Blind Spot Operasional (6 hari tanpa update maupun log produksi). Total 2 temuan terdeteksi lintas sumber.",
+      "key_verdict": "Status Aktual Tidak Terverifikasi (Data Usang)",
+      "deadline_analysis": {
+        "as_of_date": "2026-10-06T17:00:00",
+        "start_date": "2026-08-15",
+        "deadline": "2026-10-20",
+        "is_completed": false,
+        "total_duration_days": 66,
+        "elapsed_days": 52,
+        "remaining_days": 14,
+        "time_elapsed_pct": 78.79,
+        "target": 2000,
+        "unit": "boxes",
+        "reported_actual": 1840,
+        "reported_progress_pct": 94,
+        "computed_reported_pct": 92,
+        "operational_verified_actual": 1840,
+        "operational_verified_pct": 92,
+        "operational_pending_actual": null,
+        "historical_daily_rate_reported": 35.38,
+        "historical_daily_rate_operational": 40,
+        "remaining_volume_reported": 160,
+        "remaining_volume_operational": 160,
+        "required_daily_rate_reported": 11.43,
+        "required_daily_rate_operational": 11.43,
+        "acceleration_factor_reported": 0.32,
+        "acceleration_factor_operational": 0.29,
+        "projected_days_needed_reported": 4.52,
+        "projected_days_needed_operational": 4,
+        "projected_completion_date_reported": "2026-10-11",
+        "projected_completion_date_operational": "2026-10-10",
+        "projected_slip_days_reported": -9,
+        "projected_slip_days_operational": -10,
+        "stated_capacity_per_day": null,
+        "stated_capacity_source_ref": null,
+        "projected_days_at_stated_capacity": null,
+        "projected_completion_at_stated_capacity": null,
+        "projected_slip_at_stated_capacity": null,
+        "feasibility_verdict": "INSUFFICIENT_DATA",
+        "calculation_steps": [
+          {
+            "step": 1,
+            "label": "Durasi Total Proyek (Total Duration)",
+            "formula": "Deadline - Start Date (selisih hari kalender)",
+            "substitution": "2026-10-20 - 2026-08-15",
+            "result": "66 hari kalender"
+          },
+          {
+            "step": 2,
+            "label": "Waktu Berjalan & Sisa Waktu (Elapsed & Remaining Days)",
+            "formula": "Elapsed = As-Of Date - Start Date | Remaining = Deadline - As-Of Date",
+            "substitution": "Elapsed: 2026-10-06 - 2026-08-15 = 52 hari (78.79%) | Remaining: 2026-10-20 - 2026-10-06 = 14 hari",
+            "result": "52 hari berjalan (78.79%), sisa 14 hari",
+            "note": "Menggunakan tanggal acuan (as-of date) yang didokumentasikan agar hasil deterministik."
+          },
+          {
+            "step": 3,
+            "label": "Verifikasi Matematika Persentase Laporan (Reported Progress Audit)",
+            "formula": "(Reported Actual / Target) × 100%",
+            "substitution": "(1,840 / 2,000) × 100%",
+            "result": "92% (tercatat di Master: 94%)",
+            "note": "Terdapat selisih aritmetika 2% antara angka aktual dan persentase yang dilaporkan."
+          },
+          {
+            "step": 4,
+            "label": "Laju Historis Harian (Historical Average Run-Rate)",
+            "formula": "Actual Volume / Elapsed Days",
+            "substitution": "Reported: 1,840 / 52 hari | Operational Verified: 1,840 / 46 hari",
+            "result": "Reported: 35.38 boxes/hari | Operational: 40 boxes/hari",
+            "note": "Laju operasional dihitung sampai tanggal snapshot terakhir (2026-09-30, hari ke-46) agar tidak mengasumsikan output 0 selama periode tanpa laporan."
+          },
+          {
+            "step": 5,
+            "label": "Sisa Target & Laju Wajib Harian (Required Daily Pace)",
+            "formula": "(Target - Actual) / Remaining Days",
+            "substitution": "Reported: (2,000 - 1,840) / 14 | Operational: (2,000 - 1,840) / 14",
+            "result": "Reported: 11.43 boxes/hari | Operational: 11.43 boxes/hari"
+          },
+          {
+            "step": 6,
+            "label": "Faktor Akselerasi & Proyeksi Tanggal Selesai (Pace Ratio & Projected Slip)",
+            "formula": "Acceleration = Required Pace / Historical Pace | Projected Finish = As-Of + ceil(Remaining / Historical Pace)",
+            "substitution": "Operational Ratio: 11.43 / 40 = 0.29x | Proyeksi: 2026-10-06 + ceil(4) hari",
+            "result": "Proyeksi selesai (laju operasional): 2026-10-10 (10 hari lebih cepat)"
+          }
+        ]
+      },
+      "operational_summary": {
+        "latest_timestamp": "2026-09-30T17:00:00",
+        "hours_since_last_operational": 144,
+        "hours_since_last_update": 144,
+        "hours_since_last_master_report": 144,
+        "verified_quantity": 1840,
+        "pending_quantity": null,
+        "verified_source_ref": {
+          "ref_id": "WH-GAMMA-001",
+          "source_kind": "PRODUCTION_EVIDENCE",
+          "source_label": "warehouse_entry / production_snapshot",
+          "timestamp": "2026-09-30T17:00:00",
+          "excerpt": "processed_boxes=1840 boxes"
+        },
+        "pending_source_ref": null,
+        "quality_skipped_count": null,
+        "quality_skip_rate_pct": null,
+        "integration_developed": null,
+        "integration_configured": null,
+        "integration_production_tested": null,
+        "integration_target": null,
+        "environment_status": null,
+        "scanners": null,
+        "dms_status": null
+      },
+      "signals": [
+        {
+          "signal_id": "PRJ-003-R5-STALE",
+          "rule_code": "R5_DATA_STALENESS_BLIND_SPOT",
+          "severity": "HIGH",
+          "category": "DATA_STALENESS",
+          "title": "Data Usang / Blind Spot Operasional (6 hari tanpa update maupun log produksi)",
+          "explanation": "Untuk proyek aktif berstatus ON TRACK, tidak ada pembaruan lapangan maupun snapshot sistem operasional sejak 2026-09-30T17:00:00 (6 hari sebelum tanggal acuan 2026-10-06). Sistem TIDAK menyimpulkan proyek ini terlambat ataupun sehat — kondisi aktual saat ini belum terverifikasi.",
+          "reported_claim": "ON TRACK per 2026-09-30T17:00:00",
+          "observed_reality": "Tidak ada record operasional & update selama 6 hari terakhir (ambang batas: 3 hari)",
+          "evidence_refs": [
+            {
+              "ref_id": "PRJ-003:MASTER",
+              "source_kind": "PROJECT_MASTER",
+              "source_label": "Project Master (Andi)",
+              "timestamp": "2026-09-30T17:00:00",
+              "excerpt": "reported_actual=1840 boxes, reported_progress_pct=94%, status=ON TRACK"
+            },
+            {
+              "ref_id": "WH-GAMMA-001",
+              "source_kind": "PRODUCTION_EVIDENCE",
+              "source_label": "warehouse_entry / production_snapshot",
+              "timestamp": "2026-09-30T17:00:00",
+              "excerpt": "processed_boxes=1840 boxes"
+            },
+            {
+              "ref_id": "UPD-004",
+              "source_kind": "PROJECT_UPDATE",
+              "source_label": "PROJECT_MANAGER (Andi)",
+              "timestamp": "2026-09-30T17:00:00",
+              "excerpt": "Produksi dilanjutkan seperti biasa. Progress akan diperbarui kembali setelah rekap berikutnya."
+            }
+          ]
+        },
+        {
+          "signal_id": "PRJ-003-R1-MATH",
+          "rule_code": "R1_REPORT_MATH_MISMATCH",
+          "severity": "MEDIUM",
+          "category": "REPORT_INCONSISTENCY",
+          "title": "Inkonsistensi Persentase Laporan (+2% selisih aritmetika)",
+          "explanation": "Project Master melaporkan progress 94%, padahal rasio reported_actual/target (1,840 / 2,000) adalah 92%. Sistem tidak menimpa nilai laporan, namun menandai gap 2 poin persentase untuk klarifikasi definisi perhitungan.",
+          "reported_claim": "94% (1,840 / 2,000 boxes)",
+          "observed_reality": "Kalkulasi aktual/target = 92% (selisih +2%)",
+          "evidence_refs": [
+            {
+              "ref_id": "PRJ-003:MASTER",
+              "source_kind": "PROJECT_MASTER",
+              "source_label": "Project Master (Andi)",
+              "timestamp": "2026-09-30T17:00:00",
+              "excerpt": "reported_actual=1840 boxes, reported_progress_pct=94%, status=ON TRACK"
+            },
+            {
+              "ref_id": "WH-GAMMA-001",
+              "source_kind": "PRODUCTION_EVIDENCE",
+              "source_label": "warehouse_entry / production_snapshot",
+              "timestamp": "2026-09-30T17:00:00",
+              "excerpt": "processed_boxes=1840 boxes"
+            }
+          ]
+        }
+      ],
+      "unknowns": [
+        {
+          "code": "UNKNOWN_PROGRESS_FORMULA",
+          "title": "Basis rumus reported_progress_pct tidak cocok dengan rasio aktual/target",
+          "description": "Belum diketahui apakah angka 94% menggunakan bobot tahapan lain, pembulatan manual, atau mencakup item yang belum masuk rekap aktual (92%).",
+          "impact": "Berpotensi menyamarkan keterlambatan proyek terhadap garis waktu linear.",
+          "evidence_refs": [
+            {
+              "ref_id": "PRJ-003:MASTER",
+              "source_kind": "PROJECT_MASTER",
+              "source_label": "Project Master (Andi)",
+              "timestamp": "2026-09-30T17:00:00",
+              "excerpt": "reported_actual=1840 boxes, reported_progress_pct=94%, status=ON TRACK"
+            }
+          ]
+        },
+        {
+          "code": "UNKNOWN_CURRENT_PROGRESS_STALE",
+          "title": "Status operasional sejak 2026-09-30 tidak diketahui",
+          "description": "Dengan laju sebelumnya (40 boxes/hari), proyek bisa saja sudah selesai ATAU justru berhenti total tanpa laporan.",
+          "impact": "Manajemen tidak dapat memvalidasi apakah target 100% akan tercapai sebelum deadline tanpa rekap terbaru.",
+          "evidence_refs": [
+            {
+              "ref_id": "PRJ-003:MASTER",
+              "source_kind": "PROJECT_MASTER",
+              "source_label": "Project Master (Andi)",
+              "timestamp": "2026-09-30T17:00:00",
+              "excerpt": "reported_actual=1840 boxes, reported_progress_pct=94%, status=ON TRACK"
+            },
+            {
+              "ref_id": "WH-GAMMA-001",
+              "source_kind": "PRODUCTION_EVIDENCE",
+              "source_label": "warehouse_entry / production_snapshot",
+              "timestamp": "2026-09-30T17:00:00",
+              "excerpt": "processed_boxes=1840 boxes"
+            }
+          ]
+        }
+      ],
+      "timeline": [
+        {
+          "event_id": "UPD-004",
+          "timestamp": "2026-09-30T17:00:00",
+          "layer": "REPORT_UPDATE",
+          "source_type": "PROJECT_MANAGER",
+          "source_name": "Andi",
+          "summary": "Produksi dilanjutkan seperti biasa. Progress akan diperbarui kembali setelah rekap berikutnya.",
+          "details": {
+            "update_id": "UPD-004",
+            "source_type": "PROJECT_MANAGER",
+            "source_name": "Andi",
+            "message": "Produksi dilanjutkan seperti biasa. Progress akan diperbarui kembali setelah rekap berikutnya."
+          }
+        },
+        {
+          "event_id": "WH-GAMMA-001",
+          "timestamp": "2026-09-30T17:00:00",
+          "layer": "OPERATIONAL_EVIDENCE",
+          "source_type": "warehouse_entry",
+          "source_name": "warehouse_entry",
+          "record_type": "production_snapshot",
+          "summary": "Processed boxes: 1,840",
+          "details": {
+            "source_record_id": "WH-GAMMA-001",
+            "project_id": "PRJ-003",
+            "source_system": "warehouse_entry",
+            "record_type": "production_snapshot",
+            "timestamp": "2026-09-30T17:00:00",
+            "processed_boxes": 1840,
+            "unit": "boxes"
+          }
+        },
+        {
+          "event_id": "UPD-002",
+          "timestamp": "2026-09-29T15:20:00",
+          "layer": "REPORT_UPDATE",
+          "source_type": "PROJECT_MANAGER",
+          "source_name": "Andi",
+          "summary": "Pekerjaan berjalan normal dan belum ada kendala signifikan yang dilaporkan tim.",
+          "details": {
+            "update_id": "UPD-002",
+            "source_type": "PROJECT_MANAGER",
+            "source_name": "Andi",
+            "message": "Pekerjaan berjalan normal dan belum ada kendala signifikan yang dilaporkan tim."
+          }
+        }
+      ],
+      "followups": [],
+      "open_followup_count": 0,
+      "resolved_unverified_followup_count": 0
+    },
+    {
+      "project_id": "PRJ-004",
+      "master": {
+        "project_id": "PRJ-004",
+        "customer": "Instansi Delta",
+        "project_name": "Verifikasi Data Delta",
+        "project_type": "Data Verification",
+        "pic": "Sari",
+        "start_date": "2026-09-01",
+        "deadline": "2026-11-05",
+        "target": 100000,
+        "target_unit": "records",
+        "reported_actual": 45000,
+        "reported_progress_pct": 52,
+        "reported_status": "ON TRACK",
+        "last_reported_update_at": "2026-10-06T07:00:00"
+      },
+      "attention_level": "HIGH",
+      "attention_score": 75,
+      "uncertainty_level": "HIGH",
+      "executive_summary": "Inkonsistensi Persentase Laporan (+7% selisih aritmetika). Total 3 temuan terdeteksi lintas sumber.",
+      "key_verdict": "Perlu Perhatian Manajemen — Risiko Tinggi",
+      "deadline_analysis": {
+        "as_of_date": "2026-10-06T17:00:00",
+        "start_date": "2026-09-01",
+        "deadline": "2026-11-05",
+        "is_completed": false,
+        "total_duration_days": 65,
+        "elapsed_days": 35,
+        "remaining_days": 30,
+        "time_elapsed_pct": 53.85,
+        "target": 100000,
+        "unit": "records",
+        "reported_actual": 45000,
+        "reported_progress_pct": 52,
+        "computed_reported_pct": 45,
+        "operational_verified_actual": 45000,
+        "operational_verified_pct": 45,
+        "operational_pending_actual": null,
+        "historical_daily_rate_reported": 1285.71,
+        "historical_daily_rate_operational": 1285.71,
+        "remaining_volume_reported": 55000,
+        "remaining_volume_operational": 55000,
+        "required_daily_rate_reported": 1833.33,
+        "required_daily_rate_operational": 1833.33,
+        "acceleration_factor_reported": 1.43,
+        "acceleration_factor_operational": 1.43,
+        "projected_days_needed_reported": 42.78,
+        "projected_days_needed_operational": 42.78,
+        "projected_completion_date_reported": "2026-11-18",
+        "projected_completion_date_operational": "2026-11-18",
+        "projected_slip_days_reported": 13,
+        "projected_slip_days_operational": 13,
+        "stated_capacity_per_day": null,
+        "stated_capacity_source_ref": null,
+        "projected_days_at_stated_capacity": null,
+        "projected_completion_at_stated_capacity": null,
+        "projected_slip_at_stated_capacity": null,
+        "feasibility_verdict": "AT_HIGH_RISK",
+        "calculation_steps": [
+          {
+            "step": 1,
+            "label": "Durasi Total Proyek (Total Duration)",
+            "formula": "Deadline - Start Date (selisih hari kalender)",
+            "substitution": "2026-11-05 - 2026-09-01",
+            "result": "65 hari kalender"
+          },
+          {
+            "step": 2,
+            "label": "Waktu Berjalan & Sisa Waktu (Elapsed & Remaining Days)",
+            "formula": "Elapsed = As-Of Date - Start Date | Remaining = Deadline - As-Of Date",
+            "substitution": "Elapsed: 2026-10-06 - 2026-09-01 = 35 hari (53.85%) | Remaining: 2026-11-05 - 2026-10-06 = 30 hari",
+            "result": "35 hari berjalan (53.85%), sisa 30 hari",
+            "note": "Menggunakan tanggal acuan (as-of date) yang didokumentasikan agar hasil deterministik."
+          },
+          {
+            "step": 3,
+            "label": "Verifikasi Matematika Persentase Laporan (Reported Progress Audit)",
+            "formula": "(Reported Actual / Target) × 100%",
+            "substitution": "(45,000 / 100,000) × 100%",
+            "result": "45% (tercatat di Master: 52%)",
+            "note": "Terdapat selisih aritmetika 7% antara angka aktual dan persentase yang dilaporkan."
+          },
+          {
+            "step": 4,
+            "label": "Laju Historis Harian (Historical Average Run-Rate)",
+            "formula": "Actual Volume / Elapsed Days",
+            "substitution": "Reported: 45,000 / 35 hari | Operational Verified: 45,000 / 35 hari",
+            "result": "Reported: 1285.71 records/hari | Operational: 1285.71 records/hari"
+          },
+          {
+            "step": 5,
+            "label": "Sisa Target & Laju Wajib Harian (Required Daily Pace)",
+            "formula": "(Target - Actual) / Remaining Days",
+            "substitution": "Reported: (100,000 - 45,000) / 30 | Operational: (100,000 - 45,000) / 30",
+            "result": "Reported: 1833.33 records/hari | Operational: 1833.33 records/hari"
+          },
+          {
+            "step": 6,
+            "label": "Faktor Akselerasi & Proyeksi Tanggal Selesai (Pace Ratio & Projected Slip)",
+            "formula": "Acceleration = Required Pace / Historical Pace | Projected Finish = As-Of + ceil(Remaining / Historical Pace)",
+            "substitution": "Operational Ratio: 1833.33 / 1285.71 = 1.43x | Proyeksi: 2026-10-06 + ceil(42.78) hari",
+            "result": "Proyeksi selesai (laju operasional): 2026-11-18 (+13 hari terlambat)"
+          }
+        ]
+      },
+      "operational_summary": {
+        "latest_timestamp": "2026-10-06T07:00:00",
+        "hours_since_last_operational": 10,
+        "hours_since_last_update": 0.83,
+        "hours_since_last_master_report": 10,
+        "verified_quantity": 45000,
+        "pending_quantity": null,
+        "verified_source_ref": {
+          "ref_id": "VER-DELTA-001",
+          "source_kind": "PRODUCTION_EVIDENCE",
+          "source_label": "verification_application / verification_snapshot",
+          "timestamp": "2026-10-06T07:00:00",
+          "excerpt": "records_verified=45000 records"
+        },
+        "pending_source_ref": null,
+        "quality_skipped_count": 3200,
+        "quality_skip_rate_pct": 6.64,
+        "integration_developed": null,
+        "integration_configured": null,
+        "integration_production_tested": null,
+        "integration_target": null,
+        "environment_status": null,
+        "scanners": null,
+        "dms_status": null
+      },
+      "signals": [
+        {
+          "signal_id": "PRJ-004-R1-MATH",
+          "rule_code": "R1_REPORT_MATH_MISMATCH",
+          "severity": "HIGH",
+          "category": "REPORT_INCONSISTENCY",
+          "title": "Inkonsistensi Persentase Laporan (+7% selisih aritmetika)",
+          "explanation": "Project Master melaporkan progress 52%, padahal rasio reported_actual/target (45,000 / 100,000) adalah 45%. Sistem tidak menimpa nilai laporan, namun menandai gap 7 poin persentase untuk klarifikasi definisi perhitungan.",
+          "reported_claim": "52% (45,000 / 100,000 records)",
+          "observed_reality": "Kalkulasi aktual/target = 45% (selisih +7%)",
+          "evidence_refs": [
+            {
+              "ref_id": "PRJ-004:MASTER",
+              "source_kind": "PROJECT_MASTER",
+              "source_label": "Project Master (Sari)",
+              "timestamp": "2026-10-06T07:00:00",
+              "excerpt": "reported_actual=45000 records, reported_progress_pct=52%, status=ON TRACK"
+            },
+            {
+              "ref_id": "VER-DELTA-001",
+              "source_kind": "PRODUCTION_EVIDENCE",
+              "source_label": "verification_application / verification_snapshot",
+              "timestamp": "2026-10-06T07:00:00",
+              "excerpt": "records_verified=45000 records"
+            }
+          ]
+        },
+        {
+          "signal_id": "PRJ-004-R3-HIGHRISK",
+          "rule_code": "R3_SCHEDULE_HIGH_RISK",
+          "severity": "HIGH",
+          "category": "SCHEDULE_FEASIBILITY",
+          "title": "Risiko Tinggi Keterlambatan Jadwal (Deadline 2026-11-05, sisa 30 hari)",
+          "explanation": "Laju wajib operasional (1,833.33 records/hari) membutuhkan akselerasi 1.43x dari laju historis (1,285.71/hari). Pada laju saat ini proyek diproyeksikan selesai 2026-11-18 (+13 hari terlambat).",
+          "reported_claim": "ON TRACK (52%)",
+          "observed_reality": "Proyeksi selesai 2026-11-18 (+13 hari), progress terverifikasi 45% vs waktu terpakai 53.85%",
+          "evidence_refs": [
+            {
+              "ref_id": "PRJ-004:MASTER",
+              "source_kind": "PROJECT_MASTER",
+              "source_label": "Project Master (Sari)",
+              "timestamp": "2026-10-06T07:00:00",
+              "excerpt": "reported_actual=45000 records, reported_progress_pct=52%, status=ON TRACK"
+            },
+            {
+              "ref_id": "VER-DELTA-001",
+              "source_kind": "PRODUCTION_EVIDENCE",
+              "source_label": "verification_application / verification_snapshot",
+              "timestamp": "2026-10-06T07:00:00",
+              "excerpt": "records_verified=45000 records"
+            }
+          ]
+        },
+        {
+          "signal_id": "PRJ-004-R4C-QUALITY",
+          "rule_code": "R4C_DATA_QUALITY_SKIP",
+          "severity": "HIGH",
+          "category": "DATA_QUALITY",
+          "title": "3,200 Record Dilewati Akibat Field Sumber Kosong (6.64% skip rate)",
+          "explanation": "Aplikasi verifikasi mencatat 3,200 record dilewati karena field wilayah kosong (6.64% dari total record yang disentuh). Jika data sumber lama lainnya juga tidak lengkap, backlog remediasi bisa membesar menjelang akhir proyek.",
+          "reported_claim": "PM melaporkan verifikasi berjalan sesuai rencana tanpa kendala signifikan",
+          "observed_reality": "3,200 records skipped (missing region) tercatat di sistem verifikasi",
+          "evidence_refs": [
+            {
+              "ref_id": "VER-DELTA-002",
+              "source_kind": "PRODUCTION_EVIDENCE",
+              "source_label": "verification_application / verification_quality_snapshot",
+              "timestamp": "2026-10-06T07:00:00",
+              "excerpt": "records_skipped_missing_region=3200"
+            },
+            {
+              "ref_id": "UPD-011",
+              "source_kind": "PROJECT_UPDATE",
+              "source_label": "OPERATOR (Operator 1)",
+              "timestamp": "2026-10-05T13:45:00",
+              "excerpt": "Di sebagian data sumber lama, field wilayah masih kosong. Data yang field wilayahnya kosong sementara dilewati agar verifikasi data lainnya tetap berjalan."
+            }
+          ]
+        }
+      ],
+      "unknowns": [
+        {
+          "code": "UNKNOWN_PROGRESS_FORMULA",
+          "title": "Basis rumus reported_progress_pct tidak cocok dengan rasio aktual/target",
+          "description": "Belum diketahui apakah angka 52% menggunakan bobot tahapan lain, pembulatan manual, atau mencakup item yang belum masuk rekap aktual (45%).",
+          "impact": "Berpotensi menyamarkan keterlambatan proyek terhadap garis waktu linear.",
+          "evidence_refs": [
+            {
+              "ref_id": "PRJ-004:MASTER",
+              "source_kind": "PROJECT_MASTER",
+              "source_label": "Project Master (Sari)",
+              "timestamp": "2026-10-06T07:00:00",
+              "excerpt": "reported_actual=45000 records, reported_progress_pct=52%, status=ON TRACK"
+            }
+          ]
+        },
+        {
+          "code": "UNKNOWN_SKIP_REMEDIATION_SCOPE",
+          "title": "Total volume data sumber lama yang cacat & rencana remediasi belum diketahui",
+          "description": "Saat ini 3,200 record sudah dilewati, namun belum ada estimasi berapa banyak lagi di batch tersisa maupun apakah customer yang akan melengkapi field wilayah.",
+          "impact": "Berisiko menghambat serah terima 100% target jika data cacat tidak bisa diverifikasi.",
+          "evidence_refs": [
+            {
+              "ref_id": "VER-DELTA-002",
+              "source_kind": "PRODUCTION_EVIDENCE",
+              "source_label": "verification_application / verification_quality_snapshot",
+              "timestamp": "2026-10-06T07:00:00"
+            }
+          ]
+        },
+        {
+          "code": "UNKNOWN_OPERATOR_CAPACITY",
+          "title": "Kapasitas harian per operator belum tersedia dalam pelaporan",
+          "description": "PM secara eksplisit menyatakan rekap kapasitas verifikasi harian per operator belum tersedia, sehingga sulit memvalidasi apakah tim mampu meningkatkan kecepatan produksi.",
+          "impact": "Rencana percepatan untuk menutup defisit jadwal belum dapat diverifikasi kelayakannya.",
+          "evidence_refs": [
+            {
+              "ref_id": "UPD-023",
+              "source_kind": "PROJECT_UPDATE",
+              "source_label": "PROJECT_MANAGER (Sari)",
+              "timestamp": "2026-10-06T16:10:00",
+              "excerpt": "Target penyelesaian tetap mengacu pada jadwal project. Rekap kapasitas verifikasi harian per operator belum tersedia dalam laporan ini."
+            }
+          ]
+        }
+      ],
+      "timeline": [
+        {
+          "event_id": "UPD-023",
+          "timestamp": "2026-10-06T16:10:00",
+          "layer": "REPORT_UPDATE",
+          "source_type": "PROJECT_MANAGER",
+          "source_name": "Sari",
+          "summary": "Target penyelesaian tetap mengacu pada jadwal project. Rekap kapasitas verifikasi harian per operator belum tersedia dalam laporan ini.",
+          "details": {
+            "update_id": "UPD-023",
+            "source_type": "PROJECT_MANAGER",
+            "source_name": "Sari",
+            "message": "Target penyelesaian tetap mengacu pada jadwal project. Rekap kapasitas verifikasi harian per operator belum tersedia dalam laporan ini."
+          }
+        },
+        {
+          "event_id": "UPD-015",
+          "timestamp": "2026-10-06T07:00:00",
+          "layer": "REPORT_UPDATE",
+          "source_type": "PROJECT_MANAGER",
+          "source_name": "Sari",
+          "summary": "Verifikasi masih berjalan sesuai rencana. Tim melanjutkan batch berikutnya hari ini.",
+          "details": {
+            "update_id": "UPD-015",
+            "source_type": "PROJECT_MANAGER",
+            "source_name": "Sari",
+            "message": "Verifikasi masih berjalan sesuai rencana. Tim melanjutkan batch berikutnya hari ini."
+          }
+        },
+        {
+          "event_id": "VER-DELTA-001",
+          "timestamp": "2026-10-06T07:00:00",
+          "layer": "OPERATIONAL_EVIDENCE",
+          "source_type": "verification_application",
+          "source_name": "verification_application",
+          "record_type": "verification_snapshot",
+          "summary": "Records verified: 45,000",
+          "details": {
+            "source_record_id": "VER-DELTA-001",
+            "project_id": "PRJ-004",
+            "source_system": "verification_application",
+            "record_type": "verification_snapshot",
+            "timestamp": "2026-10-06T07:00:00",
+            "records_verified": 45000,
+            "unit": "records"
+          }
+        },
+        {
+          "event_id": "VER-DELTA-002",
+          "timestamp": "2026-10-06T07:00:00",
+          "layer": "OPERATIONAL_EVIDENCE",
+          "source_type": "verification_application",
+          "source_name": "verification_application",
+          "record_type": "verification_quality_snapshot",
+          "summary": "Skipped (missing region): 3,200",
+          "details": {
+            "source_record_id": "VER-DELTA-002",
+            "project_id": "PRJ-004",
+            "source_system": "verification_application",
+            "record_type": "verification_quality_snapshot",
+            "timestamp": "2026-10-06T07:00:00",
+            "records_skipped_missing_region": 3200,
+            "unit": "records"
+          }
+        },
+        {
+          "event_id": "UPD-011",
+          "timestamp": "2026-10-05T13:45:00",
+          "layer": "REPORT_UPDATE",
+          "source_type": "OPERATOR",
+          "source_name": "Operator 1",
+          "summary": "Di sebagian data sumber lama, field wilayah masih kosong. Data yang field wilayahnya kosong sementara dilewati agar verifikasi data lainnya tetap berjalan.",
+          "details": {
+            "update_id": "UPD-011",
+            "source_type": "OPERATOR",
+            "source_name": "Operator 1",
+            "message": "Di sebagian data sumber lama, field wilayah masih kosong. Data yang field wilayahnya kosong sementara dilewati agar verifikasi data lainnya tetap berjalan."
+          }
+        },
+        {
+          "event_id": "UPD-007",
+          "timestamp": "2026-10-04T15:10:00",
+          "layer": "REPORT_UPDATE",
+          "source_type": "PROJECT_MANAGER",
+          "source_name": "Sari",
+          "summary": "Tim verifikasi berjalan sesuai pembagian data. Belum ada kendala signifikan yang mempengaruhi aktivitas harian.",
+          "details": {
+            "update_id": "UPD-007",
+            "source_type": "PROJECT_MANAGER",
+            "source_name": "Sari",
+            "message": "Tim verifikasi berjalan sesuai pembagian data. Belum ada kendala signifikan yang mempengaruhi aktivitas harian."
+          }
+        }
+      ],
+      "followups": [],
+      "open_followup_count": 0,
+      "resolved_unverified_followup_count": 0
+    },
+    {
+      "project_id": "PRJ-005",
+      "master": {
+        "project_id": "PRJ-005",
+        "customer": "Instansi Epsilon",
+        "project_name": "Integrasi API Epsilon",
+        "project_type": "System Integration",
+        "pic": "Kevin",
+        "start_date": "2026-09-01",
+        "deadline": "2026-10-13",
+        "target": 10,
+        "target_unit": "endpoints",
+        "reported_actual": 9,
+        "reported_progress_pct": 90,
+        "reported_status": "ON TRACK",
+        "last_reported_update_at": "2026-10-06T07:30:00"
+      },
+      "attention_level": "CRITICAL",
+      "attention_score": 100,
+      "uncertainty_level": "MODERATE",
+      "executive_summary": "Progress 90% Hanya Mencerminkan Development — 0% Teruji di Production. Total 3 temuan terdeteksi lintas sumber.",
+      "key_verdict": "Perlu Intervensi Segera — Risiko Kritis",
+      "deadline_analysis": {
+        "as_of_date": "2026-10-06T17:00:00",
+        "start_date": "2026-09-01",
+        "deadline": "2026-10-13",
+        "is_completed": false,
+        "total_duration_days": 42,
+        "elapsed_days": 35,
+        "remaining_days": 7,
+        "time_elapsed_pct": 83.33,
+        "target": 10,
+        "unit": "endpoints",
+        "reported_actual": 9,
+        "reported_progress_pct": 90,
+        "computed_reported_pct": 90,
+        "operational_verified_actual": 0,
+        "operational_verified_pct": 0,
+        "operational_pending_actual": null,
+        "historical_daily_rate_reported": 0.26,
+        "historical_daily_rate_operational": 0,
+        "remaining_volume_reported": 1,
+        "remaining_volume_operational": 10,
+        "required_daily_rate_reported": 0.14,
+        "required_daily_rate_operational": 1.43,
+        "acceleration_factor_reported": 0.54,
+        "acceleration_factor_operational": null,
+        "projected_days_needed_reported": 3.85,
+        "projected_days_needed_operational": null,
+        "projected_completion_date_reported": "2026-10-10",
+        "projected_completion_date_operational": null,
+        "projected_slip_days_reported": -3,
+        "projected_slip_days_operational": null,
+        "stated_capacity_per_day": null,
+        "stated_capacity_source_ref": null,
+        "projected_days_at_stated_capacity": null,
+        "projected_completion_at_stated_capacity": null,
+        "projected_slip_at_stated_capacity": null,
+        "feasibility_verdict": "AT_HIGH_RISK",
+        "calculation_steps": [
+          {
+            "step": 1,
+            "label": "Durasi Total Proyek (Total Duration)",
+            "formula": "Deadline - Start Date (selisih hari kalender)",
+            "substitution": "2026-10-13 - 2026-09-01",
+            "result": "42 hari kalender"
+          },
+          {
+            "step": 2,
+            "label": "Waktu Berjalan & Sisa Waktu (Elapsed & Remaining Days)",
+            "formula": "Elapsed = As-Of Date - Start Date | Remaining = Deadline - As-Of Date",
+            "substitution": "Elapsed: 2026-10-06 - 2026-09-01 = 35 hari (83.33%) | Remaining: 2026-10-13 - 2026-10-06 = 7 hari",
+            "result": "35 hari berjalan (83.33%), sisa 7 hari",
+            "note": "Menggunakan tanggal acuan (as-of date) yang didokumentasikan agar hasil deterministik."
+          },
+          {
+            "step": 3,
+            "label": "Verifikasi Matematika Persentase Laporan (Reported Progress Audit)",
+            "formula": "(Reported Actual / Target) × 100%",
+            "substitution": "(9 / 10) × 100%",
+            "result": "90% (tercatat di Master: 90%)",
+            "note": "Persentase laporan konsisten dengan rasio reported_actual / target."
+          },
+          {
+            "step": 4,
+            "label": "Laju Historis Harian (Historical Average Run-Rate)",
+            "formula": "Actual Volume / Elapsed Days",
+            "substitution": "Reported: 9 / 35 hari | Operational Verified: 0 / 35 hari",
+            "result": "Reported: 0.26 endpoints/hari | Operational: 0 endpoints/hari"
+          },
+          {
+            "step": 5,
+            "label": "Sisa Target & Laju Wajib Harian (Required Daily Pace)",
+            "formula": "(Target - Actual) / Remaining Days",
+            "substitution": "Reported: (10 - 9) / 7 | Operational: (10 - 0) / 7",
+            "result": "Reported: 0.14 endpoints/hari | Operational: 1.43 endpoints/hari"
+          },
+          {
+            "step": 6,
+            "label": "Faktor Akselerasi & Proyeksi Tanggal Selesai (Pace Ratio & Projected Slip)",
+            "formula": "Acceleration = Required Pace / Historical Pace | Projected Finish = As-Of + ceil(Remaining / Historical Pace)",
+            "substitution": "Operational verified = 0 endpoints sehingga laju terverifikasi 0/hari (tidak bisa diproyeksikan selesai sebelum blocker terbuka).",
+            "result": "Blocked — 0 output terverifikasi di production"
+          }
+        ]
+      },
+      "operational_summary": {
+        "latest_timestamp": "2026-10-06T07:32:00",
+        "hours_since_last_operational": 9.47,
+        "hours_since_last_update": 9.5,
+        "hours_since_last_master_report": 9.5,
+        "verified_quantity": 0,
+        "pending_quantity": null,
+        "verified_source_ref": {
+          "ref_id": "API-EPS-001",
+          "source_kind": "PRODUCTION_EVIDENCE",
+          "source_label": "api_monitor / integration_snapshot",
+          "timestamp": "2026-10-06T07:30:00",
+          "excerpt": "developed=9, configured=9, production_tested=0/10"
+        },
+        "pending_source_ref": null,
+        "quality_skipped_count": null,
+        "quality_skip_rate_pct": null,
+        "integration_developed": 9,
+        "integration_configured": 9,
+        "integration_production_tested": 0,
+        "integration_target": 10,
+        "environment_status": {
+          "environment": "production",
+          "connection_status": "NOT_CONFIGURED",
+          "last_successful_connection": null,
+          "source_ref": {
+            "ref_id": "API-EPS-002",
+            "source_kind": "PRODUCTION_EVIDENCE",
+            "source_label": "api_monitor / environment_check",
+            "timestamp": "2026-10-06T07:32:00",
+            "excerpt": "environment=production, connection_status=NOT_CONFIGURED, last_successful_connection=null"
+          }
+        },
+        "scanners": null,
+        "dms_status": null
+      },
+      "signals": [
+        {
+          "signal_id": "PRJ-005-R2C-VALIDATION",
+          "rule_code": "R2C_VALIDATION_DOD_GAP",
+          "severity": "CRITICAL",
+          "category": "VALIDATION_GAP",
+          "title": "Progress 90% Hanya Mencerminkan Development — 0% Teruji di Production",
+          "explanation": "Laporan menampilkan 9/10 (90%) dengan status ON TRACK, namun telemetry api_monitor menunjukkan baru 0/10 endpoint (0%) yang teruji pada environment production. Masih tersisa 1 endpoint yang belum selesai development dan seluruh 10 endpoint belum melewati validasi production.",
+          "reported_claim": "9/10 endpoints (90%, ON TRACK)",
+          "observed_reality": "Developed: 9/10, Configured: 9, Production-Tested: 0/10 (0%)",
+          "evidence_refs": [
+            {
+              "ref_id": "PRJ-005:MASTER",
+              "source_kind": "PROJECT_MASTER",
+              "source_label": "Project Master (Kevin)",
+              "timestamp": "2026-10-06T07:30:00",
+              "excerpt": "reported_actual=9 endpoints, reported_progress_pct=90%, status=ON TRACK"
+            },
+            {
+              "ref_id": "API-EPS-001",
+              "source_kind": "PRODUCTION_EVIDENCE",
+              "source_label": "api_monitor / integration_snapshot",
+              "timestamp": "2026-10-06T07:30:00",
+              "excerpt": "developed=9, configured=9, production_tested=0/10"
+            }
+          ]
+        },
+        {
+          "signal_id": "PRJ-005-R4B-ENV",
+          "rule_code": "R4B_ENVIRONMENT_NOT_READY",
+          "severity": "CRITICAL",
+          "category": "EXTERNAL_BLOCKER",
+          "title": "Environment production Berstatus NOT_CONFIGURED",
+          "explanation": "Pemeriksaan sistem (API-EPS-002) mengonfirmasi koneksi production belum terkonfigurasi (connection_status=NOT_CONFIGURED, last_successful_connection=null). Ketergantungan eksternal terhadap akses/credential customer menghambat pengujian akhir.",
+          "reported_claim": "ON TRACK (90%)",
+          "observed_reality": "production: NOT_CONFIGURED, last_successful_connection=null",
+          "evidence_refs": [
+            {
+              "ref_id": "API-EPS-002",
+              "source_kind": "PRODUCTION_EVIDENCE",
+              "source_label": "api_monitor / environment_check",
+              "timestamp": "2026-10-06T07:32:00",
+              "excerpt": "environment=production, connection_status=NOT_CONFIGURED, last_successful_connection=null"
+            },
+            {
+              "ref_id": "UPD-006",
+              "source_kind": "PROJECT_UPDATE",
+              "source_label": "TECHNICAL_TEAM (Tim Teknis)",
+              "timestamp": "2026-10-04T14:05:00",
+              "excerpt": "Development di sisi tata.id untuk 9 endpoint sudah selesai. Pengujian ke environment production customer belum dapat dilakukan karena credential dan production endpoint belum diterima."
+            },
+            {
+              "ref_id": "UPD-010",
+              "source_kind": "PROJECT_UPDATE",
+              "source_label": "ACCOUNT (Account Team)",
+              "timestamp": "2026-10-05T10:30:00",
+              "excerpt": "Sudah koordinasi kembali dengan PIC customer terkait credential dan production endpoint untuk kebutuhan testing."
+            },
+            {
+              "ref_id": "UPD-016",
+              "source_kind": "PROJECT_UPDATE",
+              "source_label": "PROJECT_MANAGER (Kevin)",
+              "timestamp": "2026-10-06T07:30:00",
+              "excerpt": "Sudah dilakukan follow up ke customer. Saat ini tim menunggu informasi akses production."
+            }
+          ]
+        },
+        {
+          "signal_id": "PRJ-005-R3-HIGHRISK",
+          "rule_code": "R3_SCHEDULE_HIGH_RISK",
+          "severity": "HIGH",
+          "category": "SCHEDULE_FEASIBILITY",
+          "title": "Risiko Tinggi Keterlambatan Jadwal (Deadline 2026-10-13, sisa 7 hari)",
+          "explanation": "Sisa waktu tinggal 7 hari (83.33% durasi sudah terpakai) dengan output terverifikasi di production masih 0 endpoints.",
+          "reported_claim": "ON TRACK (90%)",
+          "observed_reality": "0 terverifikasi, sisa 7 hari",
+          "evidence_refs": [
+            {
+              "ref_id": "PRJ-005:MASTER",
+              "source_kind": "PROJECT_MASTER",
+              "source_label": "Project Master (Kevin)",
+              "timestamp": "2026-10-06T07:30:00",
+              "excerpt": "reported_actual=9 endpoints, reported_progress_pct=90%, status=ON TRACK"
+            },
+            {
+              "ref_id": "API-EPS-001",
+              "source_kind": "PRODUCTION_EVIDENCE",
+              "source_label": "api_monitor / integration_snapshot",
+              "timestamp": "2026-10-06T07:30:00",
+              "excerpt": "developed=9, configured=9, production_tested=0/10"
+            }
+          ]
+        }
+      ],
+      "unknowns": [
+        {
+          "code": "UNKNOWN_EXTERNAL_ETA",
+          "title": "Tidak ada ETA pasti kapan akses/credential production diberikan customer",
+          "description": "Update koordinasi dari tim Account dan PM belum mencantumkan tanggal komitmen dari PIC customer maupun durasi yang dibutuhkan untuk UAT/bugfix setelah koneksi aktif.",
+          "impact": "Setiap hari penundaan langsung menggerus sisa 7 hari menuju deadline 2026-10-13.",
+          "evidence_refs": [
+            {
+              "ref_id": "API-EPS-002",
+              "source_kind": "PRODUCTION_EVIDENCE",
+              "source_label": "api_monitor / environment_check",
+              "timestamp": "2026-10-06T07:32:00",
+              "excerpt": "environment=production, connection_status=NOT_CONFIGURED, last_successful_connection=null"
+            },
+            {
+              "ref_id": "UPD-006",
+              "source_kind": "PROJECT_UPDATE",
+              "source_label": "TECHNICAL_TEAM (Tim Teknis)",
+              "timestamp": "2026-10-04T14:05:00",
+              "excerpt": "Development di sisi tata.id untuk 9 endpoint sudah selesai. Pengujian ke environment production customer belum dapat dilakukan karena credential dan production endpoint belum diterima."
+            },
+            {
+              "ref_id": "UPD-010",
+              "source_kind": "PROJECT_UPDATE",
+              "source_label": "ACCOUNT (Account Team)",
+              "timestamp": "2026-10-05T10:30:00",
+              "excerpt": "Sudah koordinasi kembali dengan PIC customer terkait credential dan production endpoint untuk kebutuhan testing."
+            },
+            {
+              "ref_id": "UPD-016",
+              "source_kind": "PROJECT_UPDATE",
+              "source_label": "PROJECT_MANAGER (Kevin)",
+              "timestamp": "2026-10-06T07:30:00",
+              "excerpt": "Sudah dilakukan follow up ke customer. Saat ini tim menunggu informasi akses production."
+            }
+          ]
+        }
+      ],
+      "timeline": [
+        {
+          "event_id": "API-EPS-002",
+          "timestamp": "2026-10-06T07:32:00",
+          "layer": "OPERATIONAL_EVIDENCE",
+          "source_type": "api_monitor",
+          "source_name": "api_monitor",
+          "record_type": "environment_check",
+          "summary": "Env production: NOT_CONFIGURED (last_ok=null)",
+          "details": {
+            "source_record_id": "API-EPS-002",
+            "project_id": "PRJ-005",
+            "source_system": "api_monitor",
+            "record_type": "environment_check",
+            "timestamp": "2026-10-06T07:32:00",
+            "environment": "production",
+            "connection_status": "NOT_CONFIGURED",
+            "last_successful_connection": null
+          }
+        },
+        {
+          "event_id": "UPD-016",
+          "timestamp": "2026-10-06T07:30:00",
+          "layer": "REPORT_UPDATE",
+          "source_type": "PROJECT_MANAGER",
+          "source_name": "Kevin",
+          "summary": "Sudah dilakukan follow up ke customer. Saat ini tim menunggu informasi akses production.",
+          "details": {
+            "update_id": "UPD-016",
+            "source_type": "PROJECT_MANAGER",
+            "source_name": "Kevin",
+            "message": "Sudah dilakukan follow up ke customer. Saat ini tim menunggu informasi akses production."
+          }
+        },
+        {
+          "event_id": "API-EPS-001",
+          "timestamp": "2026-10-06T07:30:00",
+          "layer": "OPERATIONAL_EVIDENCE",
+          "source_type": "api_monitor",
+          "source_name": "api_monitor",
+          "record_type": "integration_snapshot",
+          "summary": "Endpoints: 9/10 dev, 9 configured, 0 prod-tested",
+          "details": {
+            "source_record_id": "API-EPS-001",
+            "project_id": "PRJ-005",
+            "source_system": "api_monitor",
+            "record_type": "integration_snapshot",
+            "timestamp": "2026-10-06T07:30:00",
+            "developed_endpoints": 9,
+            "configured_endpoints": 9,
+            "production_tested_endpoints": 0,
+            "target_endpoints": 10
+          }
+        },
+        {
+          "event_id": "UPD-010",
+          "timestamp": "2026-10-05T10:30:00",
+          "layer": "REPORT_UPDATE",
+          "source_type": "ACCOUNT",
+          "source_name": "Account Team",
+          "summary": "Sudah koordinasi kembali dengan PIC customer terkait credential dan production endpoint untuk kebutuhan testing.",
+          "details": {
+            "update_id": "UPD-010",
+            "source_type": "ACCOUNT",
+            "source_name": "Account Team",
+            "message": "Sudah koordinasi kembali dengan PIC customer terkait credential dan production endpoint untuk kebutuhan testing."
+          }
+        },
+        {
+          "event_id": "UPD-006",
+          "timestamp": "2026-10-04T14:05:00",
+          "layer": "REPORT_UPDATE",
+          "source_type": "TECHNICAL_TEAM",
+          "source_name": "Tim Teknis",
+          "summary": "Development di sisi tata.id untuk 9 endpoint sudah selesai. Pengujian ke environment production customer belum dapat dilakukan karena credential dan production endpoint belum diterima.",
+          "details": {
+            "update_id": "UPD-006",
+            "source_type": "TECHNICAL_TEAM",
+            "source_name": "Tim Teknis",
+            "message": "Development di sisi tata.id untuk 9 endpoint sudah selesai. Pengujian ke environment production customer belum dapat dilakukan karena credential dan production endpoint belum diterima."
+          }
+        }
+      ],
+      "followups": [],
+      "open_followup_count": 0,
+      "resolved_unverified_followup_count": 0
+    },
+    {
+      "project_id": "PRJ-006",
+      "master": {
+        "project_id": "PRJ-006",
+        "customer": "Perusahaan Zeta",
+        "project_name": "Implementasi DMS Zeta",
+        "project_type": "DMS Implementation",
+        "pic": "Maya",
+        "start_date": "2026-07-01",
+        "deadline": "2026-09-30",
+        "target": 1,
+        "target_unit": "system",
+        "reported_actual": 1,
+        "reported_progress_pct": 100,
+        "reported_status": "COMPLETED",
+        "last_reported_update_at": "2026-09-30T16:00:00"
+      },
+      "attention_level": "LOW",
+      "attention_score": 0,
+      "uncertainty_level": "LOW",
+      "executive_summary": "Proyek selesai tepat waktu (2026-09-30) dan terkonfirmasi ONLINE oleh monitoring operasional terbaru (14 user aktif 24 jam terakhir). Tidak perlu eskalasi.",
+      "key_verdict": "Selesai & Terverifikasi Operasional",
+      "deadline_analysis": {
+        "as_of_date": "2026-10-06T17:00:00",
+        "start_date": "2026-07-01",
+        "deadline": "2026-09-30",
+        "is_completed": true,
+        "total_duration_days": 91,
+        "elapsed_days": 97,
+        "remaining_days": -6,
+        "time_elapsed_pct": 100,
+        "target": 1,
+        "unit": "system",
+        "reported_actual": 1,
+        "reported_progress_pct": 100,
+        "computed_reported_pct": 100,
+        "operational_verified_actual": 1,
+        "operational_verified_pct": 100,
+        "operational_pending_actual": null,
+        "historical_daily_rate_reported": 0.01,
+        "historical_daily_rate_operational": 0.01,
+        "remaining_volume_reported": 0,
+        "remaining_volume_operational": 0,
+        "required_daily_rate_reported": null,
+        "required_daily_rate_operational": null,
+        "acceleration_factor_reported": null,
+        "acceleration_factor_operational": null,
+        "projected_days_needed_reported": null,
+        "projected_days_needed_operational": null,
+        "projected_completion_date_reported": null,
+        "projected_completion_date_operational": null,
+        "projected_slip_days_reported": null,
+        "projected_slip_days_operational": null,
+        "stated_capacity_per_day": null,
+        "stated_capacity_source_ref": null,
+        "projected_days_at_stated_capacity": null,
+        "projected_completion_at_stated_capacity": null,
+        "projected_slip_at_stated_capacity": null,
+        "feasibility_verdict": "COMPLETED_ON_TIME",
+        "calculation_steps": [
+          {
+            "step": 1,
+            "label": "Durasi Total Proyek (Total Duration)",
+            "formula": "Deadline - Start Date (selisih hari kalender)",
+            "substitution": "2026-09-30 - 2026-07-01",
+            "result": "91 hari kalender"
+          },
+          {
+            "step": 2,
+            "label": "Waktu Berjalan & Sisa Waktu (Elapsed & Remaining Days)",
+            "formula": "Elapsed = As-Of Date - Start Date | Remaining = Deadline - As-Of Date",
+            "substitution": "Elapsed: 2026-10-06 - 2026-07-01 = 97 hari (100%) | Remaining: 2026-09-30 - 2026-10-06 = -6 hari",
+            "result": "Proyek berstatus COMPLETED (selesai pada 2026-09-30)",
+            "note": "Menggunakan tanggal acuan (as-of date) yang didokumentasikan agar hasil deterministik."
+          },
+          {
+            "step": 3,
+            "label": "Verifikasi Matematika Persentase Laporan (Reported Progress Audit)",
+            "formula": "(Reported Actual / Target) × 100%",
+            "substitution": "(1 / 1) × 100%",
+            "result": "100% (tercatat di Master: 100%)",
+            "note": "Persentase laporan konsisten dengan rasio reported_actual / target."
+          }
+        ]
+      },
+      "operational_summary": {
+        "latest_timestamp": "2026-10-06T16:45:00",
+        "hours_since_last_operational": 0.25,
+        "hours_since_last_update": 24.33,
+        "hours_since_last_master_report": 145,
+        "verified_quantity": 1,
+        "pending_quantity": null,
+        "verified_source_ref": {
+          "ref_id": "DMS-ZETA-001",
+          "source_kind": "PRODUCTION_EVIDENCE",
+          "source_label": "dms_monitor / system_status",
+          "timestamp": "2026-09-30T16:05:00",
+          "excerpt": "app=ONLINE"
+        },
+        "pending_source_ref": null,
+        "quality_skipped_count": null,
+        "quality_skip_rate_pct": null,
+        "integration_developed": null,
+        "integration_configured": null,
+        "integration_production_tested": null,
+        "integration_target": null,
+        "environment_status": null,
+        "scanners": null,
+        "dms_status": {
+          "application_status": "ONLINE",
+          "deployment_status": "COMPLETED",
+          "active_users_last_24h": 14,
+          "successful_logins_last_24h": 21,
+          "failed_logins_last_24h": 1,
+          "source_ref": {
+            "ref_id": "DMS-ZETA-002",
+            "source_kind": "PRODUCTION_EVIDENCE",
+            "source_label": "dms_monitor / usage_snapshot",
+            "timestamp": "2026-10-06T16:45:00",
+            "excerpt": "app=ONLINE, active_users_24h=14, logins_ok=21, logins_fail=1"
+          }
+        }
+      },
+      "signals": [],
+      "unknowns": [
+        {
+          "code": "INFO_POST_GOLIVE_ADOPTION_DENOMINATOR",
+          "title": "Total populasi target user & dokumen BAST formal tidak tercakup di dataset",
+          "description": "Sistem terverifikasi ONLINE dengan 14 active users dan 21 login sukses dalam 24 jam terakhir (1 failed login yang selaras dengan insiden reset password minor). Hanya persentase adopsi terhadap total user berlisensi yang tidak tersedia di dataset.",
+          "impact": "Tidak menghambat status verifikasi selesai; relevan hanya untuk evaluasi adopsi pasca go-live.",
+          "evidence_refs": [
+            {
+              "ref_id": "DMS-ZETA-002",
+              "source_kind": "PRODUCTION_EVIDENCE",
+              "source_label": "dms_monitor / usage_snapshot",
+              "timestamp": "2026-10-06T16:45:00",
+              "excerpt": "app=ONLINE, active_users_24h=14, logins_ok=21, logins_fail=1"
+            }
+          ]
+        }
+      ],
+      "timeline": [
+        {
+          "event_id": "DMS-ZETA-002",
+          "timestamp": "2026-10-06T16:45:00",
+          "layer": "OPERATIONAL_EVIDENCE",
+          "source_type": "dms_monitor",
+          "source_name": "dms_monitor",
+          "record_type": "usage_snapshot",
+          "summary": "App ONLINE | 14 active users, 21 ok / 1 failed logins (24h)",
+          "details": {
+            "source_record_id": "DMS-ZETA-002",
+            "project_id": "PRJ-006",
+            "source_system": "dms_monitor",
+            "record_type": "usage_snapshot",
+            "timestamp": "2026-10-06T16:45:00",
+            "active_users_last_24h": 14,
+            "successful_logins_last_24h": 21,
+            "failed_logins_last_24h": 1,
+            "application_status": "ONLINE"
+          }
+        },
+        {
+          "event_id": "UPD-014",
+          "timestamp": "2026-10-05T16:40:00",
+          "layer": "REPORT_UPDATE",
+          "source_type": "ACCOUNT",
+          "source_name": "Account Team",
+          "summary": "Ada satu user yang sempat tidak bisa login setelah training. Password sudah di-reset dan user sudah berhasil login kembali.",
+          "details": {
+            "update_id": "UPD-014",
+            "source_type": "ACCOUNT",
+            "source_name": "Account Team",
+            "message": "Ada satu user yang sempat tidak bisa login setelah training. Password sudah di-reset dan user sudah berhasil login kembali."
+          }
+        },
+        {
+          "event_id": "DMS-ZETA-001",
+          "timestamp": "2026-09-30T16:05:00",
+          "layer": "OPERATIONAL_EVIDENCE",
+          "source_type": "dms_monitor",
+          "source_name": "dms_monitor",
+          "record_type": "system_status",
+          "summary": "App ONLINE | deployment=COMPLETED",
+          "details": {
+            "source_record_id": "DMS-ZETA-001",
+            "project_id": "PRJ-006",
+            "source_system": "dms_monitor",
+            "record_type": "system_status",
+            "timestamp": "2026-09-30T16:05:00",
+            "environment": "production",
+            "application_status": "ONLINE",
+            "deployment_status": "COMPLETED"
+          }
+        },
+        {
+          "event_id": "UPD-003",
+          "timestamp": "2026-09-30T16:00:00",
+          "layer": "REPORT_UPDATE",
+          "source_type": "PROJECT_MANAGER",
+          "source_name": "Maya",
+          "summary": "User training telah selesai dan aplikasi sudah digunakan. Tidak ada kendala teknis yang dilaporkan pada penutupan implementasi.",
+          "details": {
+            "update_id": "UPD-003",
+            "source_type": "PROJECT_MANAGER",
+            "source_name": "Maya",
+            "message": "User training telah selesai dan aplikasi sudah digunakan. Tidak ada kendala teknis yang dilaporkan pada penutupan implementasi."
+          }
+        },
+        {
+          "event_id": "UPD-001",
+          "timestamp": "2026-09-29T14:00:00",
+          "layer": "REPORT_UPDATE",
+          "source_type": "TECHNICAL_TEAM",
+          "source_name": "Tim Teknis",
+          "summary": "Implementasi aplikasi sudah selesai dan environment production sudah aktif. User utama sudah dapat mengakses sistem.",
+          "details": {
+            "update_id": "UPD-001",
+            "source_type": "TECHNICAL_TEAM",
+            "source_name": "Tim Teknis",
+            "message": "Implementasi aplikasi sudah selesai dan environment production sudah aktif. User utama sudah dapat mengakses sistem."
+          }
+        }
+      ],
+      "followups": [],
+      "open_followup_count": 0,
+      "resolved_unverified_followup_count": 0
+    }
+  ]
+}

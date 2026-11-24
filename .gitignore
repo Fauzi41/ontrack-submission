@@ -1,21 +1,8 @@
 node_modules/
 dist/
-*.db
-*.db-wal
-*.db-shm
+*.tsbuildinfo
+data/*.sqlite
+data/*.sqlite-wal
+data/*.sqlite-shm
 .DS_Store
 *.log
-__pycache__/
-.venv/
-
-# hasil pengukuran cakupan test
-backend/.cov/
-backend/coverage/
-
-# PDF sementara saat berkas lama masih dibuka penampil
-docs/tmp-*.pdf
-
-# basis data proof pack
-proof/*.db
-proof/*.db-wal
-proof/*.db-shm

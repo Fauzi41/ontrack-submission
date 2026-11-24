@@ -1,179 +1,55 @@
-npm notice run backend@0.1.0 evaluate
-npm notice run tsx src/cli/evaluate.ts
+=== DETERMINISTIC EVALUATION SUMMARY (As-Of: 2026-10-06T17:00:00) ===
 
-PORTOFOLIO  as_of 2026-10-06T17:00:00
+PRJ-001 — Penataan Arsip Inaktif Alpha (Instansi Alpha, PIC: Raka)
+  Attention: HIGH (score=49) | Uncertainty: MODERATE | Verdict: PRESSURED
+  Reported : 318/400 ML (79.5%, computed=79.5%, status=ON TRACK)
+  Operatnl : 301.5 ML (75.38%)
+  Deadline : 2026-09-01 -> 2026-10-15 (elapsed=35d, remaining=9d)
+  Pace (Op): hist=8.61/d | req=10.94/d | accel=1.27x | proj=2026-10-18 (slip=3d)
+  Signals (3): [HIGH] R4D_OPERATIONAL_HOLD_REWORK, [MEDIUM] R2A_WORKFLOW_STATE_GAP, [MEDIUM] R3_SCHEDULE_PRESSURED
+  Unknowns (1): UNKNOWN_HOLD_AND_REWORK_VOLUME
 
-#   proyek    severity    waktu         sisa   temuan
-------------------------------------------------------------------------------
-1   PRJ-002   critical    APPROACHING   4,29   4
-2   PRJ-005   critical    APPROACHING   7,29   2
-3   PRJ-004   critical    DISTANT       30,29  3
-4   PRJ-001   attention   APPROACHING   9,29   2
-5   PRJ-003   watch       DISTANT       14,29  3
--   PRJ-006   info        NONE          ?      0
+PRJ-002 — Digitalisasi Arsip Beta (Instansi Beta, PIC: Nadia)
+  Attention: CRITICAL (score=90) | Uncertainty: HIGH | Verdict: MATHEMATICALLY_INFEASIBLE
+  Reported : 91500/120000 pages (76.25%, computed=76.25%, status=ON TRACK)
+  Operatnl : 87240 pages (72.7%)
+  Deadline : 2026-09-10 -> 2026-10-10 (elapsed=26d, remaining=4d)
+  Pace (Op): hist=3355.38/d | req=8190/d | accel=2.44x | proj=2026-10-16 (slip=6d)
+  Signals (3): [CRITICAL] R3_SCHEDULE_INFEASIBLE, [HIGH] R2B_REPORT_VS_OPERATIONAL_GAP, [HIGH] R4A_OPERATIONAL_RESOURCE_DEGRADED
+  Unknowns (2): UNKNOWN_VOLUME_DELTA, UNKNOWN_DEGRADED_THROUGHPUT
 
+PRJ-003 — Penataan dan Pendataan Arsip Gamma (BUMN Gamma, PIC: Andi)
+  Attention: HIGH (score=37) | Uncertainty: HIGH | Verdict: INSUFFICIENT_DATA
+  Reported : 1840/2000 boxes (94%, computed=92%, status=ON TRACK)
+  Operatnl : 1840 boxes (92%)
+  Deadline : 2026-08-15 -> 2026-10-20 (elapsed=52d, remaining=14d)
+  Pace (Op): hist=40/d | req=11.43/d | accel=0.29x | proj=2026-10-10 (slip=-10d)
+  Signals (2): [HIGH] R5_DATA_STALENESS_BLIND_SPOT, [MEDIUM] R1_REPORT_MATH_MISMATCH
+  Unknowns (2): UNKNOWN_PROGRESS_FORMULA, UNKNOWN_CURRENT_PROGRESS_STALE
 
-==============================================================================
-PRJ-002  Digitalisasi Arsip Beta  [Document Digitalisation]
-Instansi Beta · PIC Nadia · status ON TRACK · APPROACHING
-progress: 91.500/120.000 pages dilaporkan 76,25% · hitung 72,7% · basis validated_quantity
-kelompok [critical] Laju tidak cukup untuk deadline / Progress dilaporkan melebihi bukti / Dua sumber berbeda angka <- schedule_risk:main, progress_gap:main, source_conflict:main
+PRJ-004 — Verifikasi Data Delta (Instansi Delta, PIC: Sari)
+  Attention: HIGH (score=75) | Uncertainty: HIGH | Verdict: AT_HIGH_RISK
+  Reported : 45000/100000 records (52%, computed=45%, status=ON TRACK)
+  Operatnl : 45000 records (45%)
+  Deadline : 2026-09-01 -> 2026-11-05 (elapsed=35d, remaining=30d)
+  Pace (Op): hist=1285.71/d | req=1833.33/d | accel=1.43x | proj=2026-11-18 (slip=13d)
+  Signals (3): [HIGH] R1_REPORT_MATH_MISMATCH, [HIGH] R3_SCHEDULE_HIGH_RISK, [HIGH] R4C_DATA_QUALITY_SKIP
+  Unknowns (3): UNKNOWN_PROGRESS_FORMULA, UNKNOWN_SKIP_REMEDIATION_SCOPE, UNKNOWN_OPERATOR_CAPACITY
 
-  [critical] schedule_risk · keyakinan high · terkelompok
-  alasan   : Untuk selesai tepat waktu dibutuhkan 7.633,42 halaman per hari, sedangkan laju sekarang 3.266,4.
-  metode   : ratio = required_pace / achieved_pace; elapsed 26,71 hari, sisa 4,29 hari
-  bukti    : PRJ-002 (MASTER/REPORTED 2026-10-06T08:10:00) | SCAN-BETA-001 (PRODUCTION/OPERATIONAL 2026-10-05T23:59:00)
-  tindakan : Angka ini tidak bisa ditutup dengan kerja lebih cepat saja; perlu keputusan lingkup, tambahan kapasitas, atau revisi tanggal.
-  pemilik  : PROJECT_MANAGER (saran sistem, bukan penugasan) - perbaikan bisa dilakukan di dalam kendali PM
+PRJ-005 — Integrasi API Epsilon (Instansi Epsilon, PIC: Kevin)
+  Attention: CRITICAL (score=100) | Uncertainty: MODERATE | Verdict: AT_HIGH_RISK
+  Reported : 9/10 endpoints (90%, computed=90%, status=ON TRACK)
+  Operatnl : 0 endpoints (0%)
+  Deadline : 2026-09-01 -> 2026-10-13 (elapsed=35d, remaining=7d)
+  Pace (Op): hist=0/d | req=1.43/d | accel=N/Ax | proj=N/A (slip=N/Ad)
+  Signals (3): [CRITICAL] R2C_VALIDATION_DOD_GAP, [CRITICAL] R4B_ENVIRONMENT_NOT_READY, [HIGH] R3_SCHEDULE_HIGH_RISK
+  Unknowns (1): UNKNOWN_EXTERNAL_ETA
 
-  [attention] progress_gap · keyakinan high · terkelompok
-  alasan   : Master mencatat 91.500 halaman, bukti operasional 87.240 halaman. Sisanya 4.260 halaman tidak diakui sumber mana pun.
-  metode   : gap = reported_actual - validated = 91.500 - 87.240 = 4.260
-  bukti    : PRJ-002 (MASTER/REPORTED 2026-10-06T08:10:00) | SCAN-BETA-001 (PRODUCTION/OPERATIONAL 2026-10-05T23:59:00)
-  belum tau: apakah angka master berasal dari hitungan tim lapangan yang belum masuk sistem
-  tindakan : Rekonsiliasi angka master dengan sistem operasional sebelum laporan berikutnya.
-  pemilik  : PROJECT_MANAGER (saran sistem, bukan penugasan) - perbaikan bisa dilakukan di dalam kendali PM
-
-  [attention] source_conflict · keyakinan medium · terkelompok
-  alasan   : Master dan sistem operasional berbeda 4.260 halaman tanpa penjelasan. Keduanya tidak bisa benar sekaligus.
-  metode   : dua sumber independen, satuan sama, selisih melebihi toleransi
-  bukti    : PRJ-002 (MASTER/REPORTED 2026-10-06T08:10:00) | SCAN-BETA-001 (PRODUCTION/OPERATIONAL 2026-10-05T23:59:00)
-  belum tau: definisi mana yang dipakai masing-masing sumber (halaman diproses vs halaman diterima)
-  belum tau: apakah ada pemrosesan ulang yang terhitung dua kali
-  tindakan : Minta pemilik masing-masing sumber menjelaskan definisi angkanya, lalu tetapkan satu definisi resmi.
-  pemilik  : PROJECT_MANAGER (saran sistem, bukan penugasan) - perbaikan bisa dilakukan di dalam kendali PM
-
-  [watch] capacity_degradation · keyakinan high
-  alasan   : 1 dari 3 unit masih terbatas, sudah membaik dari out of service pukul 08:15. Kapasitas tidak boleh diskalakan dari keadaan ini, cukup dicatat.
-  metode   : 1/3 unit tidak RUNNING; snapshot sebelumnya 1 unit terdampak
-  bukti    : SCAN-BETA-003 (PRODUCTION/OPERATIONAL 2026-10-06T15:30:00) | SCAN-BETA-002 (PRODUCTION/OPERATIONAL 2026-10-06T08:15:00)
-  belum tau: berapa throughput nyata sampai unit normal kembali
-  tindakan : Pantau sampai unit kembali RUNNING; jangan menaikkan target harian sebelum itu.
-  pemilik  : PROJECT_MANAGER (saran sistem, bukan penugasan) - perbaikan sudah berjalan, sisa pekerjaannya pengawasan
-
-
-==============================================================================
-PRJ-005  Integrasi API Epsilon  [System Integration]
-Instansi Epsilon · PIC Kevin · status ON TRACK · APPROACHING
-progress: 9/10 endpoints dilaporkan 90% · hitung 0% · basis accepted_in_production
-catatan: Laju harian tidak dihitung: pekerjaan ini bertipe diskrit, angka rata-rata per hari tidak bermakna.
-catatan: Progress dihitung dari yang diterima di production, bukan dari pekerjaan yang sudah selesai.
-kelompok [critical] Tertahan dependency eksternal / Definisi progress tidak sesuai tipe proyek <- blocked_dependency:main, progress_basis_conflict:main
-
-  [critical] blocked_dependency · keyakinan high · terkelompok
-  alasan   : 9 endpoint selesai dibangun tapi belum pernah sekali pun terhubung ke production. Sistem mencatat "belum pernah berhasil", bukan "belum ada data".
-  metode   : developed=9 tested=0 connection=NOT_CONFIGURED
-  bukti    : API-EPS-002 (PRODUCTION/OPERATIONAL 2026-10-06T07:32:00) | API-EPS-001 (PRODUCTION/OPERATIONAL 2026-10-06T07:30:00)
-  belum tau: kapan credential akan tersedia
-  tindakan : Kejar customer untuk credential dan endpoint production; tanpa itu tidak ada pekerjaan teknis yang bisa menggeser angka.
-  pemilik  : CUSTOMER (saran sistem, bukan penugasan) - penyediaan akses berada di pihak customer, bukan tim proyek
-
-  [critical] progress_basis_conflict · keyakinan high · terkelompok
-  alasan   : 90% yang dilaporkan mengukur endpoint yang sudah dibangun, bukan yang diterima di production (0). Untuk tipe proyek ini, angka itu belum bisa disebut kemajuan.
-  metode   : developed=9 production_tested=0 basis=accepted_in_production
-  bukti    : API-EPS-001 (PRODUCTION/OPERATIONAL 2026-10-06T07:30:00) | PRJ-005 (MASTER/REPORTED 2026-10-06T07:30:00)
-  belum tau: apakah customer menganggap pengembangan selesai sebagai kemajuan
-  tindakan : Tampilkan dua angka terpisah: dibangun dan diterima. Jangan memakai satu persentase untuk keduanya.
-  pemilik  : PROJECT_MANAGER (saran sistem, bukan penugasan) - perbaikan bisa dilakukan di dalam kendali PM
-
-
-==============================================================================
-PRJ-004  Verifikasi Data Delta  [Data Verification]
-Instansi Delta · PIC Sari · status ON TRACK · DISTANT
-progress: 45.000/100.000 records dilaporkan 52% · hitung 45% · basis validated_quantity
-kelompok [critical] Laju tidak cukup untuk deadline / Angka di satu baris tidak cocok <- schedule_risk:main, internal_inconsistency:main
-
-  [critical] schedule_risk · keyakinan high · terkelompok
-  alasan   : Untuk selesai tepat waktu dibutuhkan 1.815,68 record per hari, sedangkan laju sekarang 1.260,21.
-  metode   : ratio = required_pace / achieved_pace; elapsed 35,71 hari, sisa 30,29 hari
-  bukti    : PRJ-004 (MASTER/REPORTED 2026-10-06T07:00:00) | VER-DELTA-001 (PRODUCTION/OPERATIONAL 2026-10-06T07:00:00)
-  tindakan : Angka ini tidak bisa ditutup dengan kerja lebih cepat saja; perlu keputusan lingkup, tambahan kapasitas, atau revisi tanggal.
-  pemilik  : PROJECT_MANAGER (saran sistem, bukan penugasan) - perbaikan bisa dilakukan di dalam kendali PM
-
-  [attention] internal_inconsistency · keyakinan high · terkelompok
-  alasan   : Persentase yang dilaporkan 52% tidak cocok dengan angkanya sendiri. Hitungan dari kuantitas memberi 45%, selisih 7 poin.
-  metode   : 45.000 / 100.000 = 45%, dilaporkan 52%
-  bukti    : PRJ-004 (MASTER/REPORTED 2026-10-06T07:00:00)
-  belum tau: apakah penyebutnya berbeda dari target yang tertulis
-  tindakan : Perbaiki satu dari dua angka itu; jangan biarkan keduanya beredar.
-  pemilik  : PROJECT_MANAGER (saran sistem, bukan penugasan) - perbaikan bisa dilakukan di dalam kendali PM
-
-  [watch] quality_gap · keyakinan high
-  alasan   : 3.200 record dilewati karena atribut wajib tidak ada di data sumber. Kalau terus bertambah, target tidak akan tercapai meski kapasitas cukup.
-  metode   : records_skipped = 3.200 dari target 100.000
-  bukti    : VER-DELTA-002 (PRODUCTION/OPERATIONAL 2026-10-06T07:00:00)
-  belum tau: apakah record ini akan dilengkapi atau dikecualikan dari target
-  tindakan : Sepakati sekarang: dikembalikan ke sumber untuk dilengkapi, atau dikeluarkan dari penyebut target.
-  pemilik  : PROJECT_MANAGER (saran sistem, bukan penugasan) - perbaikan bisa dilakukan di dalam kendali PM
-
-
-==============================================================================
-PRJ-001  Penataan Arsip Inaktif Alpha  [Archive Arrangement]
-Instansi Alpha · PIC Raka · status ON TRACK · APPROACHING
-progress: 318/400 ML dilaporkan 79,5% · hitung 75,38% · basis validated_quantity
-kelompok [attention] Laju tidak cukup untuk deadline / Progress dilaporkan melebihi bukti <- schedule_risk:main, progress_gap:main
-
-  [attention] schedule_risk · keyakinan medium · borderline, terkelompok
-  alasan   : Kesimpulan berbeda tergantung basis. laporan: 8,91/hari tercapai vs 8,83/hari dibutuhkan (0,99x); tervalidasi: 8,44/hari tercapai vs 10,6/hari dibutuhkan (1,26x). Yang dipakai laporan bilang masih cukup, yang tervalidasi bilang tidak.
-  metode   : ratio = required_pace / achieved_pace; elapsed 35,71 hari, sisa 9,29 hari
-  bukti    : PRJ-001 (MASTER/REPORTED 2026-10-06T11:32:00) | PROD-ALPHA-001 (PRODUCTION/OPERATIONAL 2026-10-05T18:00:00)
-  belum tau: angka mana yang dipakai untuk keputusan: laporan atau tervalidasi
-  tindakan : Putuskan basis mana yang resmi dipakai untuk jadwal. Selama keduanya beredar, keputusan soal tanggal tidak punya dasar tunggal.
-  pemilik  : PROJECT_MANAGER (saran sistem, bukan penugasan) - perbaikan bisa dilakukan di dalam kendali PM
-
-  [watch] progress_gap · keyakinan high · terkelompok
-  alasan   : Master mencatat 318 meter lari, bukti operasional 301,5 meter lari. Selisih 16,5 sudah dijelaskan antrean pemeriksaan internal.
-  metode   : gap = reported_actual - validated = 318 - 301,5 = 16,5
-  bukti    : PRJ-001 (MASTER/REPORTED 2026-10-06T11:32:00) | PROD-ALPHA-001 (PRODUCTION/OPERATIONAL 2026-10-05T18:00:00) | PROD-ALPHA-002 (PRODUCTION/OPERATIONAL 2026-10-05T18:00:00)
-  tindakan : Pastikan antrean pemeriksaan punya tenggat, supaya selisih ini tidak menetap.
-  pemilik  : PROJECT_MANAGER (saran sistem, bukan penugasan) - perbaikan bisa dilakukan di dalam kendali PM
-
-
-==============================================================================
-PRJ-003  Penataan dan Pendataan Arsip Gamma  [Archive Arrangement]
-BUMN Gamma · PIC Andi · status ON TRACK · DISTANT
-progress: 1.840/2.000 boxes dilaporkan 94% · hitung 92% · basis validated_quantity
-kelompok [watch] Laporan berhenti masuk / Angka di satu baris tidak cocok <- stale_report:main, internal_inconsistency:main
-
-  [watch] stale_report · keyakinan high · terkelompok
-  alasan   : Tidak ada laporan manusia selama 6 hari, padahal proyek ini biasanya diperbarui tiap 3 hari.
-  metode   : hours_since_report = 144 vs cadence 72 jam
-  bukti    : PRJ-003 (MASTER/REPORTED 2026-09-30T17:00:00)
-  belum tau: apakah pekerjaan berhenti atau hanya pelaporannya yang berhenti
-  tindakan : Minta PIC mengirim posisi terbaru; status terakhir sudah tidak bisa dipakai sebagai dasar keputusan.
-  pemilik  : PROJECT_MANAGER (saran sistem, bukan penugasan) - perbaikan bisa dilakukan di dalam kendali PM
-
-  [watch] stale_evidence · keyakinan high
-  alasan   : Sistem operasional tidak mengirim data selama 6 hari, jadi klaim terakhir tidak punya pembanding.
-  metode   : hours_since_evidence = 144 vs cadence 72 jam
-  bukti    : WH-GAMMA-001 (PRODUCTION/OPERATIONAL 2026-09-30T17:00:00)
-  belum tau: apakah koneksi data putus atau memang tidak ada aktivitas
-  tindakan : Cek saluran data operasional sebelum mempercayai angka terakhir.
-  pemilik  : PROJECT_MANAGER (saran sistem, bukan penugasan) - perbaikan bisa dilakukan di dalam kendali PM
-
-  [watch] internal_inconsistency · keyakinan high · terkelompok
-  alasan   : Persentase yang dilaporkan 94% tidak cocok dengan angkanya sendiri. Hitungan dari kuantitas memberi 92%, selisih 2 poin.
-  metode   : 1.840 / 2.000 = 92%, dilaporkan 94%
-  bukti    : PRJ-003 (MASTER/REPORTED 2026-09-30T17:00:00)
-  belum tau: apakah penyebutnya berbeda dari target yang tertulis
-  tindakan : Perbaiki satu dari dua angka itu; jangan biarkan keduanya beredar.
-  pemilik  : PROJECT_MANAGER (saran sistem, bukan penugasan) - perbaikan bisa dilakukan di dalam kendali PM
-
-
-==============================================================================
-PRJ-006  Implementasi DMS Zeta  [DMS Implementation]
-Perusahaan Zeta · PIC Maya · status COMPLETED · NONE
-progress: 1/1 system dilaporkan 100% · hitung -% · basis accepted_in_production
-catatan: Laju harian tidak dihitung: pekerjaan ini bertipe diskrit, angka rata-rata per hari tidak bermakna.
-catatan: Progress dihitung dari yang diterima di production, bukan dari pekerjaan yang sudah selesai.
-
-  [info] verified_closure · keyakinan high
-  alasan   : Selesai tepat waktu dan terbukti masih dipakai sesudahnya. Ini satu-satunya klaim selesai di portofolio yang punya bukti langsung, jadi dipakai sebagai pembanding untuk proyek lain.
-  metode   : deployment COMPLETED 2026-09-30T16:05:00 vs deadline 2026-09-30
-  bukti    : DMS-ZETA-001 (PRODUCTION/OPERATIONAL 2026-09-30T16:05:00) | DMS-ZETA-002 (PRODUCTION/OPERATIONAL 2026-10-06T16:45:00)
-  tindakan : Tidak ada.
-  pemilik  : PROJECT_MANAGER (saran sistem, bukan penugasan) - perbaikan bisa dilakukan di dalam kendali PM
-
-
-RINGKASAN  kritis 3 · perhatian 1 · pantau 1 · info 1
-
+PRJ-006 — Implementasi DMS Zeta (Perusahaan Zeta, PIC: Maya)
+  Attention: LOW (score=0) | Uncertainty: LOW | Verdict: COMPLETED_ON_TIME
+  Reported : 1/1 system (100%, computed=100%, status=COMPLETED)
+  Operatnl : 1 system (100%)
+  Deadline : 2026-07-01 -> 2026-09-30 (elapsed=97d, remaining=-6d)
+  Pace (Op): hist=0.01/d | req=N/A/d | accel=N/Ax | proj=N/A (slip=N/Ad)
+  Signals (0): NONE
+  Unknowns (1): INFO_POST_GOLIVE_ADOPTION_DENOMINATOR

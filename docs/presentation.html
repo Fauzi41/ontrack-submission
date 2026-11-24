@@ -1,324 +1,685 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="id">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>OnTrack Project Intelligence · Presentation</title>
-<style>
-  :root {
-    --bg: #0b0f14;
-    --panel: #121821;
-    --line: #232b36;
-    --text: #e6ebf2;
-    --muted: #8b97a8;
-    --accent: #6ea8fe;
-    --warn: #d9a441;
-    --err: #e06c75;
-    --ok: #8fd39a;
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; height: 100%; background: #05070a; color: var(--text); }
-  body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    overflow: hidden;
-  }
-  #stage-wrap { position: relative; width: 100vw; height: calc(100vh - 42px); display: grid; place-items: center; }
-  #stage {
-    width: 1280px; height: 720px; position: relative; background: var(--bg);
-    overflow: hidden; box-shadow: 0 24px 70px rgba(0,0,0,0.55);
-    transform-origin: center center;
-  }
-  .slide {
-    position: absolute; inset: 0; padding: 56px 68px 64px;
-    display: none; flex-direction: column;
-  }
-  .slide.on { display: flex; }
-  .kicker {
-    font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
-    display: flex; align-items: center; gap: 12px;
-  }
-  .kicker::after { content: ''; height: 1px; width: 64px; background: var(--line); }
-  h2 { font-size: 44px; line-height: 1.14; letter-spacing: -0.02em; margin: 18px 0 14px; max-width: 20ch; }
-  .lead { font-size: 19px; line-height: 1.5; color: #c6cfdb; max-width: 62ch; margin: 0 0 22px; }
-  ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 13px; max-width: 74ch; }
-  li { font-size: 16.5px; line-height: 1.45; padding-left: 20px; position: relative; color: #d5dde7; }
-  li::before { content: ''; position: absolute; left: 0; top: 9px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); opacity: 0.85; }
-  li b { color: var(--text); font-weight: 600; }
-  .note { margin-top: auto; font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 12px; }
-
-  /* tata letak khusus */
-  .chain { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-top: 6px; }
-  .chain div { border: 1px solid var(--line); border-radius: 10px; padding: 12px 12px 14px; background: var(--panel); }
-  .chain span { display: block; font-size: 10.5px; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; }
-  .chain strong { display: block; font-size: 15px; margin: 6px 0 6px; }
-  .chain p { margin: 0; font-size: 12px; color: #a9b4c2; line-height: 1.4; }
-
-  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; align-items: start; }
-  .box { border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; background: var(--panel); }
-  .box h3 { margin: 0 0 10px; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
-  .big { font-size: 40px; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
-  .big.warn { color: var(--warn); }
-  .big.err { color: var(--err); }
-  .big.ok { color: var(--ok); }
-  .small { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.45; }
-
-  table.rank { width: 100%; border-collapse: collapse; font-size: 15px; }
-  table.rank th { text-align: left; font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 6px 8px; border-bottom: 1px solid var(--line); font-weight: 500; }
-  table.rank td { padding: 7px 8px; border-bottom: 1px solid #1a222c; }
-  table.rank td.num { text-align: right; font-variant-numeric: tabular-nums; }
-  .tag { font-size: 11px; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--line); }
-  .tag.critical { color: var(--err); border-color: #4d2529; background: #1d1113; }
-  .tag.attention { color: var(--warn); border-color: #4a3c1c; background: #1d1810; }
-  .tag.watch { color: var(--accent); border-color: #23364f; background: #111a25; }
-  .tag.info { color: var(--muted); }
-
-  .quote { font-size: 20px; line-height: 1.5; border-left: 3px solid var(--accent); padding: 6px 0 6px 18px; color: #dbe3ec; max-width: 70ch; }
-  .err-line { font-family: 'Cascadia Mono', Consolas, monospace; font-size: 13px; color: var(--err); background: #1a1013; border: 1px solid #3d1f23; border-radius: 8px; padding: 10px 13px; margin-top: 12px; }
-
-  /* kontrol */
-  #bar {
-    position: fixed; bottom: 0; left: 0; right: 0; height: 42px; display: flex; align-items: center;
-    gap: 14px; padding: 0 18px; background: rgba(5,7,10,0.92); border-top: 1px solid #141a22;
-    font-size: 12px; color: var(--muted); z-index: 20;
-  }
-  #bar .dots { display: flex; gap: 6px; }
-  #bar .dot { width: 7px; height: 7px; border-radius: 50%; background: #2a3441; cursor: pointer; }
-  #bar .dot.on { background: var(--accent); }
-  #bar .spacer { flex: 1; }
-  #bar button {
-    background: #172029; color: #cfd8e3; border: 1px solid #26313d; border-radius: 6px;
-    padding: 4px 10px; font: inherit; font-size: 11.5px; cursor: pointer;
-  }
-  #bar button:hover { border-color: var(--accent); color: var(--accent); }
-  #bar button.on { border-color: var(--accent); color: var(--accent); }
-
-  @media print {
-    @page { size: 1280px 720px; margin: 0; }
-    html, body { background: #fff; overflow: visible; height: auto; }
-    #stage-wrap { width: 1280px; height: auto; display: block; }
-    #stage { width: 1280px; height: auto; box-shadow: none; transform: none !important; }
-    .slide { display: flex !important; position: relative; width: 1280px; height: 720px; page-break-after: always; background: var(--bg); }
-    #bar { display: none; }
-  }
-</style>
+  <meta charset="UTF-8" />
+  <title>OnTrack Project Intelligence — Technical Presentation</title>
+  <style>
+    @page {
+      size: 13.333in 7.5in;
+      margin: 0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      color: #0f172a;
+      background: #ffffff;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .slide {
+      width: 13.333in;
+      height: 7.5in;
+      padding: 0.55in 0.7in 0.5in 0.7in;
+      position: relative;
+      page-break-after: always;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: #ffffff;
+    }
+    .slide:last-child { page-break-after: auto; }
+    .slide-dark {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #f8fafc;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 10px;
+      margin-bottom: 18px;
+    }
+    .slide-dark .header { border-bottom-color: #334155; }
+    .eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #0d9488;
+    }
+    .slide-dark .eyebrow { color: #2dd4bf; }
+    h1 { font-size: 36px; font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; }
+    h2 { font-size: 26px; font-weight: 800; line-height: 1.2; letter-spacing: -0.015em; color: #0f172a; }
+    .slide-dark h2 { color: #ffffff; }
+    h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; color: #0f172a; }
+    .subtitle { font-size: 15px; color: #475569; margin-top: 6px; line-height: 1.45; }
+    .slide-dark .subtitle { color: #cbd5e1; }
+    .content { flex: 1; display: flex; flex-direction: column; gap: 14px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+    .card-white {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+    .card-dark {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+    .card-rose { background: #fff1f2; border: 1px solid #fecdd3; border-left: 4px solid #e11d48; border-radius: 10px; padding: 13px 15px; }
+    .card-amber { background: #fffbeb; border: 1px solid #fde68a; border-left: 4px solid #d97706; border-radius: 10px; padding: 13px 15px; }
+    .card-teal { background: #f0fdfa; border: 1px solid #99f6e4; border-left: 4px solid #0d9488; border-radius: 10px; padding: 13px 15px; }
+    .card-purple { background: #faf5ff; border: 1px solid #e9d5ff; border-left: 4px solid #7e22ce; border-radius: 10px; padding: 13px 15px; }
+    p, li { font-size: 13px; line-height: 1.48; color: #334155; }
+    .slide-dark p, .slide-dark li { color: #cbd5e1; }
+    ul { padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
+    .mono { font-family: 'Consolas', 'Courier New', monospace; font-size: 12px; }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .b-crit { background: #ffe4e6; color: #9f1239; border: 1px solid #fda4af; }
+    .b-high { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+    .b-low { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+    .b-teal { background: #ccfbf1; color: #115e59; border: 1px solid #5eead4; }
+    .b-slate { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
+    .b-purple { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th {
+      background: #0f172a;
+      color: #ffffff;
+      text-align: left;
+      padding: 8px 10px;
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.03em;
+    }
+    td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: top;
+      line-height: 1.4;
+    }
+    tr:nth-child(even) td { background: #f8fafc; }
+    .flow-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 6px 0;
+    }
+    .flow-box {
+      flex: 1;
+      text-align: center;
+      padding: 12px 8px;
+      border-radius: 8px;
+      border: 1.5px solid #cbd5e1;
+      background: #f8fafc;
+      font-weight: 700;
+      font-size: 12px;
+      color: #0f172a;
+    }
+    .flow-box.active { background: #0f172a; color: #ffffff; border-color: #0f172a; }
+    .flow-box.teal { background: #0d9488; color: #ffffff; border-color: #0d9488; }
+    .flow-arrow { font-size: 18px; font-weight: 800; color: #94a3b8; }
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10.5px;
+      color: #64748b;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 8px;
+      margin-top: 10px;
+    }
+    .slide-dark .footer { color: #94a3b8; border-top-color: #334155; }
+    .kpi-num { font-size: 28px; font-weight: 800; line-height: 1.1; }
+  </style>
 </head>
 <body>
-<div id="stage-wrap"><div id="stage"></div></div>
 
-<div id="bar">
-  <span id="counter">1 / 10</span>
-  <div class="dots" id="dots"></div>
-  <span class="spacer"></span>
-  <button id="prev" title="Previous">←</button>
-  <button id="next" title="Next">→</button>
-  <button id="print" title="Export to PDF">Print</button>
-</div>
+<!-- ==================== SLIDE 1: TITLE & BUSINESS PROBLEM ==================== -->
+<section class="slide slide-dark">
+  <div class="header">
+    <span class="eyebrow">tata.id • Builder Technical Challenge v3.1</span>
+    <span class="mono" style="color:#94a3b8;">As-Of Reference: 2026-10-06T17:00:00</span>
+  </div>
+  <div class="content" style="justify-content:center; gap:24px;">
+    <div>
+      <span class="badge b-teal" style="margin-bottom:12px;">WORKING PROTOTYPE + TECHNICAL DEFENCE</span>
+      <h1>OnTrack Project Intelligence</h1>
+      <p class="subtitle" style="font-size:18px; max-width:920px; margin-top:10px;">
+        Membangun lapisan <strong>Project Intelligence &amp; Control</strong> yang menjelaskan <em>apa yang sebenarnya terjadi</em>, <em>mengapa itu penting</em>, <em>bukti apa yang mendukung</em>, <em>apa yang belum terverifikasi</em>, dan <em>tindakan apa yang harus diambil</em>.
+      </p>
+    </div>
 
-<script>
-const DECK = [
-    {
-      kicker: '01 · the problem',
-      title: 'One number is enough to start the conversation',
-      lead: 'PRJ-002 reports 91,500 pages digitised. Its production system records 87,240. No report mentions the 4,260 gap.',
-      body: `<ul>
-        <li>Master and production data are stored as <b>separate rows</b>, never averaged into one figure.</li>
-        <li>The gap is recomputed on every import, so a report update cannot erase it.</li>
-        <li>Decisions use the figure that can be <b>evidenced</b>; the reported figure stays visible.</li>
-      </ul>`,
-      note: 'as_of 2026-10-06T17:00 · PRJ-002 Digitalisasi Arsip Beta, target 120,000 pages'
-    },
-    {
-      kicker: '02 · what was built',
-      title: 'Six links that must hold, not a dashboard',
-      lead: 'The value is not the tables. It is the chain from a source row to a follow-up. One broken link turns the rest into guesswork.',
-      body: `<div class="chain">
-        <div><span>01 source</span><strong>Source rows</strong><p>CSV and JSON stored as received, including rows that raise nothing.</p></div>
-        <div><span>02 context</span><strong>Project context</strong><p>Type, deadline, day allowance, per-type rules.</p></div>
-        <div><span>03 evidence</span><strong>Evidence</strong><p>Two layers: human reports and system figures.</p></div>
-        <div><span>04 reading</span><strong>Interpretation</strong><p>12 detectors, severity, confidence, open questions.</p></div>
-        <div><span>05 attention</span><strong>Attention</strong><p>Ranked and grouped so nobody reads row by row.</p></div>
-        <div><span>06 follow-up</span><strong>Follow-up</strong><p>Actions, owners, closure that demands evidence.</p></div>
-      </div>`,
-      note: 'Every number on screen traces back to one of these six boxes.'
-    },
-    {
-      kicker: '03 · the data',
-      title: 'What came in, and how thick the evidence is',
-      lead: 'Six projects, 41 source rows, 92 observation values. Not every row carries the same weight.',
-      body: `<div class="split">
-        <div class="box">
-          <h3>Source mix</h3>
-          <div class="big">41 <span style="font-size:16px;color:var(--muted)">rows</span></div>
-          <div class="small">6 master · 23 field updates · 12 production records</div>
-          <div class="small" style="margin-top:14px">92 observation values extracted, each keeping its origin and timestamp.</div>
-        </div>
-        <div class="box">
-          <h3>Evidence weight</h3>
-          <div class="big warn">29 <span style="font-size:16px;color:var(--muted)">reported</span></div>
-          <div class="big ok" style="margin-top:6px">12 <span style="font-size:16px;color:var(--muted)">operational</span></div>
-          <div class="small" style="margin-top:10px">The system mostly judges human reports against system figures. That is a limitation I state, not one I hide.</div>
-        </div>
-      </div>`,
-      note: 'Provenance REPORTED vs OPERATIONAL is stored per row, not per project.'
-    },
-    {
-      kicker: '04 · the engine',
-      title: 'The PIC status is not the conclusion',
-      lead: 'PRJ-002 is ON TRACK in its report. With 4.3 days left, finishing on time needs 7,633 pages per day. Current pace is 3,266.',
-      body: `<ul>
-        <li><b>12 detectors</b> cover progress, schedule, data freshness, dependencies, capacity, quality, internal consistency, and status contradictions.</li>
-        <li>Two bases are computed separately: <b>reported</b> and <b>validated</b>. When they disagree, severity is held back and the finding is marked borderline.</li>
-        <li>Every finding carries its evidence rows, a confidence level, and the list of what remains unknown.</li>
-      </ul>`,
-      note: 'The PRJ-002 figures come from 4.3 remaining days and a 120,000 page target, not from a sentence in the report.'
-    },
-    {
-      kicker: '05 · the result',
-      title: 'An order that can be defended',
-      lead: 'Six projects, one order. The top item is not the one with the most problems, it is the most urgent with the strongest evidence.',
-      body: `<table class="rank">
-        <thead><tr><th>#</th><th>Project</th><th>Severity</th><th>Time</th><th class="num">Days left</th><th class="num">Findings</th></tr></thead>
-        <tbody>
-          <tr><td>1</td><td>PRJ-002 Digitalisasi Arsip Beta</td><td><span class="tag critical">Critical</span></td><td>Approaching</td><td class="num">4.3</td><td class="num">4</td></tr>
-          <tr><td>2</td><td>PRJ-005 Integrasi API Epsilon</td><td><span class="tag critical">Critical</span></td><td>Approaching</td><td class="num">7.3</td><td class="num">2</td></tr>
-          <tr><td>3</td><td>PRJ-004 Verifikasi Data Delta</td><td><span class="tag critical">Critical</span></td><td>Distant</td><td class="num">30.3</td><td class="num">3</td></tr>
-          <tr><td>4</td><td>PRJ-001 Penataan Arsip Inaktif Alpha</td><td><span class="tag attention">Attention</span></td><td>Approaching</td><td class="num">9.3</td><td class="num">2</td></tr>
-          <tr><td>5</td><td>PRJ-003 Arsip Gamma</td><td><span class="tag watch">Watch</span></td><td>Distant</td><td class="num">14.3</td><td class="num">3</td></tr>
-          <tr><td>—</td><td>PRJ-006 Implementasi DMS Zeta</td><td><span class="tag info">Info</span></td><td>Closed</td><td class="num">—</td><td class="num">0</td></tr>
-        </tbody>
-      </table>
-      <p class="small" style="margin-top:12px">PRJ-006 carries one informational finding because its closure is evidenced, and that finding opens no issue. PRJ-001 was deliberately not escalated: its report implies 0.99x of the required pace, its validated evidence implies 1.26x. Two valid bases that disagree must not become critical without a human call.</p>`,
-      note: 'Ranking uses five keys: severity, time pressure, confidence, grouped finding count, then days left.'
-    },
-    {
-      kicker: '06 · the honesty',
-      title: 'Findings that state their own limits',
-      lead: 'Each finding carries the things the data cannot settle. PRJ-002 is the clearest case.',
-      body: `<div class="split">
-        <div class="box">
-          <h3>What is claimed</h3>
-          <p class="quote" style="font-size:16px;margin:0">Master records 91,500 pages, operational evidence 87,240. The remaining 4,260 pages are not acknowledged by any source.</p>
-          <div class="small" style="margin-top:12px">Evidence: PRJ-002 (master, reported) and SCAN-BETA-001 (production, operational).</div>
-        </div>
-        <div class="box">
-          <h3>What is not claimed</h3>
-          <ul style="gap:9px">
-            <li style="font-size:14px">Whether the master figure comes from field counts that never reached the system.</li>
-            <li style="font-size:14px">The 4,500 pages per day capacity claim exists only in free text, so it is not used in any calculation.</li>
-          </ul>
-        </div>
-      </div>`,
-      note: 'Low or medium confidence lowers severity, never raises it. Missing evidence is not evidence.'
-    },
-    {
-      kicker: '07 · the expensive misunderstanding',
-      title: 'Done does not mean resolved',
-      lead: 'Anyone can mark a follow-up done. An issue closes only when a new record proves the fix.',
-      body: `<ul>
-        <li>Closure rejects requests without evidence: <b>EVIDENCE_REQUIRED</b>.</li>
-        <li>A record that already existed when the issue opened is rejected: repetition is not new evidence.</li>
-        <li>A dispute from the PIC does not vanish into an inbox: it waits in the Review queue for a human decision.</li>
-        <li>Findings that stop appearing become <b>NOT_DETECTED</b>, not verified. The engine never declares the work finished.</li>
-      </ul>
-      <div class="err-line">Record SCAN-BETA-001 already existed when the issue opened, so it cannot serve as proof of a fix.</div>`,
-      note: 'That rejection comes from the API, not rewritten in the interface. Review decisions are recorded with their reason and leave engine severity untouched.'
-    },
-    {
-      kicker: '08 · decisions',
-      title: 'Three decisions worth arguing about',
-      lead: 'These are not technical details. I made them because the brief is silent, and I will defend them.',
-      body: `<ul>
-        <li><b>Deadlines are read end of day.</b> That keeps PRJ-001 borderline at 0.99x instead of late. Move it to midnight and the conclusion shifts.</li>
-        <li><b>Conflicting bases do not become critical.</b> Schedule risk is held at attention when report and evidence point in different directions.</li>
-        <li><b>Info findings are not issues.</b> A closed project with full evidence still carries an informational finding but opens no follow-up row.</li>
-      </ul>
-      <p class="small" style="margin-top:14px">The severity thresholds are mine too: pace ratio above 1.05 becomes attention, above 1.25 critical; internal difference above 1 percentage point becomes watch, above 5 attention; stale data beyond twice the expected cadence. All of them are open to change.</p>`,
-      note: 'The thresholds live in code and are tested, but not validated against business truth. Tests cannot close that gap.'
-    },
-    {
-      kicker: '09 · the evidence of work',
-      title: 'How I know this works',
-      lead: 'Not because the screens look tidy, but because tests fail when the behaviour changes.',
-      body: `<div class="split">
-        <div>
-          <ul>
-            <li><b>124 tests</b> across 8 files: parser, importer, normalisation, detectors, ranking, API, edge cases.</li>
-            <li><b>58 checks</b> in the verification script: every route, expected status codes, and data integrity in SQLite.</li>
-            <li><b>14 bugs</b> found along the way, each recorded with symptom, cause, and the test that now guards it.</li>
-          </ul>
-        </div>
-        <div class="box">
-          <h3>Statement coverage</h3>
-          <div class="big ok">96%</div>
-          <div class="small">core modules at 100% (interpretation, presence, database)</div>
-          <div class="small" style="margin-top:10px">API 80%, issues and follow-ups 92%, ingest 86%.</div>
-        </div>
-      </div>`,
-      note: 'Six bugs were caught by tests, eight by manual review, UI checks, and the verification script. The list lives in docs/BUG_LOG.md.'
-    },
-    {
-      kicker: '10 · limits',
-      title: 'What this tool still cannot answer',
-      lead: 'Better said now than discovered in use.',
-      body: `<ul>
-        <li><b>Free text is not read by the engine.</b> The 4,500 pages per day capacity claim and delay reasons are stored, not interpreted.</li>
-        <li><b>Deadline changes are not tracked yet.</b> The history table exists but the importer does not fill it.</li>
-        <li><b>No auth and no deployment.</b> Matching the brief: a local prototype on sample data.</li>
-        <li><b>Closing an issue stays a human act.</b> The system guarantees the evidence is real and new; it does not judge whether the fix is enough.</li>
-      </ul>`,
-      note: 'Next steps for real use: agree on thresholds, read the free text, schedule recurring imports.'
-    }
-  ];
+    <div class="grid-3">
+      <div class="card-dark">
+        <div class="eyebrow" style="margin-bottom:6px;">THE ILLUSION OF GREEN REPORTS</div>
+        <div class="kpi-num" style="color:#fb7185;">5 / 5 Aktif = "ON TRACK"</div>
+        <p style="margin-top:8px;">Seluruh proyek aktif di Project Master dilaporkan <strong>ON TRACK</strong> oleh PIC — dashboard biasa akan terlihat "hijau" seluruhnya.</p>
+      </div>
+      <div class="card-dark">
+        <div class="eyebrow" style="margin-bottom:6px;">OPERATIONAL REALITY</div>
+        <div class="kpi-num" style="color:#fbbf24;">2 Kritis • 3 Perlu Perhatian</div>
+        <p style="margin-top:8px;">Triangulasi bukti sistem mengungkap jadwal mustahil secara matematis, 0% uji production, selisih hitung +7%, hold rework, dan blind spot 6 hari.</p>
+      </div>
+      <div class="card-dark">
+        <div class="eyebrow" style="margin-bottom:6px;">ENGINEERING MANDATE</div>
+        <div class="kpi-num" style="color:#2dd4bf;">Zero Hardcoding</div>
+        <p style="margin-top:8px;">100% aturan generik berbasis data (R1–R6), pelacakan bukti lengkap, SQLite persisten, dan kebijakan <strong>Evidence-Based Closure</strong>.</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>OnTrack Project Intelligence • Full Stack Software Engineer (Builder)</span>
+    <span>Slide 1 / 10</span>
+  </div>
+</section>
 
+<!-- ==================== SLIDE 2: USERS & PRODUCT JOURNEY ==================== -->
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="eyebrow">02 / USERS &amp; WORKFLOW</div>
+      <h2>Dua Persona, Satu Rantai Kebenaran yang Dapat Ditelusuri</h2>
+    </div>
+    <span class="badge b-slate">Product &amp; UX Scope</span>
+  </div>
+  <div class="content">
+    <div class="flow-row">
+      <div class="flow-box">1. SOURCE<br><span style="font-weight:400;font-size:10.5px;">CSV &amp; JSON Inputs</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">2. CONTEXT<br><span style="font-weight:400;font-size:10.5px;">Target, PIC, Deadline</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box teal">3. EVIDENCE<br><span style="font-weight:400;font-size:10.5px;">System Telemetry</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">4. INTERPRETATION<br><span style="font-weight:400;font-size:10.5px;">Generic Rules R1–R6</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box active">5. ATTENTION<br><span style="font-weight:400;font-size:10.5px;">Priority &amp; Unknowns</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box teal">6. FOLLOW-UP<br><span style="font-weight:400;font-size:10.5px;">Owner + Verified Close</span></div>
+    </div>
 
-const stage = document.getElementById('stage');
-const dots = document.getElementById('dots');
-const counter = document.getElementById('counter');
-let idx = 0;
+    <div class="grid-2" style="margin-top:6px;">
+      <div class="card">
+        <h3>Persona A — Director / Management</h3>
+        <ul>
+          <li><strong>Kebutuhan:</strong> Ringkasan portofolio dalam 10 detik, peringkat prioritas perhatian, alasan jelas, dan akses 1 klik ke bukti pendukung tanpa membaca seluruh raw update.</li>
+          <li><strong>Jawaban di Aplikasi:</strong> <em>Portfolio Overview</em> dengan Executive KPI Strip, perbandingan langsung <strong>Reported vs Operational Verified</strong>, badge kelayakan deadline, serta hitungan follow-up <em>resolved-unverified</em>.</li>
+          <li><strong>Kontrol Waktu:</strong> Pemilih <em>As-Of Date</em> interaktif untuk audit historis &amp; simulasi.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Persona B — Project Manager / PIC</h3>
+        <ul>
+          <li><strong>Kebutuhan:</strong> Memahami mengapa proyek ditandai, melihat rincian rumus jadwal, mencatat tindak lanjut dengan rujukan bukti, dan memperbarui status aksi.</li>
+          <li><strong>Jawaban di Aplikasi:</strong> <em>Project Detail</em> dengan 3-Layer Truth Comparison, tabel langkah perhitungan deadline, panel <em>Unknowns</em>, timeline kronologis terfilter, serta form Follow-Up lengkap dengan audit trail.</li>
+          <li><strong>Simulasi Role &amp; Rencana RBAC:</strong> Header menyediakan <em>Persona Switcher</em> tanpa login (Director vs PIC) untuk mendemokan filter proyek, audit <code>actor</code>, &amp; <em>separation of duties</em> (verifikasi bukti akhir khusus Director).</li>
+        </ul>
+      </div>
+    </div>
 
-function render() {
-  const slides = DECK;
-  stage.innerHTML = slides.map((s, i) => `
-    <section class="slide${i === idx ? ' on' : ''}">
-      <div class="kicker">${s.kicker}</div>
-      <h2>${s.title}</h2>
-      <p class="lead">${s.lead}</p>
-      ${s.body}
-      <div class="note">${s.note}</div>
-    </section>`).join('');
-  dots.innerHTML = slides.map((_, i) => `<span class="dot${i === idx ? ' on' : ''}" data-i="${i}"></span>`).join('');
-  counter.textContent = `${idx + 1} / ${slides.length}`;
-  document.querySelectorAll('#dots .dot').forEach((d) => d.addEventListener('click', () => {
-    idx = Number(d.dataset.i); render();
-  }));
-}
+    <div class="card-teal">
+      <strong>Alur End-to-End Minimal yang Berjalan Penuh:</strong> Portfolio Overview → Pilih Proyek → Bandingkan Reported vs Operational Evidence → Audit Langkah Perhitungan Deadline &amp; Unknowns → Buat Follow-Up + Rujukan Bukti → Transisi Status (<code>OPEN</code> → <code>IN_PROGRESS</code> → <code>RESOLVED</code>) → Ingest Bukti Baru → Verifikasi Penutupan Berbasis Bukti.
+    </div>
+  </div>
+  <div class="footer">
+    <span>OnTrack Project Intelligence • Users &amp; Workflow</span>
+    <span>Slide 2 / 10</span>
+  </div>
+</section>
 
-function go(n) {
-  const total = DECK.length;
-  idx = Math.max(0, Math.min(total - 1, n));
-  render();
-}
+<!-- ==================== SLIDE 3: DATA SOURCES, PROVENANCE & UNCERTAINTY ==================== -->
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="eyebrow">03 / DATA MODEL &amp; PROVENANCE</div>
+      <h2>Memisahkan Klaim Laporan, Bukti Operasional &amp; Ketidakpastian</h2>
+    </div>
+    <span class="badge b-teal">Never Silently Overwrite</span>
+  </div>
+  <div class="content">
+    <div class="grid-3">
+      <div class="card-white">
+        <span class="badge b-slate" style="margin-bottom:8px;">LAYER 1: REPORTED MASTER</span>
+        <h3>02_Project_Master.csv</h3>
+        <p>Klaim ringkasan proyek dari PIC: target, deadline, <code>reported_actual</code>, <code>reported_progress_pct</code>, <code>reported_status</code>, dan <code>last_reported_update_at</code>.</p>
+        <p style="margin-top:8px;"><strong>Prinsip:</strong> Diperlakukan sebagai <em>klaim</em>, bukan fakta final. Diaudit secara aritmetika terhadap <code>reported_actual / target</code>.</p>
+      </div>
+      <div class="card-white">
+        <span class="badge b-purple" style="margin-bottom:8px;">LAYER 2: HUMAN UPDATES</span>
+        <h3>03_Project_Updates.csv</h3>
+        <p>23 pesan kronologis dari PM, Operator, Field Team, Technical Team, Account, dan Vendor dengan <code>update_id</code> &amp; <code>timestamp</code>.</p>
+        <p style="margin-top:8px;"><strong>Prinsip:</strong> Memberi konteks operasional (hold, revisi, kapasitas 4.500/hari, blocker akses) tanpa menggantikan bukti sistem.</p>
+      </div>
+      <div class="card-teal">
+        <span class="badge b-teal" style="margin-bottom:8px;">LAYER 3: OPERATIONAL EVIDENCE</span>
+        <h3>04_Production_Data.json</h3>
+        <p>12 snapshot dari 6 sistem (<code>archive_production_report</code>, <code>scanner_production_log</code>, <code>warehouse_entry</code>, <code>verification_application</code>, <code>api_monitor</code>, <code>dms_monitor</code>).</p>
+        <p style="margin-top:8px;"><strong>Prinsip:</strong> Disimpan utuh (<em>immutable</em>) lengkap dengan <code>source_record_id</code> &amp; raw payload untuk inspeksi audit.</p>
+      </div>
+    </div>
 
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); go(idx + 1); }
-  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(idx - 1); }
-  if (e.key === 'Home') go(0);
-  if (e.key === 'End') go(DECK.length - 1);
-});
+    <div class="grid-2">
+      <div class="card-amber">
+        <h3>Kebijakan Tanggal Acuan (As-Of Date) &amp; Selisih Sumber</h3>
+        <ul>
+          <li><strong>As-Of Date:</strong> Ditetapkan eksplisit <code>2026-10-06T17:00:00</code> (sesuai Data Dictionary &amp; <code>generated_at</code> JSON).</li>
+          <li><strong>Bukan Semua Selisih = Error:</strong> Pada <code>PRJ-001</code>, <code>301.5 VERIFIED + 16.5 PENDING = 318.0 ML</code> diklasifikasikan sebagai <em>Workflow-State Gap</em> (perbedaan definisi tahap), bukan kesalahan pencatatan.</li>
+          <li><strong>Selisih Tak Terjelaskan:</strong> Pada <code>PRJ-002</code>, selisih <code>+4,260 pages</code> menampilkan kedua nilai beserta selisih waktu <code>8.18 jam</code>.</li>
+        </ul>
+      </div>
+      <div class="card-purple">
+        <h3>Ketidakpastian Eksplisit &amp; Kebijakan Refresh (P5)</h3>
+        <ul>
+          <li><strong>Anti-Overclaim:</strong> Pada <code>PRJ-003</code> (tanpa data selama 6 hari), sistem menolak menyimpulkan "aman" atau "terlambat" → menandai <code>INSUFFICIENT_DATA</code> &amp; <code>HIGH UNCERTAINTY</code>.</li>
+          <li><strong>Duplikat Identik:</strong> Dilewati secara idempoten (berbasis <code>SHA-256 payload_hash</code>).</li>
+          <li><strong>Konflik ID Sama, Isi Beda:</strong> Bukti asli dipertahankan, konflik dicatat di <code>ingestion_runs</code>.</li>
+          <li><strong>Data Lebih Lama:</strong> Disimpan sebagai <em>historical backfill</em> tanpa menimpa snapshot terbaru.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>OnTrack Project Intelligence • Data Provenance &amp; Uncertainty</span>
+    <span>Slide 3 / 10</span>
+  </div>
+</section>
 
-document.getElementById('next').addEventListener('click', () => go(idx + 1));
-document.getElementById('prev').addEventListener('click', () => go(idx - 1));
-document.getElementById('print').addEventListener('click', () => window.print());
+<!-- ==================== SLIDE 4: TECHNICAL ARCHITECTURE ==================== -->
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="eyebrow">04 / SOLUTION ARCHITECTURE</div>
+      <h2>Arsitektur Full-Stack Modular, Lokal &amp; Zero-Native-Friction</h2>
+    </div>
+    <span class="badge b-slate">TypeScript • React • Express • node:sqlite</span>
+  </div>
+  <div class="content">
+    <div class="grid-3">
+      <div class="card-white">
+        <h3>Frontend (React 19 + Vite + Tailwind)</h3>
+        <ul>
+          <li><code>PortfolioView.tsx</code>: Executive KPIs, filter perhatian, kartu perbandingan Reported vs Operational.</li>
+          <li><code>ProjectDetailView.tsx</code>: 3-Layer Truth Cards, Attention Signals dengan provenance tags, panel Unknowns, Unified Timeline + Raw JSON inspector.</li>
+          <li><code>DeadlineBreakdown.tsx</code>: Visualisasi garis waktu + tabel audit perhitungan 7 langkah.</li>
+          <li><code>FollowUpPanel.tsx</code> &amp; <code>RefreshModal.tsx</code>: Siklus tindak lanjut, verifikasi bukti, &amp; live ingest console.</li>
+        </ul>
+      </div>
+      <div class="card-white">
+        <h3>Backend API &amp; Intelligence Engine</h3>
+        <ul>
+          <li><code>parsers.ts</code>: Validasi ketat CSV/JSON; karantina baris rusak tanpa memaksa angka jadi <code>0</code> (P6).</li>
+          <li><code>deadlineEngine.ts</code>: Kalkulasi durasi, run-rate, required pace, acceleration factor, slip, &amp; capacity ceiling.</li>
+          <li><code>intelligenceEngine.ts</code>: Mesin aturan deterministik <strong>R1–R6</strong> bebas hardcoding <code>project_id</code>.</li>
+          <li><code>app.ts</code>: 10 REST endpoints tervalidasi <strong>Zod</strong> (<code>/portfolio</code>, <code>/projects/:id</code>, <code>/followups</code>, <code>/verify</code>, <code>/refresh</code>, <code>/ingest</code>).</li>
+        </ul>
+      </div>
+      <div class="card-white">
+        <h3>Persistence (SQLite WAL — <code>node:sqlite</code>)</h3>
+        <ul>
+          <li><code>source_masters</code>, <code>source_updates</code>, <code>source_production</code> (dengan <code>payload_hash</code> untuk deteksi duplikat/konflik).</li>
+          <li><code>follow_ups</code>: menyimpan <code>action_status</code> terpisah dari <code>verification_status</code> &amp; <code>resolved_at</code>.</li>
+          <li><code>follow_up_history</code>: audit trail permanen tiap transisi status &amp; verifikasi bukti.</li>
+          <li><code>ingestion_runs</code>: log transparan tiap startup, disk refresh, dan live ingest beserta warning.</li>
+        </ul>
+      </div>
+    </div>
 
-function fit() {
-  const scale = Math.min(window.innerWidth / 1280, (window.innerHeight - 42) / 720);
-  stage.style.transform = `scale(${scale})`;
-}
+    <div class="card" style="padding:12px 16px;">
+      <h3>Mengapa Pilihan Stack Ini Optimal?</h3>
+      <div class="grid-3" style="margin-top:6px;">
+        <div><strong>1. Zero Build Friction:</strong> Menggunakan <code>node:sqlite</code> bawaan Node 22.5+/24 sehingga tidak perlu kompilasi native C++ (<code>node-gyp</code>) di Windows/Mac/Linux.</div>
+        <div><strong>2. Clean Testability:</strong> <code>createApp({ db, dataDir })</code> menerima SQLite <code>:memory:</code> maupun file sementara untuk uji isolasi &amp; persistensi restart.</div>
+        <div><strong>3. Change Readiness:</strong> Sumber data diproses ulang lewat <code>POST /api/refresh</code> atau <code>POST /api/ingest</code> langsung dari UI saat sesi Q&amp;A.</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>OnTrack Project Intelligence • Technical Architecture</span>
+    <span>Slide 4 / 10</span>
+  </div>
+</section>
 
-window.addEventListener('resize', fit);
-fit();
-render();
-</script>
+<!-- ==================== SLIDE 5: EXPLAINABLE RULES & DEADLINE CALCULATION ==================== -->
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="eyebrow">05 / EXPLAINABLE ATTENTION &amp; DEADLINE MATH</div>
+      <h2>Aturan Generik R1–R6 &amp; Metodologi Perhitungan Deadline</h2>
+    </div>
+    <span class="badge b-teal">100% Deterministic &amp; Auditable</span>
+  </div>
+  <div class="content">
+    <div class="grid-2">
+      <div>
+        <h3 style="margin-bottom:8px;">Mesin Aturan Generik (Nol Branching <code>project_id</code>)</h3>
+        <table>
+          <thead>
+            <tr><th>Rule</th><th>Logika Deteksi Generik</th><th>Level</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono"><strong>R1</strong></td><td><code>|reported_progress_pct - (actual/target×100)| &gt; 0.5%</code></td><td><span class="badge b-high">MED/HIGH</span></td></tr>
+            <tr><td class="mono"><strong>R2A</strong></td><td><code>verified + pending ≈ reported_actual</code> → Workflow-State Gap (bukan error)</td><td><span class="badge b-slate">MEDIUM</span></td></tr>
+            <tr><td class="mono"><strong>R2B</strong></td><td>Selisih <code>reported_actual</code> vs log operasional tanpa pending record</td><td><span class="badge b-high">HIGH</span></td></tr>
+            <tr><td class="mono"><strong>R2C</strong></td><td><code>developed_endpoints &gt; production_tested_endpoints</code> (DoD Gap)</td><td><span class="badge b-crit">CRITICAL</span></td></tr>
+            <tr><td class="mono"><strong>R3</strong></td><td><code>Required Pace &gt; Max Capacity</code> / <code>Accel ≥ 1.75x</code> / <code>Slip ≥ 7d</code></td><td><span class="badge b-crit">CRIT/HIGH</span></td></tr>
+            <tr><td class="mono"><strong>R4</strong></td><td>Scanner <code>OUT_OF_SERVICE/LIMITED</code>, Env <code>NOT_CONFIGURED</code>, Skipped &gt; 0, Hold/Rework</td><td><span class="badge b-crit">CRIT/HIGH</span></td></tr>
+            <tr><td class="mono"><strong>R5</strong></td><td>Proyek aktif tanpa update &amp; log operasional <code>≥ 72 jam</code> → Blind Spot</td><td><span class="badge b-purple">HIGH UNC.</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>7 Langkah Perhitungan Deadline (<code>deadlineEngine.ts</code>)</h3>
+        <ol style="padding-left:18px; display:flex; flex-direction:column; gap:7px; font-size:12.5px; color:#1e293b;">
+          <li><strong>Total Duration:</strong> <span class="mono">Deadline - Start Date</span> (selisih hari kalender UTC).</li>
+          <li><strong>Elapsed &amp; Remaining:</strong> <span class="mono">Elapsed = As-Of - Start</span> | <span class="mono">Remaining = Deadline - As-Of</span>.</li>
+          <li><strong>Audit Persentase:</strong> <span class="mono">Computed % = (Reported Actual / Target) × 100%</span>.</li>
+          <li><strong>Historical Run-Rate:</strong> <span class="mono">Actual / Elapsed Days</span> <em>(untuk data usang &gt;72j, pembagi berhenti di tanggal snapshot terakhir agar tidak mengasumsikan output 0)</em>.</li>
+          <li><strong>Required Daily Pace:</strong> <span class="mono">(Target - Actual) / Remaining Days</span>.</li>
+          <li><strong>Acceleration &amp; Projected Slip:</strong> <span class="mono">Accel = Required / Historical</span> | <span class="mono">Finish = As-Of + ceil(Remaining / Historical)</span>.</li>
+          <li><strong>Capacity Ceiling Check:</strong> Bila kapasitas harian disebut di update (mis. <code>4.500 pages/hari</code>), uji <span class="mono">Remaining / Max Capacity</span> untuk membuktikan kelayakan fisik.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>OnTrack Project Intelligence • Explainable Rules &amp; Deadline Math</span>
+    <span>Slide 5 / 10</span>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 6: PORTFOLIO FINDINGS (ALL 6 PROJECTS) ==================== -->
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="eyebrow">06 / PORTFOLIO INTELLIGENCE OUTPUT</div>
+      <h2>Hasil Analisis Seluruh Portofolio (As-Of 2026-10-06T17:00)</h2>
+    </div>
+    <span class="badge b-crit">2 Critical • 3 High • 1 Verified OK</span>
+  </div>
+  <div class="content">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:9%;">Proyek</th>
+          <th style="width:14%;">Master Claim</th>
+          <th style="width:15%;">Operational Evidence</th>
+          <th style="width:14%;">Deadline &amp; Pace</th>
+          <th style="width:11%;">Attention</th>
+          <th style="width:37%;">Alasan Utama &amp; Bukti Traceable</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>PRJ-002</strong><br><span style="color:#64748b;">Beta • Nadia</span></td>
+          <td>ON TRACK<br><strong>76.25%</strong> (91,500)</td>
+          <td><strong>72.70%</strong> (87,240)<br><code>SCN-B: LIMITED</code></td>
+          <td>Sisa <strong>4 hari</strong><br>Wajib <strong>8,190/hr</strong> vs max 4,500/hr</td>
+          <td><span class="badge b-crit">CRITICAL</span><br><span style="font-size:10px;color:#9f1239;">Infeasible (+4–6d)</span></td>
+          <td>Mustahil secara matematis (2.44x historis, 1.82x kapasitas penuh); <code>SCN-B</code> masih terbatas (<code>SCAN-BETA-003</code>); selisih +4,260 pages vs <code>SCAN-BETA-001</code>.</td>
+        </tr>
+        <tr>
+          <td><strong>PRJ-005</strong><br><span style="color:#64748b;">Epsilon • Kevin</span></td>
+          <td>ON TRACK<br><strong>90.0%</strong> (9/10)</td>
+          <td><strong>0.0%</strong> prod-tested<br><code>NOT_CONFIGURED</code></td>
+          <td>Sisa <strong>7 hari</strong><br>0/10 teruji prod</td>
+          <td><span class="badge b-crit">CRITICAL</span><br><span style="font-size:10px;color:#9f1239;">External Blocker</span></td>
+          <td>90% hanya development; <code>production_tested_endpoints=0</code> (<code>API-EPS-001</code>); koneksi <code>NOT_CONFIGURED</code> (<code>API-EPS-002</code>); menunggu credential tanpa ETA (<code>UPD-006/016</code>).</td>
+        </tr>
+        <tr>
+          <td><strong>PRJ-004</strong><br><span style="color:#64748b;">Delta • Sari</span></td>
+          <td>ON TRACK<br><strong>52.0%</strong> (45,000)</td>
+          <td><strong>45.0%</strong> (45,000)<br>3,200 skipped</td>
+          <td>Sisa <strong>30 hari</strong><br>Wajib <strong>1,833/hr</strong> vs 1,286/hr</td>
+          <td><span class="badge b-high">HIGH</span><br><span style="font-size:10px;color:#92400e;">Slip +13 hari</span></td>
+          <td>Selisih aritmetika <strong>+7.0%</strong> (45% vs 52%); butuh akselerasi 1.43x; 3,200 record dilewati (6.64% skip, <code>VER-DELTA-002</code>); kapasitas operator kosong (<code>UPD-023</code>).</td>
+        </tr>
+        <tr>
+          <td><strong>PRJ-001</strong><br><span style="color:#64748b;">Alpha • Raka</span></td>
+          <td>ON TRACK<br><strong>79.5%</strong> (318 ML)</td>
+          <td><strong>75.38%</strong> (301.5)<br>+16.5 pending</td>
+          <td>Sisa <strong>9 hari</strong><br>Wajib 10.94 vs 8.61 ML/hr</td>
+          <td><span class="badge b-high">HIGH</span><br><span style="font-size:10px;color:#92400e;">Hold &amp; Rework</span></td>
+          <td><code>301.5+16.5=318</code> (Workflow gap, bukan error, <code>PROD-ALPHA-001/002</code>), namun hold parsial &amp; revisi klasifikasi uji petik (<code>UPD-012/019</code>) mengancam jadwal.</td>
+        </tr>
+        <tr>
+          <td><strong>PRJ-003</strong><br><span style="color:#64748b;">Gamma • Andi</span></td>
+          <td>ON TRACK<br><strong>94.0%</strong> (1,840)</td>
+          <td><strong>92.0%</strong> (1,840)<br>per <strong>30 Sept</strong></td>
+          <td>Sisa <strong>14 hari</strong><br><em>Data usang 6 hr</em></td>
+          <td><span class="badge b-purple">HIGH UNC.</span><br><span style="font-size:10px;color:#6b21a8;">Blind Spot 144j</span></td>
+          <td>Nol update &amp; nol log gudang selama <strong>6 hari</strong> (<code>WH-GAMMA-001</code>, <code>UPD-004</code>) + selisih hitung <strong>+2.0%</strong> (92% vs 94%). Status aktual tidak terverifikasi.</td>
+        </tr>
+        <tr>
+          <td><strong>PRJ-006</strong><br><span style="color:#64748b;">Zeta • Maya</span></td>
+          <td>COMPLETED<br><strong>100.0%</strong> (1 sys)</td>
+          <td><strong>ONLINE</strong><br>14 active users</td>
+          <td>Selesai tepat<br><strong>2026-09-30</strong></td>
+          <td><span class="badge b-low">VERIFIED OK</span><br><span style="font-size:10px;color:#065f46;">No False Alarm</span></td>
+          <td>Selesai tepat waktu, terkonfirmasi <code>ONLINE</code> &amp; <code>COMPLETED</code> (<code>DMS-ZETA-001/002</code>, 21 login sukses, 1 gagal = reset password <code>UPD-014</code>).</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="footer">
+    <span>OnTrack Project Intelligence • Portfolio Intelligence Output</span>
+    <span>Slide 6 / 10</span>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 7: DEEP DIVE SPOTLIGHT (DEMO WALKTHROUGH) ==================== -->
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="eyebrow">07 / DEMO WALKTHROUGH HIGHLIGHTS</div>
+      <h2>Bagaimana Aplikasi Membedakan Masalah Kritis, Definisi &amp; Ketidakpastian</h2>
+    </div>
+    <span class="badge b-slate">Live Demo Walkthrough</span>
+  </div>
+  <div class="content">
+    <div class="grid-2">
+      <div class="card-rose">
+        <span class="badge b-crit" style="margin-bottom:6px;">CASE 1: MATHEMATICAL INFEASIBILITY (PRJ-002)</span>
+        <h3>Mengapa "ON TRACK" Tidak Masuk Akal Secara Fisik</h3>
+        <ul>
+          <li>Sisa beban log operasional: <code>120,000 - 87,240 = 32,760 pages</code> dalam <strong>4 hari</strong> = <strong>8,190 pages/hari</strong>.</li>
+          <li>Kapasitas penuh 3 scanner normal (<code>UPD-008</code>) hanya <strong>4,500 pages/hari</strong> → bahkan tanpa kerusakan butuh <code>7.28 hari</code> (selesai <code>14 Okt</code>, telat +4 hari).</li>
+          <li>Realita: <code>SCN-B</code> sempat <code>OUT_OF_SERVICE</code> (<code>08:15</code>) dan kini <code>LIMITED</code> (<code>15:30</code>), plus selisih tak terjelaskan <code>+4,260 pages</code>.</li>
+        </ul>
+      </div>
+
+      <div class="card-rose">
+        <span class="badge b-crit" style="margin-bottom:6px;">CASE 2: DEFINITION-OF-DONE TRAP (PRJ-005)</span>
+        <h3>90% Development ≠ 90% Siap Go-Live</h3>
+        <ul>
+          <li>PIC melaporkan <code>9/10 (90%) ON TRACK</code> dengan deadline <strong>7 hari lagi</strong> (<code>13 Okt</code>).</li>
+          <li><code>API-EPS-001</code> membuktikan <code>production_tested_endpoints = 0</code>; <code>API-EPS-002</code> menunjukkan <code>connection_status = NOT_CONFIGURED</code>.</li>
+          <li>Semua 10 endpoint masih harus melewati setup, uji integrasi production, bugfix, dan sign-off, sementara akses customer belum punya ETA.</li>
+        </ul>
+      </div>
+
+      <div class="card-teal">
+        <span class="badge b-teal" style="margin-bottom:6px;">CASE 3: NUANCED WORKFLOW GAP (PRJ-001)</span>
+        <h3>Tidak Salah Memvonis Selisih Sebagai Error</h3>
+        <ul>
+          <li>Master: <code>318 ML</code> vs Operational Verified: <code>301.5 ML</code> (selisih <code>16.5 ML</code>).</li>
+          <li>Aturan <code>R2A</code> mendeteksi <code>301.5 + 16.5 (PENDING_INTERNAL_CHECK) = 318.0 ML</code> → dijelaskan sebagai <strong>perbedaan tahap workflow</strong>.</li>
+          <li>Namun aturan <code>R4D</code> tetap menangkap risiko nyata: <em>hold</em> klasifikasi &amp; potensi rework (<code>UPD-012/019</code>) dengan sisa 9 hari.</li>
+        </ul>
+      </div>
+
+      <div class="card-purple">
+        <span class="badge b-purple" style="margin-bottom:6px;">CASE 4: EXPLICIT UNCERTAINTY (PRJ-003)</span>
+        <h3>Berani Berkata "Belum Terverifikasi"</h3>
+        <ul>
+          <li>Update terakhir (<code>UPD-004</code>) dan log gudang (<code>WH-GAMMA-001</code>) berhenti pada <code>2026-09-30</code> (<strong>6 hari lalu</strong>).</li>
+          <li>Dengan laju <code>40 box/hari</code>, sisa <code>160 box</code> bisa saja sudah selesai — ATAU berhenti total.</li>
+          <li>Aplikasi menandai <code>INSUFFICIENT_DATA</code> + <code>+2%</code> selisih hitung (<code>94%</code> vs <code>92%</code>) tanpa mengarang status.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>OnTrack Project Intelligence • Demo Walkthrough Highlights</span>
+    <span>Slide 7 / 10</span>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 8: FOLLOW-UP & EVIDENCE-BASED CLOSURE ==================== -->
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="eyebrow">08 / FOLLOW-UP WORKFLOW &amp; SECTION 11</div>
+      <h2>Evidence-Based Closure: Action Closed ≠ Operational Issue Resolved</h2>
+    </div>
+    <span class="badge b-teal">SQLite Persistent + Immutable Audit Trail</span>
+  </div>
+  <div class="content">
+    <div class="flow-row">
+      <div class="flow-box">1. CREATE FOLLOW-UP<br><span style="font-weight:400;font-size:10.5px;">Owner, Due, Signal, Refs</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">2. IN PROGRESS<br><span style="font-weight:400;font-size:10.5px;">PIC Eksekusi + Note</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="background:#fef3c7;border-color:#d97706;color:#92400e;">3. ACTION: RESOLVED<br><span style="font-weight:400;font-size:10.5px;">Issue: AWAITING EVIDENCE</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">4. DATA REFRESH<br><span style="font-weight:400;font-size:10.5px;">New Operational Record</span></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box teal">5. VERIFIED BY EVIDENCE<br><span style="font-weight:400;font-size:10.5px;">ts ≥ resolved_at + Re-eval</span></div>
+    </div>
+
+    <div class="grid-2" style="margin-top:6px;">
+      <div class="card">
+        <h3>Mekanisme Pemisahan Status di Backend &amp; UI</h3>
+        <ul>
+          <li><strong>Dua State Independen:</strong> <code>action_status</code> (<code>OPEN</code>, <code>IN_PROGRESS</code>, <code>RESOLVED</code>, <code>CANCELLED</code>) dipisahkan secara skema dari <code>verification_status</code> (<code>NOT_APPLICABLE</code>, <code>AWAITING_EVIDENCE</code>, <code>VERIFIED_BY_EVIDENCE</code>).</li>
+          <li><strong>Guard Otomatis saat <code>RESOLVED</code>:</strong> Sistem langsung memunculkan banner amber <em>"Action Closed ≠ Operational Issue Resolved"</em> dan <strong>tidak menghapus</strong> sinyal perhatian proyek.</li>
+          <li><strong>Validasi Timestamp Ketat (<code>POST /api/followups/:id/verify</code>):</strong> Menolak (<code>400 Bad Request</code>) bila bukti yang ditautkan lebih lama dari <code>resolved_at</code> atau milik proyek lain.</li>
+        </ul>
+      </div>
+
+      <div class="card-teal">
+        <h3>Contoh Live Flow (Teruji di Automated Test &amp; UI)</h3>
+        <ul>
+          <li><strong>Step 1:</strong> Buat follow-up untuk <code>PRJ-005</code> (Owner: Kevin, linked: <code>R4B_ENVIRONMENT_NOT_READY</code>, ref: <code>API-EPS-002</code>).</li>
+          <li><strong>Step 2:</strong> Kevin menandai <code>RESOLVED</code> pada <code>2026-10-06T18:00</code> ("Credential diterima via email"). Status proyek <strong>tetap CRITICAL</strong>; follow-up masuk <code>AWAITING_EVIDENCE</code>.</li>
+          <li><strong>Step 3:</strong> Melalui <em>Data Refresh / Live Ingest</em>, masuk snapshot baru <code>API-EPS-003</code> (<code>2026-10-07T09:00</code>, <code>connection_status: CONNECTED</code>).</li>
+          <li><strong>Step 4:</strong> Reviewer menautkan <code>API-EPS-003</code> → follow-up menjadi <code>VERIFIED_BY_EVIDENCE</code> &amp; sinyal blocker otomatis hilang saat dievaluasi per <code>2026-10-07</code>!</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>OnTrack Project Intelligence • Follow-Up &amp; Evidence-Based Closure</span>
+    <span>Slide 8 / 10</span>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 9: TESTING, RESILIENCE & 6-HOUR TRADE-OFFS ==================== -->
+<section class="slide">
+  <div class="header">
+    <div>
+      <div class="eyebrow">09 / VERIFICATION, RESILIENCE &amp; TRADE-OFFS</div>
+      <h2>Automated Testing, Penanganan Error (P6) &amp; Keputusan Trade-Off</h2>
+    </div>
+    <span class="badge b-low">124 Tests • 58 Verify Checks Passing</span>
+  </div>
+  <div class="content">
+    <div class="grid-2">
+      <div class="card-white">
+        <h3>Cakupan Pengujian &amp; Proof Pack (<code>proof/</code>)</h3>
+        <ul>
+          <li><strong><code>npm test</code> — 124 Automated Tests (5 Suite):</strong> <code>parsers.test.ts</code> (28), <code>deadlineEngine.test.ts</code> (26), <code>intelligenceEngine.test.ts</code> (32), <code>db.test.ts</code> (18), <code>api.test.ts</code> (20).</li>
+          <li><strong><code>npm run verify -w backend</code> — 58 Pemeriksaan:</strong> integritas data (16), 6 proyek (18), kontrak rute &amp; Section 11 closure (16), serta isolasi Persona RBAC (8).</li>
+          <li><strong>Anti-Hardcoding Proof:</strong> Menguji proyek sintetis baru <code>PRJ-999-CUSTOM</code>; aturan generik <code>R1/R2B/R3</code> aktif identik.</li>
+          <li><strong>Resilience P6 &amp; Refresh P5:</strong> Karantina input cacat tanpa crash, duplikat idempoten, konflik dilindungi, &amp; <em>historical backfill</em>.</li>
+          <li><strong>SQLite Persistence &amp; RBAC:</strong> Uji tutup/buka ulang file SQLite, penolakan bukti lama (400), &amp; proteksi lintas PIC (403).</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>Keputusan Trade-Off (Rentang Kerja Aktif: 3 Jam 49 Menit)</h3>
+        <table>
+          <thead>
+            <tr><th>Keputusan</th><th>Alasan &amp; Trade-Off</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Deterministic Rules vs LLM</strong></td><td>Dipilih aturan deterministik R1–R6 demi 100% <em>explainability</em> &amp; zero hallucination; regex teks lapangan sederhana adalah keterbatasan yang disadari.</td></tr>
+            <tr><td><strong>SQLite (<code>node:sqlite</code>) vs Postgres</strong></td><td>Nol setup eksternal &amp; bebas <code>node-gyp</code>; cukup untuk prototipe lokal, perlu migrasi ke Postgres untuk multi-writer skala besar.</td></tr>
+            <tr><td><strong>Calendar Days vs Workdays</strong></td><td>Konsisten &amp; transparan karena kalender shift/libur tiap customer tidak ada di dataset.</td></tr>
+            <tr><td><strong>On-the-Fly Eval vs Precomputed</strong></td><td>Sederhana &amp; mendukung <em>time-travel</em> <code>?asOf=</code> seketika; perlu <em>materialized snapshot</em> saat skala &gt;500 proyek.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>OnTrack Project Intelligence • Testing, Resilience &amp; Trade-Offs</span>
+    <span>Slide 9 / 10</span>
+  </div>
+</section>
+
+<!-- ==================== SLIDE 10: LIMITATIONS & PRODUCT ROADMAP ==================== -->
+<section class="slide slide-dark">
+  <div class="header">
+    <div>
+      <div class="eyebrow">10 / SCALE RISKS &amp; NEXT STEPS</div>
+      <h2>Evolusi Menuju Produk Nyata OnTrackProject.ai</h2>
+    </div>
+    <span class="badge b-teal">Roadmap &amp; Scale Readiness</span>
+  </div>
+  <div class="content">
+    <div class="grid-2">
+      <div class="card-dark">
+        <h3 style="color:#fbbf24;">Apa yang Pertama Kali Bottleneck di 500 Proyek + Daily Updates?</h3>
+        <ul style="margin-top:8px;">
+          <li><strong>N+1 On-the-Fly Recomputation:</strong> Memuat ratusan ribu baris update &amp; snapshot di setiap request <code>/api/portfolio</code> akan memicu lonjakan latensi.</li>
+          <li><strong>SQLite Single-Writer &amp; Full-File Reload:</strong> Konkurensi <em>ingest</em> dari banyak sistem operasional akan antre di write-lock SQLite.</li>
+          <li><strong>Cumulative Average Velocity:</strong> Pada proyek multi-bulan, rata-rata sejak hari pertama terlambat mendeteksi penurunan performa mendadak di minggu terakhir.</li>
+          <li><strong>Free-Text Regex Limits:</strong> Variasi bahasa pesan lapangan di 500 proyek membutuhkan taksonomi blocker terstruktur.</li>
+        </ul>
+      </div>
+
+      <div class="card-dark">
+        <h3 style="color:#2dd4bf;">Prioritas Pengembangan Berikutnya (2 Hari → Production)</h3>
+        <ul style="margin-top:8px;">
+          <li><strong>Fase 1 (Scale &amp; Accuracy):</strong> Materialized <code>project_intelligence_snapshots</code> per ingestion event + <strong>Rolling 7-Day Velocity</strong> &amp; grafik <em>burn-up</em> harian.</li>
+          <li><strong>Fase 2 (Configurable Control):</strong> Ambang batas aturan (staleness, pace ratio, math tolerance) dapat dikonfigurasi per <code>project_type</code> + auto-reconciliation follow-up saat bukti baru menghilangkan sinyal.</li>
+          <li><strong>Fase 3 (Enterprise Control Layer):</strong> Migrasi ke PostgreSQL, konektor webhook/API otomatis dari DMS/ERP/Scanner, autentikasi SSO + RBAC (<em>separation of duties</em> pada verifikasi penutupan), serta E2E Playwright tests.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card-dark" style="border-color:#2dd4bf; display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <div class="eyebrow">READY FOR LIVE WALKTHROUGH &amp; CHANGE REQUEST</div>
+        <p style="margin-top:4px; color:#f8fafc;">Berjalan lokal di <code>http://127.0.0.1:5173</code> • <code>npm test</code> (124/124) • <code>npm run verify -w backend</code> (58/58) • Batasan jujur: UI berbahasa Indonesia, klaim &gt;501 kueri belum diuji beban, Excel tidak dibandingkan otomatis.</p>
+      </div>
+      <div class="mono" style="color:#2dd4bf; font-weight:700; font-size:14px;">Terima Kasih — Q&amp;A</div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>OnTrack Project Intelligence • Roadmap &amp; Closing</span>
+    <span>Slide 10 / 10</span>
+  </div>
+</section>
+
 </body>
 </html>

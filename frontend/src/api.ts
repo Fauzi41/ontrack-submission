@@ -1,306 +1,183 @@
-export type Severity = 'critical' | 'attention' | 'watch' | 'info';
+import type {
+  ActivePersona,
+  FollowUpActionStatus,
+  FollowUpRecord,
+  IngestionRunSummary,
+  PortfolioOverview,
+  ProjectIntelligence,
+  ProjectMasterRecord,
+} from './types';
 
-export interface Evidence {
-  ref_id: string;
-  source_kind: string;
-  provenance: string;
-  observed_at: string | null;
-  label: string;
-}
-
-export interface Finding {
-  project_id: string;
-  detector: string;
-  fingerprint: string;
-  severity: Severity;
-  severity_final: Severity;
-  confidence: 'high' | 'medium' | 'low';
-  method: string;
-  reason: string;
-  unknowns: string[];
-  evidence: Evidence[];
-  action: string;
-  owner: string;
-  owner_reason: string;
-  borderline: boolean;
-  time_pressure: string;
-  group_key: string | null;
-}
-
-export interface FindingGroup {
-  group_key: string;
-  title: string;
-  severity: Severity;
-  member_fingerprints: string[];
-}
-
-export interface Assessment {
-  project_id: string;
-  project_name: string;
-  project_type: string;
-  customer: string;
-  pic: string | null;
-  lifecycle: string;
-  deadline: string | null;
-  time_pressure: string;
-  days_remaining: number | null;
-  progress: {
-    target: number | null;
-    unit: string | null;
-    reported: number | null;
-    validated: number | null;
-    pct_reported: number | null;
-    pct_calculated: number | null;
-    basis: string;
+function actorHeaders(persona?: ActivePersona): Record<string, string> {
+  if (!persona) return {};
+  return {
+    'X-Actor-Role': persona.role,
+    'X-Actor-Name': persona.name,
   };
-  findings: Finding[];
-  groups: FindingGroup[];
-  top_severity: Severity;
-  rank: number | null;
-  tied: boolean;
-  narrative: string;
-  notes: string[];
 }
 
-export interface Portfolio {
-  as_of: string;
-  projects: Assessment[];
-  counts: Partial<Record<Severity, number>>;
-  issue_counts: Record<string, number>;
-  review_queue: number;
-}
-
-export interface ReviewItem {
-  id: number;
-  project_id: string;
-  project_name: string;
-  fingerprint: string;
-  detector: string | null;
-  severity: Severity | null;
-  actor: string;
-  kind: 'ACKNOWLEDGED' | 'DISPUTED' | 'EXPLAINED';
-  note: string;
-  evidence_ref: string | null;
-  created_at: string;
-  issue_status: string | null;
-}
-
-export interface ReviewQueue {
-  queue: ReviewItem[];
-  counts: Record<string, number>;
-  total: number;
-}
-
-export interface Issue {
-  id: number;
-  project_id: string;
-  detector_key: string;
-  fingerprint: string;
-  status: 'OPEN' | 'AWAITING_EVIDENCE' | 'VERIFIED_RESOLVED' | 'NOT_DETECTED';
-  opened_at: string;
-  last_evaluated_at: string;
-  resolved_by_record: string | null;
-  reopen_count: number;
-}
-
-export interface Followup {
-  id: string;
-  project_id: string;
-  issue_id: number | null;
-  fingerprint: string | null;
-  title: string;
-  description: string;
-  owner: string;
-  owner_kind: string;
-  status: 'OPEN' | 'IN_PROGRESS' | 'DONE' | 'CANCELLED';
-  due_date: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface ResponseRow {
-  id: number;
-  project_id: string;
-  fingerprint: string;
-  actor: string;
-  kind: 'ACKNOWLEDGED' | 'DISPUTED' | 'EXPLAINED';
-  note: string;
-  evidence_ref: string | null;
-  needs_review: number;
-  created_at: string;
-}
-
-export interface ProjectDetail extends Assessment {
-  issues: Issue[];
-  followups: Followup[];
-  responses: ResponseRow[];
-  as_of: string;
-}
-
-export interface ImportSummary {
-  report: {
-    inserted: number;
-    updated: number;
-    duplicates: number;
-    rejected: number;
-    late_arrivals: number;
-    orphans: number;
-    as_of: string | null;
-    issues: Array<{ severity: string; code: string; message: string }>;
-    impact: { added: string[]; removed: string[]; changed: Array<{ project_id: string; field: string; from: unknown; to: unknown }> };
-  };
-  findings_impact: { opened: Array<{ project_id: string; detector: string }>; gone: unknown[]; escalated: unknown[]; deescalated: unknown[] };
-  issues_sync: { opened: number; reopened: number; noLongerDetected: number };
-}
-
-export interface Inventory {
-  as_of: string | null;
-  by_kind: Array<{ source_kind: string; provenance: string; count: number }>;
-  per_project: Array<{ project_id: string; source_kind: string; count: number }>;
-  recent_runs: Array<{ id: number; started_at: string; as_of: string | null }>;
-}
-
-export class ApiError extends Error {
-  constructor(
-    readonly status: number,
-    readonly code: string,
-    message: string,
-  ) {
-    super(message);
-  }
-}
-
-async function parse<T>(res: Response): Promise<T> {
-  const body = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+async function requestJson<T>(url: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(url, {
+    ...init,
+    headers: { 'Content-Type': 'application/json', ...(init?.headers ?? {}) },
+  });
+  const body = await res.json().catch(() => ({}));
   if (!res.ok) {
-    throw new ApiError(res.status, String(body.error ?? res.status), String(body.message ?? res.statusText));
+    throw new Error((body as { error?: string }).error || `Request failed (${res.status})`);
   }
   return body as T;
 }
 
-export const getPortfolio = (): Promise<Portfolio> => fetch('/api/portfolio').then((r) => parse<Portfolio>(r));
+export function fetchPortfolio(asOf?: string, persona?: ActivePersona): Promise<PortfolioOverview> {
+  const qs = asOf ? `?asOf=${encodeURIComponent(asOf)}` : '';
+  return requestJson<PortfolioOverview>(`/api/portfolio${qs}`, {
+    headers: actorHeaders(persona),
+  });
+}
 
-export const getProject = (id: string): Promise<ProjectDetail> =>
-  fetch(`/api/projects/${id}`).then((r) => parse<ProjectDetail>(r));
-
-export const getInventory = (): Promise<Inventory> => fetch('/api/source-inventory').then((r) => parse<Inventory>(r));
-
-export const getIssues = (): Promise<{ issues: Issue[] }> => fetch('/api/issues').then((r) => parse<{ issues: Issue[] }>(r));
-
-export const runImport = (): Promise<ImportSummary> =>
-  fetch('/api/import', { method: 'POST' }).then((r) => parse<ImportSummary>(r));
-
-export const setIssueStatus = (id: number, status: string, evidenceRef?: string): Promise<{ issue: Issue }> =>
-  fetch(`/api/issues/${id}/status`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ status, evidence_ref: evidenceRef ?? null }),
-  }).then((r) => parse<{ issue: Issue }>(r));
-
-export const createFollowup = (
+export function fetchProjectDetail(
   projectId: string,
-  body: { title: string; owner: string; due_date?: string | null; issue_id?: number | null; fingerprint?: string | null },
-): Promise<{ followup: Followup }> =>
-  fetch(`/api/projects/${projectId}/followups`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ ...body, actor: 'ui' }),
-  }).then((r) => parse<{ followup: Followup }>(r));
+  asOf?: string,
+  persona?: ActivePersona
+): Promise<ProjectIntelligence> {
+  const qs = asOf ? `?asOf=${encodeURIComponent(asOf)}` : '';
+  return requestJson<ProjectIntelligence>(`/api/projects/${encodeURIComponent(projectId)}${qs}`, {
+    headers: actorHeaders(persona),
+  });
+}
 
-export const updateFollowup = (
+export function createFollowUp(
+  payload: {
+    project_id: string;
+    title: string;
+    description: string;
+    owner: string;
+    priority: 'HIGH' | 'MEDIUM' | 'LOW';
+    due_date: string | null;
+    linked_signal_code: string | null;
+    evidence_refs: string[];
+    actor?: string;
+  },
+  persona?: ActivePersona
+): Promise<FollowUpRecord> {
+  return requestJson<FollowUpRecord>('/api/followups', {
+    method: 'POST',
+    headers: actorHeaders(persona),
+    body: JSON.stringify(payload),
+  });
+}
+
+export function updateFollowUp(
   id: string,
-  body: { status?: string; note?: string },
-): Promise<{ followup: Followup; events: Array<{ event_type: string; from_value: string | null; to_value: string | null; actor: string }>; note: string }> =>
-  fetch(`/api/followups/${id}`, {
+  payload: {
+    action_status?: FollowUpActionStatus;
+    owner?: string;
+    due_date?: string | null;
+    note?: string;
+    actor?: string;
+  },
+  persona?: ActivePersona
+): Promise<FollowUpRecord> {
+  return requestJson<FollowUpRecord>(`/api/followups/${encodeURIComponent(id)}`, {
     method: 'PATCH',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ ...body, actor: 'ui' }),
-  }).then((r) => parse<{ followup: Followup; events: Array<{ event_type: string; from_value: string | null; to_value: string | null; actor: string }>; note: string }>(r));
+    headers: actorHeaders(persona),
+    body: JSON.stringify(payload),
+  });
+}
 
-export const addResponse = (
-  projectId: string,
-  fingerprint: string,
-  body: { kind: string; note: string; evidence_ref?: string | null },
-): Promise<{ response: ResponseRow }> =>
-  fetch(`/api/projects/${projectId}/findings/${fingerprint}/responses`, {
+export function verifyFollowUp(
+  id: string,
+  payload: { source_record_id: string; note: string; actor?: string },
+  persona?: ActivePersona
+): Promise<FollowUpRecord> {
+  return requestJson<FollowUpRecord>(`/api/followups/${encodeURIComponent(id)}/verify`, {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ ...body, actor: 'ui' }),
-  }).then((r) => parse<{ response: ResponseRow }>(r));
+    headers: actorHeaders(persona),
+    body: JSON.stringify(payload),
+  });
+}
 
-export const getReviewQueue = (): Promise<ReviewQueue> =>
-  fetch('/api/review').then((r) => parse<ReviewQueue>(r));
+export function triggerDiskRefresh(): Promise<IngestionRunSummary> {
+  return requestJson<IngestionRunSummary>('/api/refresh', { method: 'POST' });
+}
 
-export const decideReview = (
-  id: number,
-  body: { decision: 'UPHELD' | 'DENIED'; note: string },
-): Promise<{ response: ResponseRow; queue_remaining: number }> =>
-  fetch(`/api/responses/${id}/review`, {
+export function ingestPayloads(payload: {
+  masterCsv?: string;
+  updatesCsv?: string;
+  prodJson?: string;
+}): Promise<IngestionRunSummary> {
+  return requestJson<IngestionRunSummary>('/api/ingest', {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ ...body, actor: 'ui' }),
-  }).then((r) => parse<{ response: ResponseRow; queue_remaining: number }>(r));
+    body: JSON.stringify(payload),
+  });
+}
 
-export const LABEL = {
-  severity: { critical: 'Kritis', attention: 'Perhatian', watch: 'Pantau', info: 'Info' } as Record<string, string>,
-  time: {
-    OVERDUE: 'Lewat deadline',
-    DUE_TODAY: 'Jatuh tempo hari ini',
-    DUE_SOON: 'Segera',
-    APPROACHING: 'Mendekat',
-    DISTANT: 'Masih jauh',
-    NONE: 'Tidak berlaku',
-    UNKNOWN: 'Tidak diketahui',
-  } as Record<string, string>,
-  confidence: { high: 'tinggi', medium: 'sedang', low: 'rendah' } as Record<string, string>,
-  owner: {
-    PROJECT_MANAGER: 'Project manager',
-    TECHNICAL_TEAM: 'Tim teknis',
-    ACCOUNT: 'Account',
-    VENDOR: 'Vendor',
-    CUSTOMER: 'Pelanggan',
-  } as Record<string, string>,
-  issue: {
-    OPEN: 'Terbuka',
-    AWAITING_EVIDENCE: 'Menunggu bukti',
-    VERIFIED_RESOLVED: 'Terverifikasi',
-    NOT_DETECTED: 'Tidak terdeteksi lagi',
-  } as Record<string, string>,
-  basis: {
-    validated_quantity: 'kuantitas tervalidasi',
-    accepted_in_production: 'diterima di produksi',
-  } as Record<string, string>,
-  detector: {
-    progress_gap: 'Progress dilaporkan melebihi bukti',
-    schedule_risk: 'Laju tidak cukup untuk deadline',
-    deadline_passed: 'Deadline lewat, belum selesai',
-    stale_report: 'Laporan berhenti masuk',
-    stale_evidence: 'Bukti operasional tidak diperbarui',
-    blocked_dependency: 'Ketergantungan menghambat',
-    capacity_degradation: 'Kapasitas menurun',
-    quality_gap: 'Kualitas di bawah ambang',
-    internal_inconsistency: 'Angka di satu baris tidak cocok',
-    status_contradiction: 'Status bertentangan dengan bukti',
-    progress_basis_conflict: 'Definisi progress tidak sesuai tipe proyek',
-    source_conflict: 'Dua sumber berbeda angka',
-    closure_evidence_missing: 'Klaim selesai tanpa bukti',
-    verified_closure: 'Penutupan terbukti',
-  } as Record<string, string>,
-};
+export function fetchIngestionRuns(): Promise<{ runs: IngestionRunSummary[] }> {
+  return requestJson<{ runs: IngestionRunSummary[] }>('/api/ingestion/runs');
+}
 
-export const num = (v: number | null | undefined, digits = 0): string =>
-  v === null || v === undefined ? '—' : new Intl.NumberFormat('id-ID', { maximumFractionDigits: digits }).format(v);
+export function saveProjectMaster(
+  payload: ProjectMasterRecord,
+  asOf?: string,
+  persona?: ActivePersona
+): Promise<{ summary: IngestionRunSummary; project: ProjectIntelligence }> {
+  const qs = asOf ? `?asOf=${encodeURIComponent(asOf)}` : '';
+  return requestJson(`/api/data/master${qs}`, {
+    method: 'POST',
+    headers: actorHeaders(persona),
+    body: JSON.stringify(payload),
+  });
+}
 
-export const when = (iso: string | null | undefined): string => {
-  if (!iso) return '—';
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
-  return new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }).format(d);
-};
+export function appendOperationalSnapshot(
+  payload: {
+    source_record_id?: string;
+    project_id: string;
+    source_system: string;
+    record_type: string;
+    timestamp: string;
+    metrics: Record<string, unknown>;
+  },
+  asOf?: string,
+  persona?: ActivePersona
+): Promise<{ source_record_id: string; summary: IngestionRunSummary; project: ProjectIntelligence | null }> {
+  const qs = asOf ? `?asOf=${encodeURIComponent(asOf)}` : '';
+  return requestJson(`/api/data/production${qs}`, {
+    method: 'POST',
+    headers: actorHeaders(persona),
+    body: JSON.stringify(payload),
+  });
+}
 
-export const day = (iso: string | null | undefined): string => {
-  if (!iso) return '—';
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return iso;
-  return new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }).format(d);
-};
+export function appendProjectUpdate(
+  payload: {
+    update_id?: string;
+    project_id: string;
+    timestamp: string;
+    source_type: string;
+    source_name: string;
+    message: string;
+  },
+  asOf?: string,
+  persona?: ActivePersona
+): Promise<{ update_id: string; summary: IngestionRunSummary; project: ProjectIntelligence | null }> {
+  const qs = asOf ? `?asOf=${encodeURIComponent(asOf)}` : '';
+  return requestJson(`/api/data/updates${qs}`, {
+    method: 'POST',
+    headers: actorHeaders(persona),
+    body: JSON.stringify(payload),
+  });
+}
+
+export function resetAllData(
+  options: boolean | { resetFollowUps?: boolean; scope?: 'ALL' | 'OWN'; projectId?: string } = false,
+  persona?: ActivePersona
+): Promise<IngestionRunSummary> {
+  const body =
+    typeof options === 'boolean' ? { resetFollowUps: options } : options;
+  return requestJson<IngestionRunSummary>('/api/data/reset', {
+    method: 'POST',
+    headers: actorHeaders(persona),
+    body: JSON.stringify(body),
+  });
+}
